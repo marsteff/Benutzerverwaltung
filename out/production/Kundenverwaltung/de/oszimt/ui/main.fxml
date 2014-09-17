@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.control.CheckMenuItem?>
 
-<BorderPane fx:controller="de.oszimt.ui.controller.Controller" xmlns:fx="http://javafx.com/fxml">
+<BorderPane fx:controller="de.oszimt.ui.Controller" xmlns:fx="http://javafx.com/fxml">
     <!-- !!!!!!!!!!!!!!!!!!! Menubar !!!!!!!!!!-->
     <top>
         <MenuBar >
