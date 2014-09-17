@@ -2,6 +2,7 @@ package de.oszimt.ui;
 
 import java.time.LocalDate;
 
+import de.oszimt.model.User;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
@@ -15,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import de.oszimt.ui.templates.AdvancedSearch;
 import de.oszimt.factory.PersistanceFactory;
-import de.oszimt.model.Kunde;
 import de.oszimt.persistence.enumeration.PersistanceMethod;
 import de.oszimt.persistence.iface.IPersistance;
 import de.oszimt.util.RestService;
@@ -24,22 +24,22 @@ import de.oszimt.util.Util;
 public class Controller {
 	
 	@FXML
-	private TableView<Kunde> customerTable;
+	private TableView<User> customerTable;
 	
 	@FXML 
-	private TableColumn<Kunde, String> vornameColumn;
+	private TableColumn<User, String> vornameColumn;
 	@FXML 
-	private TableColumn<Kunde, String> nachnameColumn;
+	private TableColumn<User, String> nachnameColumn;
 	@FXML 
-	private TableColumn<Kunde, String> ortColumn;
+	private TableColumn<User, String> ortColumn;
 	@FXML 
-	private TableColumn<Kunde, String> strasseColumn;
+	private TableColumn<User, String> strasseColumn;
 	@FXML 
-	private TableColumn<Kunde, String> strassenNummerColumn;
+	private TableColumn<User, String> strassenNummerColumn;
 	@FXML 
-	private TableColumn<Kunde, LocalDate> geburtstagColumn;
+	private TableColumn<User, LocalDate> geburtstagColumn;
 	@FXML 
-	private TableColumn<Kunde, Integer> plzColumn;
+	private TableColumn<User, Integer> plzColumn;
 	
 	@FXML
 	private TextField vornameField;
@@ -90,7 +90,7 @@ public class Controller {
 	@FXML
 	public void initialize(){
 		//Initialisierung der DB-Schnittstelle
-		db = PersistanceFactory.buildPersistance(PersistanceMethod.RELATIONAL);
+		db = PersistanceFactory.buildPersistance(PersistanceMethod.SQLITE);
 				
 		//setzt die Bindings der einzelnen Controls - unter anderem f�r eine Full-Responsive GUI zust�ndig
 		bindingOfControls();
@@ -146,7 +146,7 @@ public class Controller {
 	
 	@FXML
 	private void deleteCustomer(){
-		Kunde customer = customerTable.getSelectionModel().getSelectedItem();
+		User customer = customerTable.getSelectionModel().getSelectedItem();
         db.deleteUser(customer);
 		
 		searchInTable();
@@ -155,7 +155,7 @@ public class Controller {
 	@FXML
 	private void deleteCustomerButton(){
 		
-		ObservableList<Kunde> testList = customerTable.getItems();
+		ObservableList<User> testList = customerTable.getItems();
 		testList.forEach(e -> {
 			if(e.getVorname() == null)
 				System.err.println(e + " ist fehlerhaft");
@@ -178,7 +178,7 @@ public class Controller {
 		String strassenNummer = strassenNummerField.getText();
 		int plz = Integer.parseInt(plzField.getText());
 		
-		Kunde newCustomer = new Kunde(vorname, nachname, geburtstag, ort, strasse, strassenNummer, plz);
+		User newCustomer = new User(vorname, nachname, geburtstag, ort, strasse, strassenNummer, plz);
 		
 		//to specify if is it a new user or only a change
 		boolean isNew = false;
@@ -191,7 +191,7 @@ public class Controller {
 		db.updateUser(newCustomer);
 		
 		//create a nice Message of Action
-		setSuccedMessage(newCustomer + " erfolgreich" + (isNew ?  " bearbeitet" : " erfolgreich als Kunde hinzugef�gt"));
+		setSuccedMessage(newCustomer + " erfolgreich" + (isNew ?  " bearbeitet" : " erfolgreich als User hinzugef�gt"));
 		
 		searchInTable();
 		
@@ -201,11 +201,11 @@ public class Controller {
 	
 	@FXML
 	private void createRandomCustomersAction(){
-		IPersistance db = PersistanceFactory.buildPersistance(PersistanceMethod.RELATIONAL);
+		IPersistance db = PersistanceFactory.buildPersistance(PersistanceMethod.SQLITE);
     	
-    	ObservableList<Kunde> customerList = Util.createCustomers();
-    	for(Kunde kunde : customerList){
-    		db.createUser(kunde);
+    	ObservableList<User> customerList = Util.createCustomers();
+    	for(User user : customerList){
+    		db.createUser(user);
     	}
     	searchInTable();
     	setSuccedMessage("Zufallsnutzer erfolgreich erstellt!");
@@ -213,7 +213,7 @@ public class Controller {
 	
     @FXML
     private void deleteAllCustomersAction(){
-    	ObservableList<Kunde> list = db.getAllKunden();
+    	ObservableList<User> list = db.getAllKunden();
     	list.forEach(e -> db.deleteUser(e));
     	searchInTable();
     }
@@ -256,9 +256,9 @@ public class Controller {
 	 * Dieses erfolgt Live.
 	 */
 	private void searchInTable() {
-		ObservableList<Kunde> masterDate = db.getAllKunden();
+		ObservableList<User> masterDate = db.getAllKunden();
 
-		FilteredList<Kunde> filteredDate = new FilteredList<>(masterDate, p -> true);
+		FilteredList<User> filteredDate = new FilteredList<>(masterDate, p -> true);
 
 		searchField.textProperty().addListener((observable, oldValue, newValue) -> {
 			filteredDate.setPredicate(kunde -> {
@@ -286,7 +286,7 @@ public class Controller {
 			});
 		});
 
-		SortedList<Kunde> sortedDate = new SortedList<>(filteredDate);
+		SortedList<User> sortedDate = new SortedList<>(filteredDate);
 		sortedDate.comparatorProperty().bind(customerTable.comparatorProperty());
 
 		customerTable.setItems(filteredDate);
