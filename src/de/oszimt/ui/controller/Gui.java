@@ -1,14 +1,15 @@
 package de.oszimt.ui.controller;
 
-import de.oszimt.ui.controller.Controller;
+import de.oszimt.conzept.impl.Concept;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.*;
 
 public class Gui extends Application {
+
+    private Concept concept;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -21,7 +22,7 @@ public class Gui extends Application {
         contr.setStage(primaryStage);
         
         //Initialisieren des Fensters
-        primaryStage.setTitle("Oszimt Projekt Benutzerverwaltung");
+        primaryStage.setTitle(this.concept.getTitle());
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.setMinWidth(650);
         primaryStage.setMinHeight(300);
@@ -33,7 +34,8 @@ public class Gui extends Application {
 
     }
 
-    public Gui(String conzept){
+    public Gui(Concept concept){
+        this.concept = concept;
         this.run();
     }
 

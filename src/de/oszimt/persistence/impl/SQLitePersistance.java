@@ -6,23 +6,23 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 
+import de.oszimt.model.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import de.oszimt.model.Kunde;
 import de.oszimt.persistence.iface.IPersistance;
 
-public class RelationalDatabasePersistance implements IPersistance {
+public class SQLitePersistance implements IPersistance {
 
-	private static RelationalDatabasePersistance obj;
+	private static SQLitePersistance obj;
 	private static final String DATABASEPATH = "customer.db";
 	
-	private RelationalDatabasePersistance() {
+	private SQLitePersistance() {
 		this.createTable();
 	}
 	
-	public static RelationalDatabasePersistance getInstance(){
+	public static SQLitePersistance getInstance(){
 		if(obj == null)
-			obj = new RelationalDatabasePersistance();
+			obj = new SQLitePersistance();
 		return obj;
 	}
 	
@@ -69,15 +69,15 @@ public class RelationalDatabasePersistance implements IPersistance {
 	}
 	
 	@Override
-	public void updateUser(Kunde kunde) {
-		if(existCustomer(kunde))
-			update(kunde);
+	public void updateUser(User user) {
+		if(existCustomer(user))
+			update(user);
 		else
-			createUser(kunde);
+			createUser(user);
 
 	}
 
-	private void update(Kunde kunde) {
+	private void update(User user) {
 		Connection con = this.getConnection();
 		Statement stmt = null;
 
@@ -85,14 +85,14 @@ public class RelationalDatabasePersistance implements IPersistance {
 			stmt = con.createStatement();
 
 			String sql = "UPDATE CUSTOMERS set " +
-												"VORNAME 		= '" + kunde.getVorname() + "', " +
-												"NACHNAME 		= '" + kunde.getNachname() + "', " +
-												"ORT 			= '" + kunde.getOrt() + "', " +
-												"STRASSE 		= '" + kunde.getStrasse() + "', " +
-												"STRASSENNUMMER	= '" + kunde.getStrassenNummer() + "', " +
-												"PLZ 			= " + kunde.getPlz() + ", " +
-												"GEBURTSTAG		= '" + kunde.getGeburtstag() + "' " +
-												"WHERE ID=" + kunde.getId();
+												"VORNAME 		= '" + user.getVorname() + "', " +
+												"NACHNAME 		= '" + user.getNachname() + "', " +
+												"ORT 			= '" + user.getOrt() + "', " +
+												"STRASSE 		= '" + user.getStrasse() + "', " +
+												"STRASSENNUMMER	= '" + user.getStrassenNummer() + "', " +
+												"PLZ 			= " + user.getPlz() + ", " +
+												"GEBURTSTAG		= '" + user.getGeburtstag() + "' " +
+												"WHERE ID=" + user.getId();
 			stmt.executeUpdate(sql);
 			con.commit();
 
@@ -101,19 +101,19 @@ public class RelationalDatabasePersistance implements IPersistance {
 			System.out.println(e.getMessage());
 		} finally{
 			this.closeConnection(con, stmt);
-			System.out.println(kunde + " erfolgreich bearbeitet");
+			System.out.println(user + " erfolgreich bearbeitet");
 		}
 	}
 
     @Override
-    public void deleteUser(Kunde kunde) {
+    public void deleteUser(User user) {
         Connection con = this.getConnection();
         Statement stmt = null;
 
         try {
             stmt = con.createStatement();
 
-            String sql = "DELETE FROM CUSTOMERS WHERE ID=" + kunde.getId();
+            String sql = "DELETE FROM CUSTOMERS WHERE ID=" + user.getId();
 
             stmt.executeUpdate(sql);
 
@@ -127,7 +127,7 @@ public class RelationalDatabasePersistance implements IPersistance {
     }
 
 	@Override
-	public void createUser(Kunde kunde) {
+	public void createUser(User user) {
 		Connection con = this.getConnection();
 		Statement stmt = null;
 		
@@ -135,13 +135,13 @@ public class RelationalDatabasePersistance implements IPersistance {
 			stmt = con.createStatement();
 			
 			String sql = "INSERT INTO CUSTOMERS (VORNAME,NACHNAME,ORT,STRASSE,STRASSENNUMMER,PLZ,GEBURTSTAG)" +
-						"VALUES (	'" + kunde.getVorname() + "', " +
-									"'" + kunde.getNachname() + "', " +
-									"'" + kunde.getOrt() + "', " +
-									"'" + kunde.getStrasse() + "', " +
-									"'" + kunde.getStrassenNummer() + "', " +
-									"'" + kunde.getPlz() + "', " +
-									"'" + kunde.getGeburtstag() + "');";
+						"VALUES (	'" + user.getVorname() + "', " +
+									"'" + user.getNachname() + "', " +
+									"'" + user.getOrt() + "', " +
+									"'" + user.getStrasse() + "', " +
+									"'" + user.getStrassenNummer() + "', " +
+									"'" + user.getPlz() + "', " +
+									"'" + user.getGeburtstag() + "');";
 			stmt.executeUpdate(sql);
 			con.commit();
 			
@@ -154,7 +154,7 @@ public class RelationalDatabasePersistance implements IPersistance {
 
 	}
 	
-	public boolean existCustomer(Kunde kunde){
+	public boolean existCustomer(User user){
 		boolean exist = false;
 		Connection con = this.getConnection();
 		Statement stmt = null;
@@ -162,7 +162,7 @@ public class RelationalDatabasePersistance implements IPersistance {
 		try{
 			stmt = con.createStatement();
 			
-			String sql = "SELECT * FROM CUSTOMERS WHERE ID=" + kunde.getId();
+			String sql = "SELECT * FROM CUSTOMERS WHERE ID=" + user.getId();
 			
 			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next())
@@ -181,8 +181,8 @@ public class RelationalDatabasePersistance implements IPersistance {
 	}
 
 	@Override
-	public ObservableList<Kunde> getAllKunden() {
-		ObservableList<Kunde> obList = FXCollections.observableArrayList();
+	public ObservableList<User> getAllKunden() {
+		ObservableList<User> obList = FXCollections.observableArrayList();
 		
 		Connection con = obj.getConnection();
 		Statement stmt = null;
@@ -206,7 +206,7 @@ public class RelationalDatabasePersistance implements IPersistance {
 				
 				LocalDate geburtstag 	= LocalDate.parse(geburt);
 				
-				Kunde k = new Kunde(vorname, nachname, geburtstag, ort, strasse, strassenNummer, plz);
+				User k = new User(vorname, nachname, geburtstag, ort, strasse, strassenNummer, plz);
 				k.setId(id);
 				
 				obList.add(k);

@@ -10,7 +10,7 @@ import javafx.beans.property.StringProperty;
 /**
  * Created by Marci on 03.07.2014.
  */
-public class Kunde {
+public class User {
 
 	private int id;
 	private final SimpleStringProperty vorname;
@@ -21,8 +21,8 @@ public class Kunde {
     private final SimpleIntegerProperty plz;
     private final SimpleObjectProperty<LocalDate> geburtstag;
     
-    public Kunde(String vorname, String nachname, LocalDate geburtstag,
-			String ort, String strasse, String strassenNummer, int plz) {
+    public User(String vorname, String nachname, LocalDate geburtstag,
+                String ort, String strasse, String strassenNummer, int plz) {
 		super();
 		this.vorname 		= new SimpleStringProperty(vorname);
 		this.nachname 		= new SimpleStringProperty(nachname);
@@ -108,7 +108,7 @@ public class Kunde {
     
     @Override
 	public boolean equals(Object obj){
-    	return obj instanceof Kunde && obj != null ? this.hashCode() == obj.hashCode() : false;
+    	return obj instanceof User && obj != null ? this.hashCode() == obj.hashCode() : false;
     }
     
     @Override

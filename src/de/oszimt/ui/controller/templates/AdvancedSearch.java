@@ -1,6 +1,6 @@
 package de.oszimt.ui.controller.templates;
 
-import de.oszimt.model.Kunde;
+import de.oszimt.model.User;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,10 +31,10 @@ public class AdvancedSearch extends StackPane{
 	@FXML
 	DatePicker geburtstagField;
 	
-	TableView<Kunde> customerTable;
-    ObservableList<Kunde> originalList;
+	TableView<User> customerTable;
+    ObservableList<User> originalList;
 	
-	public AdvancedSearch(TableView<Kunde> customerTable){
+	public AdvancedSearch(TableView<User> customerTable){
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("advancedSearch.fxml"));
 		loader.setRoot(this);
 		loader.setController(this);
@@ -142,11 +142,11 @@ public class AdvancedSearch extends StackPane{
 	 * Filtert die Kundenliste nach den jeweiligen Kriterien
 	 * @return gefilterte ObservableList
 	 */
-    private ObservableList<Kunde> searchInTable(){
+    private ObservableList<User> searchInTable(){
 
-        ObservableList<Kunde> returnList = originalList;
+        ObservableList<User> returnList = originalList;
 
-        List<Kunde> list = returnList.parallelStream()
+        List<User> list = returnList.parallelStream()
                                     .filter(kunde -> kunde.getVorname().toLowerCase().contains(vornameField.getText().toLowerCase()))
                                     .filter(kunde -> kunde.getNachname().toLowerCase().contains(nachnameField.getText().toLowerCase()))
                                     .filter(kunde -> kunde.getOrt().toLowerCase().contains(ortField.getText().toLowerCase()))
@@ -160,7 +160,7 @@ public class AdvancedSearch extends StackPane{
                                             return true;
                                     })
                                     .filter(kunde -> Integer.toString(kunde.getPlz()).toLowerCase().indexOf(plzField.getText()) != -1)
-                                    .collect(Collectors.<Kunde>toList());
+                                    .collect(Collectors.<User>toList());
 
         return FXCollections.observableArrayList(list);
     }
