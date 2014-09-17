@@ -2,19 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/de/oszimt/conzept/impl/Concept.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/de/oszimt/persistence/impl/MongoDbPersistance.java" />
-      <change type="MOVED" beforePath="C:\Users\Philipp\Desktop\Kundenverwaltung-work\src\de\oszimt\model\Kunde.java" afterPath="$PROJECT_DIR$/src/de/oszimt/model/User.java" />
-      <change type="MOVED" beforePath="C:\Users\Philipp\Desktop\Kundenverwaltung-work\src\de\oszimt\persistence\impl\RelationalDatabasePersistance.java" afterPath="$PROJECT_DIR$/src/de/oszimt/persistence/impl/SQLitePersistance.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/oszimt/ui/controller/templates/AdvancedSearch.java" afterPath="$PROJECT_DIR$/src/de/oszimt/ui/controller/templates/AdvancedSearch.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/oszimt/Benutzerverwaltung.java" afterPath="$PROJECT_DIR$/src/de/oszimt/Benutzerverwaltung.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/oszimt/conzept/impl/Concept.java" afterPath="$PROJECT_DIR$/src/de/oszimt/conzept/impl/Concept.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/oszimt/ui/controller/Controller.java" afterPath="$PROJECT_DIR$/src/de/oszimt/ui/controller/Controller.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/oszimt/ui/controller/Gui.java" afterPath="$PROJECT_DIR$/src/de/oszimt/ui/controller/Gui.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/oszimt/persistence/iface/IPersistance.java" afterPath="$PROJECT_DIR$/src/de/oszimt/persistence/iface/IPersistance.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/oszimt/factory/PersistanceFactory.java" afterPath="$PROJECT_DIR$/src/de/oszimt/factory/PersistanceFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/oszimt/persistence/enumeration/PersistanceMethod.java" afterPath="$PROJECT_DIR$/src/de/oszimt/persistence/enumeration/PersistanceMethod.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/oszimt/util/Util.java" afterPath="$PROJECT_DIR$/src/de/oszimt/util/Util.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/oszimt/persistence/impl/MongoDbPersistance.java" afterPath="$PROJECT_DIR$/src/de/oszimt/persistence/impl/MongoDbPersistance.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/oszimt/persistence/impl/SQLitePersistance.java" afterPath="$PROJECT_DIR$/src/de/oszimt/persistence/impl/SQLitePersistance.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/de/oszimt/model/User.java" afterPath="$PROJECT_DIR$/src/de/oszimt/model/User.java" />
     </list>
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -83,9 +78,13 @@
           <file leaf-file-name="Gui.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/de/oszimt/ui/controller/Gui.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="36" column="22" selection-start="1011" selection-end="1011" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="867">
+                <state line="54" column="0" selection-start="1308" selection-end="1308" vertical-scroll-proportion="0.0" vertical-offset="50" max-vertical-offset="1054">
                   <folding>
                     <element signature="imports" expanded="true" />
+                    <element signature="e#1191#1192#0" expanded="true" />
+                    <element signature="e#1221#1222#0" expanded="true" />
+                    <element signature="e#1268#1269#0" expanded="true" />
+                    <element signature="e#1306#1307#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -94,7 +93,7 @@
           <file leaf-file-name="Controller.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/de/oszimt/ui/controller/Controller.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="205" column="67" selection-start="5413" selection-end="5413" vertical-scroll-proportion="0.0" vertical-offset="2798" max-vertical-offset="7871">
+                <state line="204" column="67" selection-start="5316" selection-end="5316" vertical-scroll-proportion="0.0" vertical-offset="2781" max-vertical-offset="7990">
                   <folding />
                 </state>
               </provider>
@@ -103,10 +102,11 @@
           <file leaf-file-name="Concept.java" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/de/oszimt/conzept/impl/Concept.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="16" column="19" selection-start="394" selection-end="394" vertical-scroll-proportion="0.30155212" vertical-offset="0" max-vertical-offset="902">
+                <state line="18" column="39" selection-start="493" selection-end="493" vertical-scroll-proportion="0.33924612" vertical-offset="0" max-vertical-offset="902">
                   <folding>
-                    <element signature="e#305#306#0" expanded="true" />
-                    <element signature="e#338#339#0" expanded="true" />
+                    <element signature="imports" expanded="true" />
+                    <element signature="e#376#377#0" expanded="true" />
+                    <element signature="e#409#410#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -115,7 +115,7 @@
           <file leaf-file-name="SQLitePersistance.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/de/oszimt/persistence/impl/SQLitePersistance.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="29" column="18" selection-start="725" selection-end="725" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3961">
+                <state line="181" column="0" selection-start="4950" selection-end="4950" vertical-scroll-proportion="-9.730769" vertical-offset="2671" max-vertical-offset="3961">
                   <folding />
                 </state>
               </provider>
@@ -153,7 +153,7 @@
           <file leaf-file-name="MongoDbPersistance.java" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/de/oszimt/persistence/impl/MongoDbPersistance.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="17" column="31" selection-start="402" selection-end="402" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="714">
+                <state line="25" column="0" selection-start="480" selection-end="480" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="714">
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -168,7 +168,30 @@
           <file leaf-file-name="Controller.java" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/de/oszimt/ui/controller/Controller.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="115" column="32" selection-start="2790" selection-end="2790" vertical-scroll-proportion="-0.42967033" vertical-offset="1989" max-vertical-offset="7871">
+                <state line="147" column="62" selection-start="3542" selection-end="3542" vertical-scroll-proportion="0.46153846" vertical-offset="1734" max-vertical-offset="7990">
+                  <folding>
+                    <element signature="e#8106#8107#0" expanded="true" />
+                    <element signature="e#8132#8133#0" expanded="true" />
+                    <element signature="e#8167#8168#0" expanded="true" />
+                    <element signature="e#8197#8198#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="IPersistance.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/de/oszimt/persistence/iface/IPersistance.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="11" column="0" selection-start="267" selection-end="267" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="272">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="User.java" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/de/oszimt/model/User.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="78" column="4" selection-start="1941" selection-end="1941" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2091">
                   <folding />
                 </state>
               </provider>
@@ -208,11 +231,14 @@
         <option value="$PROJECT_DIR$/src/de/oszimt/KundenverwaltungMain.java" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/de/oszimt/conzept/impl/Conzept.java" />
-        <option value="$PROJECT_DIR$/src/de/oszimt/ui/controller/Gui.java" />
         <option value="$PROJECT_DIR$/src/de/oszimt/persistence/enumeration/PersistanceMethod.java" />
         <option value="$PROJECT_DIR$/src/de/oszimt/Benutzerverwaltung.java" />
         <option value="$PROJECT_DIR$/src/de/oszimt/factory/PersistanceFactory.java" />
+        <option value="$PROJECT_DIR$/src/de/oszimt/ui/controller/Gui.java" />
+        <option value="$PROJECT_DIR$/src/de/oszimt/persistence/iface/IPersistance.java" />
+        <option value="$PROJECT_DIR$/src/de/oszimt/persistence/impl/SQLitePersistance.java" />
         <option value="$PROJECT_DIR$/src/de/oszimt/persistence/impl/MongoDbPersistance.java" />
+        <option value="$PROJECT_DIR$/src/de/oszimt/model/User.java" />
         <option value="$PROJECT_DIR$/src/de/oszimt/ui/controller/Controller.java" />
         <option value="$PROJECT_DIR$/src/de/oszimt/conzept/impl/Concept.java" />
       </list>
@@ -676,6 +702,11 @@
       <updated>1359379246138</updated>
       <workItem from="1359379250712" duration="1302000" />
     </task>
+    <task id="LOCAL-00001" summary="reorganize">
+      <created>1410948637512</created>
+      <updated>1410948637512</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -702,7 +733,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16666667" sideWeight="0.6703755" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16666667" sideWeight="0.6703755" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14330874" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -732,7 +763,7 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32876712" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -756,6 +787,8 @@
       <TodoPanelSettings />
     </option>
     <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="false" />
+    <MESSAGE value="reorganize" />
+    <option name="LAST_COMMIT_MESSAGE" value="reorganize" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -928,20 +961,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/oszimt/model/User.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="13" selection-start="311" selection-end="311" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2091">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/oszimt/persistence/iface/IPersistance.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="0" selection-start="37" selection-end="37" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="272">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/de/oszimt/ui/controller/templates/AdvancedSearch.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="17" column="13" selection-start="472" selection-end="472" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2499">
@@ -970,22 +989,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/oszimt/ui/controller/Gui.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="22" selection-start="1011" selection-end="1011" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="867">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/oszimt/persistence/impl/SQLitePersistance.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="18" selection-start="725" selection-end="725" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3961">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/de/oszimt/Benutzerverwaltung.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="15" column="1" selection-start="459" selection-end="459" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="374">
@@ -1009,28 +1012,63 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/oszimt/ui/controller/Gui.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="54" column="0" selection-start="1308" selection-end="1308" vertical-scroll-proportion="0.0" vertical-offset="50" max-vertical-offset="1054">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1191#1192#0" expanded="true" />
+            <element signature="e#1221#1222#0" expanded="true" />
+            <element signature="e#1268#1269#0" expanded="true" />
+            <element signature="e#1306#1307#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/oszimt/persistence/impl/SQLitePersistance.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="181" column="0" selection-start="4950" selection-end="4950" vertical-scroll-proportion="-9.730769" vertical-offset="2671" max-vertical-offset="3961">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/oszimt/persistence/iface/IPersistance.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="0" selection-start="267" selection-end="267" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="272">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/de/oszimt/persistence/impl/MongoDbPersistance.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="31" selection-start="402" selection-end="402" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="714">
+        <state line="25" column="0" selection-start="480" selection-end="480" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="714">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/oszimt/model/User.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="78" column="4" selection-start="1941" selection-end="1941" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2091">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/de/oszimt/ui/controller/Controller.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="205" column="67" selection-start="5413" selection-end="5413" vertical-scroll-proportion="0.0" vertical-offset="2798" max-vertical-offset="7871">
+        <state line="204" column="67" selection-start="5316" selection-end="5316" vertical-scroll-proportion="0.0" vertical-offset="2781" max-vertical-offset="7990">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/de/oszimt/conzept/impl/Concept.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="19" selection-start="394" selection-end="394" vertical-scroll-proportion="0.30155212" vertical-offset="0" max-vertical-offset="902">
+        <state line="18" column="39" selection-start="493" selection-end="493" vertical-scroll-proportion="0.33924612" vertical-offset="0" max-vertical-offset="902">
           <folding>
-            <element signature="e#305#306#0" expanded="true" />
-            <element signature="e#338#339#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#376#377#0" expanded="true" />
+            <element signature="e#409#410#0" expanded="true" />
           </folding>
         </state>
       </provider>

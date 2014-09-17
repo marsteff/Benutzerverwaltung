@@ -13,24 +13,24 @@ import javafx.beans.property.StringProperty;
 public class User {
 
 	private int id;
-	private final SimpleStringProperty vorname;
-    private final SimpleStringProperty nachname;
-    private final SimpleStringProperty ort;
-    private final SimpleStringProperty strasse;
-    private final SimpleStringProperty strassenNummer;
-    private final SimpleIntegerProperty plz;
-    private final SimpleObjectProperty<LocalDate> geburtstag;
+	private final SimpleStringProperty firstname;
+    private final SimpleStringProperty lastname;
+    private final SimpleStringProperty city;
+    private final SimpleStringProperty street;
+    private final SimpleStringProperty streetnr;
+    private final SimpleIntegerProperty zipcode;
+    private final SimpleObjectProperty<LocalDate> birthday;
     
-    public User(String vorname, String nachname, LocalDate geburtstag,
-                String ort, String strasse, String strassenNummer, int plz) {
+    public User(String fname, String lname, LocalDate bday,
+                String city, String street, String streetnr, int zipcode) {
 		super();
-		this.vorname 		= new SimpleStringProperty(vorname);
-		this.nachname 		= new SimpleStringProperty(nachname);
-		this.ort 			= new SimpleStringProperty(ort);
-		this.strasse 		= new SimpleStringProperty(strasse);
-		this.strassenNummer = new SimpleStringProperty(strassenNummer);
-		this.plz 			= new SimpleIntegerProperty(plz);
-		this.geburtstag 	= new SimpleObjectProperty<LocalDate>(geburtstag);
+		this.firstname = new SimpleStringProperty(fname);
+		this.lastname = new SimpleStringProperty(lname);
+		this.city = new SimpleStringProperty(city);
+		this.street = new SimpleStringProperty(street);
+		this.streetnr = new SimpleStringProperty(streetnr);
+		this.zipcode = new SimpleIntegerProperty(zipcode);
+		this.birthday = new SimpleObjectProperty<LocalDate>(bday);
 	}
 
 	public int getId() {
@@ -41,69 +41,69 @@ public class User {
 		this.id = id;
 	}
 
-	public String getVorname(){
-    	return vorname.get();
+	public String getFirstname(){
+    	return firstname.get();
     }
     
-    public void setVorname(String name){
-    	vorname.set(name);
+    public void setFirstname(String name){
+    	firstname.set(name);
     }
     
-    public String getNachname(){
-    	return nachname.get();
+    public String getLastname(){
+    	return lastname.get();
     }
     
-    public void setNachname(String name){
-    	nachname.set(name);
+    public void setLastname(String name){
+    	lastname.set(name);
     }
     
-    public String getOrt(){
-    	return ort.get();
+    public String getCity(){
+    	return city.get();
     }
     
-    public void setOrt(String name){
-    	ort.set(name);
+    public void setCity(String name){
+    	city.set(name);
     }
     
-    public String getStrasse(){
-    	return strasse.get();
+    public String getStreet(){
+    	return street.get();
     }
     
-    public void setStrasse(String name){
-    	strasse.set(name);
+    public void setStreet(String name){
+    	street.set(name);
     }
     
-    public String getStrassenNummer(){
-    	return strassenNummer.get();
+    public String getStreetnr(){
+    	return streetnr.get();
     }
     
-    public void setStrassenNummer(String nummer){
-    	strassenNummer.set(nummer);
+    public void setStreetnr(String number){
+    	streetnr.set(number);
     }
     
-    public int getPlz(){
-    	return plz.get();
+    public int getZipcode(){
+    	return zipcode.get();
     }
     
     public void setPLZ(int plz){
-    	this.plz.set(plz);
+    	this.zipcode.set(plz);
     }
     
-    public LocalDate getGeburtstag(){
-    	return geburtstag.get();
+    public LocalDate getBirthday(){
+    	return birthday.get();
     }
     
-    public void setGeburtstag(LocalDate geb){
-    	geburtstag.set(geb);
+    public void setBirthday(LocalDate geb){
+    	birthday.set(geb);
     }
  
     public StringProperty getVorProp(){
-    	return this.vorname;
+    	return this.firstname;
     }
 
 	@Override
     public String toString(){
-    	return vorname.getValue() + " " + nachname.getValue();
+    	return firstname.getValue() + " " + lastname.getValue();
     }
     
     @Override
@@ -114,15 +114,15 @@ public class User {
     @Override
 	public int hashCode(){
     	return ("" + 
-    			this.vorname + 
-    			this.nachname + 
-    			this.ort + 
-    			this.plz + 
-    			this.strasse + 
-    			this.strassenNummer + 
-    			this.geburtstag.getValue().getDayOfMonth() + 
-    			this.geburtstag.getValue().getMonthValue() + 
-    			this.geburtstag.getValue().getYear()
+    			this.firstname +
+    			this.lastname +
+    			this.city +
+    			this.zipcode +
+    			this.street +
+    			this.streetnr +
+    			this.birthday.getValue().getDayOfMonth() +
+    			this.birthday.getValue().getMonthValue() +
+    			this.birthday.getValue().getYear()
     			).hashCode();
     }
 }

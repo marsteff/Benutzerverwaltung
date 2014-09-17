@@ -147,19 +147,19 @@ public class AdvancedSearch extends StackPane{
         ObservableList<User> returnList = originalList;
 
         List<User> list = returnList.parallelStream()
-                                    .filter(kunde -> kunde.getVorname().toLowerCase().contains(vornameField.getText().toLowerCase()))
-                                    .filter(kunde -> kunde.getNachname().toLowerCase().contains(nachnameField.getText().toLowerCase()))
-                                    .filter(kunde -> kunde.getOrt().toLowerCase().contains(ortField.getText().toLowerCase()))
-                                    .filter(kunde -> kunde.getStrasse().toLowerCase().contains(strasseField.getText().toLowerCase()))
-                                    .filter(kunde -> kunde.getStrassenNummer().toLowerCase().contains(strassenNummerField.getText().toLowerCase()))
-                                    .filter(kunde -> kunde.getVorname().toLowerCase().contains(vornameField.getText().toLowerCase()))
+                                    .filter(kunde -> kunde.getFirstname().toLowerCase().contains(vornameField.getText().toLowerCase()))
+                                    .filter(kunde -> kunde.getLastname().toLowerCase().contains(nachnameField.getText().toLowerCase()))
+                                    .filter(kunde -> kunde.getCity().toLowerCase().contains(ortField.getText().toLowerCase()))
+                                    .filter(kunde -> kunde.getStreet().toLowerCase().contains(strasseField.getText().toLowerCase()))
+                                    .filter(kunde -> kunde.getStreetnr().toLowerCase().contains(strassenNummerField.getText().toLowerCase()))
+                                    .filter(kunde -> kunde.getFirstname().toLowerCase().contains(vornameField.getText().toLowerCase()))
                                     .filter(kunde ->{
                                         if(geburtstagField.getValue() != null)
-                                            return kunde.getGeburtstag().toString().toLowerCase().contains(geburtstagField.getValue().toString().toLowerCase());
+                                            return kunde.getBirthday().toString().toLowerCase().contains(geburtstagField.getValue().toString().toLowerCase());
                                         else
                                             return true;
                                     })
-                                    .filter(kunde -> Integer.toString(kunde.getPlz()).toLowerCase().indexOf(plzField.getText()) != -1)
+                                    .filter(kunde -> Integer.toString(kunde.getZipcode()).toLowerCase().indexOf(plzField.getText()) != -1)
                                     .collect(Collectors.<User>toList());
 
         return FXCollections.observableArrayList(list);

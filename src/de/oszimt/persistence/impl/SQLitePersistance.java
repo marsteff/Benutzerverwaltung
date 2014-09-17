@@ -85,13 +85,13 @@ public class SQLitePersistance implements IPersistance {
 			stmt = con.createStatement();
 
 			String sql = "UPDATE CUSTOMERS set " +
-												"VORNAME 		= '" + user.getVorname() + "', " +
-												"NACHNAME 		= '" + user.getNachname() + "', " +
-												"ORT 			= '" + user.getOrt() + "', " +
-												"STRASSE 		= '" + user.getStrasse() + "', " +
-												"STRASSENNUMMER	= '" + user.getStrassenNummer() + "', " +
-												"PLZ 			= " + user.getPlz() + ", " +
-												"GEBURTSTAG		= '" + user.getGeburtstag() + "' " +
+												"VORNAME 		= '" + user.getFirstname() + "', " +
+												"NACHNAME 		= '" + user.getLastname() + "', " +
+												"ORT 			= '" + user.getCity() + "', " +
+												"STRASSE 		= '" + user.getStreet() + "', " +
+												"STRASSENNUMMER	= '" + user.getStreetnr() + "', " +
+												"PLZ 			= " + user.getZipcode() + ", " +
+												"GEBURTSTAG		= '" + user.getBirthday() + "' " +
 												"WHERE ID=" + user.getId();
 			stmt.executeUpdate(sql);
 			con.commit();
@@ -135,13 +135,13 @@ public class SQLitePersistance implements IPersistance {
 			stmt = con.createStatement();
 			
 			String sql = "INSERT INTO CUSTOMERS (VORNAME,NACHNAME,ORT,STRASSE,STRASSENNUMMER,PLZ,GEBURTSTAG)" +
-						"VALUES (	'" + user.getVorname() + "', " +
-									"'" + user.getNachname() + "', " +
-									"'" + user.getOrt() + "', " +
-									"'" + user.getStrasse() + "', " +
-									"'" + user.getStrassenNummer() + "', " +
-									"'" + user.getPlz() + "', " +
-									"'" + user.getGeburtstag() + "');";
+						"VALUES (	'" + user.getFirstname() + "', " +
+									"'" + user.getLastname() + "', " +
+									"'" + user.getCity() + "', " +
+									"'" + user.getStreet() + "', " +
+									"'" + user.getStreetnr() + "', " +
+									"'" + user.getZipcode() + "', " +
+									"'" + user.getBirthday() + "');";
 			stmt.executeUpdate(sql);
 			con.commit();
 			
@@ -181,7 +181,7 @@ public class SQLitePersistance implements IPersistance {
 	}
 
 	@Override
-	public ObservableList<User> getAllKunden() {
+	public ObservableList<User> getAllUser() {
 		ObservableList<User> obList = FXCollections.observableArrayList();
 		
 		Connection con = obj.getConnection();

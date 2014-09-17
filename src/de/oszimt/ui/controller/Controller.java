@@ -78,27 +78,26 @@ public class Controller {
 	private boolean isAdvancedSearch = false;
 	
 	private AdvancedSearch advancedSearcher;
-	
-	private IPersistance db;
-	
-	private Stage stage;
+
+    private Gui gui;
+    private Stage stage;
 	
 	private RestService service;
 	private boolean serviceTown = false;
 	private boolean writeError = false;
+
+
 	
 	@FXML
 	public void initialize(){
-		//Initialisierung der DB-Schnittstelle
-		db = PersistanceFactory.buildPersistance(PersistanceMethod.SQLITE);
 				
-		//setzt die Bindings der einzelnen Controls - unter anderem f�r eine Full-Responsive GUI zust�ndig
+		//setzt die Bindings der einzelnen Controls - unter anderem für eine Full-Responsive GUI zuständig
 		bindingOfControls();
 		
 		//bei klicken auf einen Nutzer Felder mit Daten fuellen
 		fillControls();
 		
-		//Tabelle mit Daten fuellen und Livesuche erm�glichen
+		//Tabelle mit Daten fuellen und Livesuche ermöglichen
 		searchInTable();
 		
 		//
@@ -146,9 +145,9 @@ public class Controller {
 	
 	@FXML
 	private void deleteCustomer(){
-		User customer = customerTable.getSelectionModel().getSelectedItem();
-        db.deleteUser(customer);
-		
+		User user = customerTable.getSelectionModel().getSelectedItem();
+
+		this.gui.getConcept().removeUser(user);
 		searchInTable();
 	}
 	
@@ -157,7 +156,7 @@ public class Controller {
 		
 		ObservableList<User> testList = customerTable.getItems();
 		testList.forEach(e -> {
-			if(e.getVorname() == null)
+			if(e.getFirstname() == null)
 				System.err.println(e + " ist fehlerhaft");
 			else
 				System.out.println(e + " weist keine Fehler auf");
@@ -178,20 +177,20 @@ public class Controller {
 		String strassenNummer = strassenNummerField.getText();
 		int plz = Integer.parseInt(plzField.getText());
 		
-		User newCustomer = new User(vorname, nachname, geburtstag, ort, strasse, strassenNummer, plz);
+		User newUser = new User(vorname, nachname, geburtstag, ort, strasse, strassenNummer, plz);
 		
 		//to specify if is it a new user or only a change
 		boolean isNew = false;
 		
 		if(!customerTable.getSelectionModel().isEmpty()){
-			newCustomer.setId(customerTable.getSelectionModel().getSelectedItem().getId());
+            newUser.setId(customerTable.getSelectionModel().getSelectedItem().getId());
 			isNew = true;
 		}
 		
-		db.updateUser(newCustomer);
+		this.gui.getConcept().updateUser(newUser);
 		
 		//create a nice Message of Action
-		setSuccedMessage(newCustomer + " erfolgreich" + (isNew ?  " bearbeitet" : " erfolgreich als User hinzugef�gt"));
+		setSuccedMessage(newUser + " erfolgreich" + (isNew ?  " bearbeitet" : " erfolgreich als User hinzugef�gt"));
 		
 		searchInTable();
 		
@@ -213,8 +212,8 @@ public class Controller {
 	
     @FXML
     private void deleteAllCustomersAction(){
-    	ObservableList<User> list = db.getAllKunden();
-    	list.forEach(e -> db.deleteUser(e));
+    	ObservableList<User> list = this.gui.getConcept().getAllUser();
+    	list.forEach(e -> this.gui.getConcept().removeUser(e));
     	searchInTable();
     }
     
@@ -237,14 +236,14 @@ public class Controller {
 			if(newValue != null){
 				changeButton.setDisable(true);
 				isNewSelection = true;
-				vornameField.setText(newValue.getVorname());
-				nachnameField.setText(newValue.getNachname());
-				ortField.setText(newValue.getOrt());
-				plzField.setText(new String("" + newValue.getPlz()));
+				vornameField.setText(newValue.getFirstname());
+				nachnameField.setText(newValue.getLastname());
+				ortField.setText(newValue.getCity());
+				plzField.setText(new String("" + newValue.getZipcode()));
 				
-				strasseField.setText(newValue.getStrasse());
-				strassenNummerField.setText(newValue.getStrassenNummer());
-				geburtstagField.setValue(newValue.getGeburtstag());
+				strasseField.setText(newValue.getStreet());
+				strassenNummerField.setText(newValue.getStreetnr());
+				geburtstagField.setValue(newValue.getBirthday());
 				isNewSelection = false;
 				serviceTown = false;
 			}
@@ -256,30 +255,30 @@ public class Controller {
 	 * Dieses erfolgt Live.
 	 */
 	private void searchInTable() {
-		ObservableList<User> masterDate = db.getAllKunden();
+		ObservableList<User> masterDate = this.gui.getConcept().getAllUser();
 
 		FilteredList<User> filteredDate = new FilteredList<>(masterDate, p -> true);
 
 		searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-			filteredDate.setPredicate(kunde -> {
+			filteredDate.setPredicate(user -> {
 				if(newValue == null || newValue.isEmpty())
 					return true;
 
 				String lowerCaseFilter = newValue.toLowerCase();
 
-				if(kunde.getVorname().toLowerCase().indexOf(lowerCaseFilter) != -1)
+				if(user.getFirstname().toLowerCase().indexOf(lowerCaseFilter) != -1)
 					return true;
-				else if(kunde.getNachname().toLowerCase().indexOf(lowerCaseFilter) != -1)
+				else if(user.getLastname().toLowerCase().indexOf(lowerCaseFilter) != -1)
 					return true;
-				else if(kunde.getOrt().toLowerCase().indexOf(lowerCaseFilter) != -1)
+				else if(user.getCity().toLowerCase().indexOf(lowerCaseFilter) != -1)
 					return true;
-				else if(kunde.getStrasse().toLowerCase().indexOf(lowerCaseFilter) != -1)
+				else if(user.getStreet().toLowerCase().indexOf(lowerCaseFilter) != -1)
 					return true;
-				else if(kunde.getStrassenNummer().toLowerCase().indexOf(lowerCaseFilter) != -1)
+				else if(user.getStreetnr().toLowerCase().indexOf(lowerCaseFilter) != -1)
 					return true;
-				else if(Integer.toString(kunde.getPlz()).toLowerCase().indexOf(lowerCaseFilter) != -1)
+				else if(Integer.toString(user.getZipcode()).toLowerCase().indexOf(lowerCaseFilter) != -1)
 					return true;
-				else if(kunde.getGeburtstag().toString().toLowerCase().indexOf(lowerCaseFilter) != -1)
+				else if(user.getBirthday().toString().toLowerCase().indexOf(lowerCaseFilter) != -1)
 					return true;
 
 				return false;
@@ -291,6 +290,14 @@ public class Controller {
 
 		customerTable.setItems(filteredDate);
 	}
+
+    public Gui getGui() {
+        return gui;
+    }
+
+    public void setGui(Gui gui) {
+        this.gui = gui;
+    }
 	
 	/**
 	 * Bindet die Breite der Controls an die Breite des Fensters, zwecks Responsive-GUI

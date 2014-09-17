@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 
 public class Gui extends Application {
 
+
     private Concept concept;
 
     @Override
@@ -20,6 +21,7 @@ public class Gui extends Application {
         //setzen der Stage Variable im Controller um zuverl�ssigdas Fenster schliessen zu k�nnen
         Controller contr = loader.getController();
         contr.setStage(primaryStage);
+        contr.setGui(this);
         
         //Initialisieren des Fensters
         primaryStage.setTitle(this.concept.getTitle());
@@ -42,4 +44,13 @@ public class Gui extends Application {
     public void run() {
         launch();
     }
+
+    public Concept getConcept() {
+        return concept;
+    }
+
+    public void setConcept(Concept concept) {
+        this.concept = concept;
+    }
+
 }

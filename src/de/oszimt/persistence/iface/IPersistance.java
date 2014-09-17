@@ -7,5 +7,5 @@ public interface IPersistance {
 	void updateUser(User user);
 	void deleteUser(User user);
 	void createUser(User user);
-	ObservableList<User> getAllKunden();
+	ObservableList<User> getAllUser();
 }

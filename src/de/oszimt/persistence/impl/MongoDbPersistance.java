@@ -30,7 +30,7 @@ public class MongoDbPersistance implements IPersistance{
     }
 
     @Override
-    public ObservableList<User> getAllKunden() {
+    public ObservableList<User> getAllUser() {
         return null;
     }
 }
