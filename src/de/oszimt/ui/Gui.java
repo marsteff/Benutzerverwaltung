@@ -1,4 +1,4 @@
-package de.oszimt.ui.controller;
+package de.oszimt.ui;
 
 import de.oszimt.conzept.impl.Concept;
 import javafx.application.Application;

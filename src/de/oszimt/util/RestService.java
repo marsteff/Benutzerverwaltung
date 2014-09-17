@@ -20,14 +20,10 @@ public class RestService {
 	JSONObject js = null;
 	
 	public RestService(){
-		//setzen des Proxy
-		System.setProperty ("http.proxyHost", "proxy");
-	    System.setProperty ("http.proxyPort", "80");
-		
 		client = ClientBuilder.newClient();
 		target = client.target("http://zip.elevenbasetwo.com/v2/DE");
 		
-		//Eine Abfrage wird direkt bei der Erzeugung des Objektes get�tigt, da dadurch meiner Meinung die Verbindung aufgebaut wird und
+		//Eine Abfrage wird direkt bei der Erzeugung des Objektes getaetigt, da dadurch meiner Meinung die Verbindung aufgebaut wird und
 		//andere Abfragen schneller von statten gehen
 		WebTarget resourceTarget = target.path("15711");
 	    Invocation.Builder request = resourceTarget.request(MediaType.TEXT_PLAIN);
@@ -53,7 +49,7 @@ public class RestService {
 	}
 	
 	/**
-	 * Durchsucht einen JSON String nach dem Schl�ssel 'city' und gibt den entsprechenden Key zur�ck
+	 * Durchsucht einen JSON String nach dem Schluessel 'city' und gibt den entsprechenden Key zurueck
 	 * 
 	 * @param jsonString
 	 * @return den Key, oder null wenn nichts gefunden wurde
