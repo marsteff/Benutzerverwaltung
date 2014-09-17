@@ -2,6 +2,7 @@ package de.oszimt.conzept.impl;
 
 import de.oszimt.model.User;
 import de.oszimt.persistence.iface.IPersistance;
+import de.oszimt.util.Util;
 import javafx.collections.ObservableList;
 
 public class Concept {
@@ -22,10 +23,23 @@ public class Concept {
         return true;
     }
 
-    public boolean updateUser(User user){
-        this.database.updateUser(user);
+    public boolean createUser(User user){
+        this.database.createUser(user);
         return true;
     }
+
+    public boolean upsertUser(User user){
+        this.database.upsertUser(user);
+        return true;
+    }
+
+    public void createRandomUsers(boolean useRest){
+        ObservableList<User> customerList = Util.createCustomers(useRest);
+        for(User user : customerList){
+            this.createUser(user);
+        }
+    }
+
 
     public ObservableList<User> getAllUser(){
         return this.database.getAllUser();

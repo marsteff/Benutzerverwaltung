@@ -15,11 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import de.oszimt.ui.templates.AdvancedSearch;
-import de.oszimt.factory.PersistanceFactory;
-import de.oszimt.persistence.enumeration.PersistanceMethod;
-import de.oszimt.persistence.iface.IPersistance;
 import de.oszimt.util.RestService;
-import de.oszimt.util.Util;
 
 public class Controller {
 	
@@ -193,12 +189,12 @@ public class Controller {
 			isNew = true;
 		}
 		
-		this.gui.getConcept().updateUser(newUser);
+		this.gui.getConcept().upsertUser(newUser);
 		
 		//create a nice Message of Action
-		setSuccedMessage(newUser + " erfolgreich" + (isNew ?  " bearbeitet" : " erfolgreich als User hinzugefügt"));
+		this.setSuccedMessage(newUser + " erfolgreich" + (isNew ?  " bearbeitet" : " erfolgreich als User hinzugefügt"));
 		
-		searchInTable();
+		this.searchInTable();
 		
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().select(index);
@@ -206,14 +202,11 @@ public class Controller {
 	
 	@FXML
 	private void createRandomCustomersAction(){
-		IPersistance db = PersistanceFactory.buildPersistance(PersistanceMethod.SQLITE);
-    	
-    	ObservableList<User> customerList = Util.createCustomers(
+
+        this.gui.getConcept().createRandomUsers(
                 restServiceMainMenu.isSelected()
         );
-    	for(User user : customerList){
-    		db.createUser(user);
-    	}
+
     	searchInTable();
     	setSuccedMessage("Zufallsnutzer erfolgreich erstellt!");
 	}
@@ -222,13 +215,13 @@ public class Controller {
     private void deleteAllCustomersAction(){
     	ObservableList<User> list = this.gui.getConcept().getAllUser();
     	list.forEach(e -> this.gui.getConcept().deleteUser(e));
-    	searchInTable();
+    	this.searchInTable();
     }
     
     @FXML
     private void newCustomerAction() {
-        abortButtonAction();
-        firstnameField.requestFocus();
+        this.abortButtonAction();
+        this.firstnameField.requestFocus();
     }
 
     @FXML

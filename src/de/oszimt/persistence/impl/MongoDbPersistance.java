@@ -15,7 +15,7 @@ public class MongoDbPersistance implements IPersistance{
     }
 
     @Override
-    public void updateUser(User user) {
+    public void upsertUser(User user) {
 
     }
 
