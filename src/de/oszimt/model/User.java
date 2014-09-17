@@ -23,7 +23,6 @@ public class User {
     
     public User(String fname, String lname, LocalDate bday,
                 String city, String street, String streetnr, int zipcode) {
-		super();
 		this.firstname = new SimpleStringProperty(fname);
 		this.lastname = new SimpleStringProperty(lname);
 		this.city = new SimpleStringProperty(city);

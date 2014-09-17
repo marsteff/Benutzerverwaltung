@@ -5,6 +5,8 @@ import de.oszimt.persistence.iface.IPersistance;
 import javafx.collections.ObservableList;
 
 public class Concept {
+
+
     private String title = "Oszimt Projekt Benutzerverwaltung";
     private IPersistance database;
 
@@ -15,7 +17,7 @@ public class Concept {
         return this.title;
     }
 
-    public boolean removeUser(User user){
+    public boolean deleteUser(User user){
         this.database.deleteUser(user);
         return true;
     }

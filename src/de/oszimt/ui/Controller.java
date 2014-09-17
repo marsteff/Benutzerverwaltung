@@ -27,34 +27,34 @@ public class Controller {
 	private TableView<User> customerTable;
 	
 	@FXML 
-	private TableColumn<User, String> vornameColumn;
+	private TableColumn<User, String> firstnmaeColumn;
 	@FXML 
-	private TableColumn<User, String> nachnameColumn;
+	private TableColumn<User, String> lastnameColumn;
 	@FXML 
-	private TableColumn<User, String> ortColumn;
+	private TableColumn<User, String> cityColumn;
 	@FXML 
-	private TableColumn<User, String> strasseColumn;
+	private TableColumn<User, String> streetColumn;
 	@FXML 
-	private TableColumn<User, String> strassenNummerColumn;
+	private TableColumn<User, String> streetNrColumn;
 	@FXML 
-	private TableColumn<User, LocalDate> geburtstagColumn;
+	private TableColumn<User, LocalDate> birthdayColumn;
 	@FXML 
-	private TableColumn<User, Integer> plzColumn;
+	private TableColumn<User, Integer> zipcodeColumn;
 	
 	@FXML
-	private TextField vornameField;
+	private TextField firstnameField;
 	@FXML
-	private TextField nachnameField;
+	private TextField lastnameField;
 	@FXML
-	private TextField plzField;
+	private TextField zipCodeField;
 	@FXML
-	private TextField ortField;
+	private TextField cityField;
 	@FXML
-	private TextField strasseField;
+	private TextField streetField;
 	@FXML
-	private TextField strassenNummerField;
+	private TextField streetNrField;
 	@FXML
-	private DatePicker geburtstagField;
+	private DatePicker birthdayField;
 	
 	@FXML
 	private Button changeButton;
@@ -96,33 +96,39 @@ public class Controller {
 		
 		//bei klicken auf einen Nutzer Felder mit Daten fuellen
 		fillControls();
-		
-		//Tabelle mit Daten fuellen und Livesuche ermöglichen
-		searchInTable();
-		
+
 		//
 		setListenerForControls();
 		
 		//service = new RestService();
 	}
-	
+
+    public void initSearchInTable(){
+        //Tabelle mit Daten fuellen und Livesuche ermöglichen
+        searchInTable();
+    }
+
 	public void setStage(Stage stage){
 		this.stage = stage;
 	}
-	
+
+
+    /**
+     * Ausgangswerte initialisieren
+     */
 	@FXML
 	private void abortButtonAction(){
-		vornameField.setText("");
-		nachnameField.setText("");
-		geburtstagField.setValue(null);
-		ortField.setText("");
-		plzField.setText("");
-		strasseField.setText("");
-		strassenNummerField.setText("");
+		firstnameField.setText("");
+		lastnameField.setText("");
+		birthdayField.setValue(null);
+		cityField.setText("");
+		zipCodeField.setText("");
+		streetField.setText("");
+		streetNrField.setText("");
 		
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().clearSelection();
-		vornameField.requestFocus();
+		firstnameField.requestFocus();
 	}
 	
 	@FXML
@@ -147,13 +153,13 @@ public class Controller {
 	private void deleteCustomer(){
 		User user = customerTable.getSelectionModel().getSelectedItem();
 
-		this.gui.getConcept().removeUser(user);
+		this.gui.getConcept().deleteUser(user);
 		searchInTable();
 	}
-	
+
 	@FXML
 	private void deleteCustomerButton(){
-		
+
 		ObservableList<User> testList = customerTable.getItems();
 		testList.forEach(e -> {
 			if(e.getFirstname() == null)
@@ -162,22 +168,22 @@ public class Controller {
 				System.out.println(e + " weist keine Fehler auf");
 		});
 	}
-	
+
 	@FXML
 	private void changeButtonAction(){
 		//get index of actual selection to make double chnage possible
 		int index = customerTable.getSelectionModel().getSelectedIndex();
 		
 		//get content of fields to make new customer
-		String vorname = vornameField.getText();
-		String nachname = nachnameField.getText();
-		String ort = ortField.getText();
-		LocalDate geburtstag = geburtstagField.getValue();
-		String strasse = strasseField.getText();
-		String strassenNummer = strassenNummerField.getText();
-		int plz = Integer.parseInt(plzField.getText());
+		String firstname = firstnameField.getText();
+		String lastname = lastnameField.getText();
+		String city = cityField.getText();
+		LocalDate bday = birthdayField.getValue();
+		String street = streetField.getText();
+		String streetNr = streetNrField.getText();
+		int zipcode = Integer.parseInt(zipCodeField.getText());
 		
-		User newUser = new User(vorname, nachname, geburtstag, ort, strasse, strassenNummer, plz);
+		User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode);
 		
 		//to specify if is it a new user or only a change
 		boolean isNew = false;
@@ -190,7 +196,7 @@ public class Controller {
 		this.gui.getConcept().updateUser(newUser);
 		
 		//create a nice Message of Action
-		setSuccedMessage(newUser + " erfolgreich" + (isNew ?  " bearbeitet" : " erfolgreich als User hinzugef�gt"));
+		setSuccedMessage(newUser + " erfolgreich" + (isNew ?  " bearbeitet" : " erfolgreich als User hinzugefügt"));
 		
 		searchInTable();
 		
@@ -202,7 +208,9 @@ public class Controller {
 	private void createRandomCustomersAction(){
 		IPersistance db = PersistanceFactory.buildPersistance(PersistanceMethod.SQLITE);
     	
-    	ObservableList<User> customerList = Util.createCustomers();
+    	ObservableList<User> customerList = Util.createCustomers(
+                restServiceMainMenu.isSelected()
+        );
     	for(User user : customerList){
     		db.createUser(user);
     	}
@@ -213,14 +221,14 @@ public class Controller {
     @FXML
     private void deleteAllCustomersAction(){
     	ObservableList<User> list = this.gui.getConcept().getAllUser();
-    	list.forEach(e -> this.gui.getConcept().removeUser(e));
+    	list.forEach(e -> this.gui.getConcept().deleteUser(e));
     	searchInTable();
     }
     
     @FXML
     private void newCustomerAction() {
         abortButtonAction();
-        vornameField.requestFocus();
+        firstnameField.requestFocus();
     }
 
     @FXML
@@ -236,14 +244,14 @@ public class Controller {
 			if(newValue != null){
 				changeButton.setDisable(true);
 				isNewSelection = true;
-				vornameField.setText(newValue.getFirstname());
-				nachnameField.setText(newValue.getLastname());
-				ortField.setText(newValue.getCity());
-				plzField.setText(new String("" + newValue.getZipcode()));
+				firstnameField.setText(newValue.getFirstname());
+				lastnameField.setText(newValue.getLastname());
+				cityField.setText(newValue.getCity());
+				zipCodeField.setText(new String("" + newValue.getZipcode()));
 				
-				strasseField.setText(newValue.getStreet());
-				strassenNummerField.setText(newValue.getStreetnr());
-				geburtstagField.setValue(newValue.getBirthday());
+				streetField.setText(newValue.getStreet());
+				streetNrField.setText(newValue.getStreetnr());
+				birthdayField.setValue(newValue.getBirthday());
 				isNewSelection = false;
 				serviceTown = false;
 			}
@@ -304,23 +312,23 @@ public class Controller {
 	 */
 	private void bindingOfControls() {
 		//Breiten Binding der Columns an die Breite des Fensters
-				vornameColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
-				nachnameColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
-				ortColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
-				strasseColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
-				strassenNummerColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
-				geburtstagColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
-				plzColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
+				firstnmaeColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
+				lastnameColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
+				cityColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
+				streetColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
+				streetNrColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
+				birthdayColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
+				zipcodeColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
 				
 				//Breiten Binding der TextFields an die Breite des Fensters
-				vornameField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
-				nachnameField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
-				geburtstagField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
+				firstnameField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
+				lastnameField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
+				birthdayField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
 				
-				ortField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
-				plzField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.15));
-				strasseField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
-				strassenNummerField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.15));
+				cityField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
+				zipCodeField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.15));
+				streetField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
+				streetNrField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.15));
 				
 				//Breiten Binding der Buttons an die Breite des Fensters
 				changeButton.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
@@ -329,7 +337,7 @@ public class Controller {
 				//Breiten Binding der Suchleiste an die Breite des Fensters
 				searchField.prefWidthProperty().bind(customerTable.widthProperty().multiply(1));
 				
-				//Binding der CheckMenuItems f�r den RestService
+				//Binding der CheckMenuItems für den RestService
 				restServiceContextMenu.selectedProperty().bindBidirectional(restServiceMainMenu.selectedProperty());
 	}
 	
@@ -338,20 +346,20 @@ public class Controller {
 	 * Set a Listener for the TextField Controls
 	 */
 	private void setListenerForControls(){
-		//Definierung eines textListener f�r die jeweiligen TextFelder,  
+		//Definierung eines textListener für die jeweiligen TextFelder,
 		//ausser PLZ-Feld, da dieses gesondert behandelt werden muss zwecks RestService
 		ChangeListener<String> textListener =(observable, oldValue, newValue) -> {
 			
-			//serviceTown auf Standardwert zur�cksetzen
+			//serviceTown auf Standardwert zurücksetzen
 			serviceTown = false;
 				
-			//Validierung der L�nge und gegebenfalls Meldung l�schen
+			//Validierung der Länge und gegebenfalls Meldung löschen
 			if(newValue.length() < 28){
 				writeError = false;
 				cleanInformationLabel();
 			}
 				
-			//wenn Input l�nger als 28 Zeichen, alten Wert setzen und Fehler melden
+			//wenn Input länger als 28 Zeichen, alten Wert setzen und Fehler melden
 			else if(newValue.length() > 28){
 				writeError = true;
 				((StringProperty) observable).setValue(oldValue);
@@ -359,30 +367,30 @@ public class Controller {
 				
 			//Ausgabe der Fehlermeldung
 			if(writeError){
-				setErrorMessage("Eingabe darf nicht l�nger als 30 Zeichen lang sein");
+				setErrorMessage("Eingabe darf nicht länger als 30 Zeichen lang sein");
 			}
 				
-			//Pr�fen, ob der �bernehmenButton aktiviert werden darf
+			//Prüfen, ob der ÜbernehmenButton aktiviert werden darf
 			activateChangeButton(oldValue, newValue, "");
 		};
 		
 		ChangeListener<String> plzListener = (observable, oldValue, newValue) -> {
 				
-			//Validierung der L�nge und gegebenfalls Meldung l�schen
+			//Validierung der Länge und gegebenfalls Meldung löschen
 			if(newValue.length() < 5){
 				writeError = false;
 				cleanInformationLabel();
 			}
 			
-			//wenn Input l�nger als 5 Zeichen, alten Wert setzen und Fehler melden
+			//wenn Input lönger als 5 Zeichen, alten Wert setzen und Fehler melden
 			else if(newValue.length() > 5){
 				writeError = true;
 				((StringProperty) observable).setValue(oldValue);
 			}
 				
-			//Wenn RestService benutzt wird, soll der Ort beim l�schen der 5 Stelle der PLZ auch der Ort gel�scht werden
+			//Wenn RestService benutzt wird, soll der Ort beim löschen der 5 Stelle der PLZ auch der Ort gel�scht werden
 			if(restServiceMainMenu.isSelected() ||serviceTown && newValue.length() == 4 && oldValue.length() == 5){
-				ortField.setText("");
+				cityField.setText("");
 				serviceTown = false;
 			}
 
@@ -390,34 +398,34 @@ public class Controller {
 			//Wenn keiner gefunden wird, Fehlermeldung ausgeben
 			if(restServiceMainMenu.isSelected()){
 				if(newValue.length() == 5){
-					String town = service.getTown(plzField.getText());
+					String town = service.getTown(zipCodeField.getText());
 					if(!town.equals(""))
-						ortField.setText(town);
+						cityField.setText(town);
 					else
 						setErrorMessage("Diese PLZ ist uns leider nicht bekannt");
 					serviceTown = true;
 				}
 			}
 			
-			//Pr�fen, ob der �bernehmenButton aktiviert werden darf
+			//Prüfen, ob der ÜbernehmenButton aktiviert werden darf
 			activateChangeButton(oldValue, newValue, "");
 		};
 		
 		ChangeListener<LocalDate> dateListener = (observable, oldValue, newValue) -> {
 			if(oldValue != null)	
-				//Pr�fen, ob der �bernehmenButton aktiviert werden darf
+				//Prüfen, ob der ÜbernehmenButton aktiviert werden darf
 				activateChangeButton(oldValue, newValue, null);
 		};
 		
 		//setzen der ebend definierten Listener
-		vornameField.textProperty().addListener(textListener);
-		vornameField.textProperty().addListener(textListener);
-		nachnameField.textProperty().addListener(textListener);
-		ortField.textProperty().addListener(textListener);
-		strasseField.textProperty().addListener(textListener);
-		strassenNummerField.textProperty().addListener(textListener);
-		plzField.textProperty().addListener(plzListener);
-		geburtstagField.valueProperty().addListener(dateListener);
+		firstnameField.textProperty().addListener(textListener);
+		firstnameField.textProperty().addListener(textListener);
+		lastnameField.textProperty().addListener(textListener);
+		cityField.textProperty().addListener(textListener);
+		streetField.textProperty().addListener(textListener);
+		streetNrField.textProperty().addListener(textListener);
+		zipCodeField.textProperty().addListener(plzListener);
+		birthdayField.valueProperty().addListener(dateListener);
 	}
 	
 	/**
@@ -425,13 +433,13 @@ public class Controller {
 	 * @return true, wenn alle TextFields + DatePicker gefuellt sind, ansonsten false
 	 */
 	private boolean isAllFieldsFillt(){
-		if(		vornameField.getText().equals("") ||
-				nachnameField.getText().equals("") ||
-				ortField.getText().equals("") ||
-				strasseField.getText().equals("") ||
-				strassenNummerField.getText().equals("") ||
-				plzField.getText().equals("") ||
-				geburtstagField.getValue() == null
+		if(		firstnameField.getText().equals("") ||
+				lastnameField.getText().equals("") ||
+				cityField.getText().equals("") ||
+				streetField.getText().equals("") ||
+				streetNrField.getText().equals("") ||
+				zipCodeField.getText().equals("") ||
+				birthdayField.getValue() == null
 			) 
 			return false;
 		
@@ -439,12 +447,12 @@ public class Controller {
 	}
 	
 	/**
-	 * Pr�ft, ob der �bernehmeButton aktiviert werden darf
+	 * Prüft, ob der ÜbernehmeButton aktiviert werden darf
 	 * Kriterien: Kein Control darf leer sein, der alte Inhalt darf nicht dem neuen gleich sein 
 	 * und es darf keine neue Selektion sein
 	 * @param oldValue 	- alter Wert eines Controls
 	 * @param newValue 	- neuer Wert eines Controls
-	 * @param value		- wogegen gepr�ft wird (in der regel null, oder bei Strings "")
+	 * @param value		- wogegen geprüft wird (in der regel null, oder bei Strings "")
 	 */
 	private <T> void activateChangeButton(T oldValue, T newValue, String value){
 		changeButton.setDisable(true);
@@ -476,7 +484,7 @@ public class Controller {
     }
     
     /**
-     * s�ubert das Nachrichtenfeld
+     * säubert das Nachrichtenfeld
      */
     private void cleanInformationLabel(){
     	informationLabel.setText("");
