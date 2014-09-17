@@ -1,6 +1,6 @@
 package de.oszimt;
 
-import de.oszimt.ui.controller.Gui;
+import de.oszimt.ui.Gui;
 
 /**
  * Created by Philipp on 17.09.14.

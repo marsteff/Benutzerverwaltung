@@ -1,4 +1,4 @@
-package de.oszimt.ui.controller;
+package de.oszimt.ui;
 
 import java.time.LocalDate;
 
@@ -13,7 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import de.oszimt.ui.controller.templates.AdvancedSearch;
+import de.oszimt.ui.templates.AdvancedSearch;
 import de.oszimt.factory.PersistanceFactory;
 import de.oszimt.model.Kunde;
 import de.oszimt.persistence.enumeration.PersistanceMethod;

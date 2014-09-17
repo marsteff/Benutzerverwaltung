@@ -1,12 +1,10 @@
-package de.oszimt.ui.controller;
+package de.oszimt.ui;
 
-import de.oszimt.ui.controller.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.*;
 
 public class Gui extends Application {
 

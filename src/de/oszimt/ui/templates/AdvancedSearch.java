@@ -1,4 +1,4 @@
-package de.oszimt.ui.controller.templates;
+package de.oszimt.ui.templates;
 
 import de.oszimt.model.Kunde;
 
