@@ -1,0 +1,160 @@
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.CheckMenuItem?>
+
+<BorderPane fx:controller="de.oszimt.ui.controller.Controller" xmlns:fx="http://javafx.com/fxml">
+    <!-- !!!!!!!!!!!!!!!!!!! Menubar !!!!!!!!!!-->
+    <top>
+        <MenuBar >
+            <menus>
+                <Menu text="Datei">
+                    <items>
+                        <MenuItem text="Schliessen" onAction="#closeAction" />
+                    </items>
+                </Menu>
+                <Menu text="Bearbeiten">
+                    <items>
+                        <MenuItem text="Neuer Kunde" onAction="#abortButtonAction"/>
+                        <MenuItem text="Lösche alle Kunden" onAction="#deleteAllCustomersAction" />
+                        <MenuItem text="Erstelle Zufallskunden" onAction="#createRandomCustomersAction" />
+                    </items>
+                </Menu>
+                <Menu text="Einstellungen">
+                	<items>
+                		<CheckMenuItem fx:id="restServiceMainMenu" text="Autocomplete Postleitzahl" />
+                	</items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    
+	<!-- !!!!!!!!!!!!!!!!!! Kontaktdaten !!!!!!!!!! -->
+	<center>
+		<BorderPane>
+			<top>
+				<VBox >
+					<padding>
+						<Insets left="10" bottom="10" right="10" top="10" />
+					</padding>
+					
+					<AnchorPane>
+						<!-- Kontakdaten -->
+						<VBox AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" spacing="5">
+							<HBox spacing="5">
+								<TextField  promptText="Vorname" fx:id="vornameField" onAction="#changeButtonAction"/>
+								<TextField  promptText="Nachname" fx:id="nachnameField"	onAction="#changeButtonAction"/>
+							</HBox>
+							<HBox >
+								<DatePicker fx:id="geburtstagField" editable="false" promptText="Geburtstag"/>
+							</HBox>		
+							<HBox>
+								<padding>
+									<Insets top="10" />
+								</padding>
+								<Label fx:id="informationLabel" />
+							</HBox>
+						</VBox>					
+									
+						<!-- Stadt und Strasse -->
+						<VBox spacing="5" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
+							<HBox spacing="5">
+								<TextField  promptText="Stadt" fx:id="ortField" onAction="#changeButtonAction"/>
+								<TextField  promptText="PLZ" fx:id="plzField" onAction="#changeButtonAction">
+									<tooltip>
+										<Tooltip text="Bei eingeben einer Validen Postleitzahl wird die Stadt automatisch ausgefüllt" />
+									</tooltip>
+									<contextMenu>
+										<ContextMenu >
+											<items>
+												<CheckMenuItem fx:id="restServiceContextMenu" text="Autocomplete Postleitzahl"  />
+											</items>
+										</ContextMenu>
+									</contextMenu>
+								</TextField>
+							</HBox>
+							<HBox spacing="5">
+								<TextField  promptText="Strasse" fx:id="strasseField" onAction="#changeButtonAction"/>
+								<TextField  promptText="Nummer" fx:id="strassenNummerField" onAction="#changeButtonAction"/>
+							</HBox>
+							<HBox spacing="5">
+								<Button text="Übernehmen" fx:id="changeButton" onAction="#changeButtonAction" disable="true"/>
+								<Button text="Abbrechen" fx:id="abortButton" onAction="#abortButtonAction"/>						
+							</HBox>
+						</VBox>
+					</AnchorPane>	
+					
+					<!-- Live-Search-Field -->
+					<VBox spacing= "5" fx:id="searchVBox">
+						<padding>
+							<Insets top="15" />
+						</padding>	
+						<TextField promptText="Suchanfrage eingeben" fx:id="searchField" />
+						<Hyperlink text="Erweiterte Suche" onAction="#advancedSearch" styleClass="advancedSearchLink"/>
+					</VBox>
+				</VBox>
+			</top>
+			<center>
+			
+			<!-- !!!!!!!!!!!!!!!!!! Nutzertabelle !!!!!!!!!! -->
+				<TableView fx:id="customerTable">
+					<columns>
+						<TableColumn text="Vorname" fx:id="vornameColumn">
+							<cellValueFactory>
+								<PropertyValueFactory property="vorname" />
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn text="Nachname" fx:id="nachnameColumn">
+							<cellValueFactory>
+								<PropertyValueFactory property="nachname" />
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn text="Geburtstag" fx:id="geburtstagColumn">
+							<cellValueFactory>
+								<PropertyValueFactory property="geburtstag" />
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn text="Stadt" fx:id="ortColumn">
+							<cellValueFactory>
+								<PropertyValueFactory property="ort" />
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn text="Postleitzahl" fx:id="plzColumn">
+							<cellValueFactory>
+								<PropertyValueFactory property="plz" />
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn text="Strasse" fx:id="strasseColumn">
+							<cellValueFactory>
+								<PropertyValueFactory property="strasse" />
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn text="Nummer" fx:id="strassenNummerColumn">
+							<cellValueFactory>
+								<PropertyValueFactory property="strassenNummer" />
+							</cellValueFactory>
+						</TableColumn>
+					</columns>
+					<contextMenu>
+						<ContextMenu>
+							<items>
+								<MenuItem text="Kunde löschen" onAction="#deleteCustomer"/>
+							</items>
+						</ContextMenu>
+					</contextMenu>
+        		</TableView>
+			</center>
+		</BorderPane>
+	</center>
+</BorderPane>

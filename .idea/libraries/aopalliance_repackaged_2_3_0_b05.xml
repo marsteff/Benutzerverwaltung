@@ -1,0 +1,25 @@
+<component name="libraryTable">
+  <library name="aopalliance-repackaged-2.3.0-b05">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/aopalliance-repackaged-2.3.0-b05.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/asm-debug-all-5.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/hk2-api-2.3.0-b05.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/hk2-locator-2.3.0-b05.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/hk2-utils-2.3.0-b05.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/javassist-3.18.1-GA.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/javax.annotation-api-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/javax.inject-2.3.0-b05.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/javax.servlet-api-3.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/jaxb-api-2.2.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/jersey-guava-2.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/osgi-resource-locator-1.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/persistence-api-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/validation-api-1.1.0.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/org.osgi.core-4.2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/jaxrs-ri/ext/org.osgi.core-4.2.0.jar!/OSGI-OPT/src" />
+    </SOURCES>
+  </library>
+</component>

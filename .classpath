@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/db4o-8.0.249.16098-all-java5.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jettison-1.3.3.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/sqlite-jdbc-3.7.2.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/api/javax.ws.rs-api-2.0.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/aopalliance-repackaged-2.3.0-b05.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/asm-debug-all-5.0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/hk2-api-2.3.0-b05.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/hk2-locator-2.3.0-b05.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/hk2-utils-2.3.0-b05.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/javassist-3.18.1-GA.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/javax.annotation-api-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/javax.inject-2.3.0-b05.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/javax.servlet-api-3.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/jaxb-api-2.2.7.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/jersey-guava-2.11.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/org.osgi.core-4.2.0.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/osgi-resource-locator-1.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/persistence-api-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/ext/validation-api-1.1.0.Final.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/lib/jersey-client.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/lib/jersey-common.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/lib/jersey-container-servlet.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/lib/jersey-container-servlet-core.jar"/>
+	<classpathentry kind="lib" path="C:/Ablage/efx1-workspace/Kundenverwaltung/lib/jaxrs-ri/lib/jersey-server.jar"/>
+	<classpathentry kind="output" path="out/production/Kundenverwaltung"/>
+</classpath>
