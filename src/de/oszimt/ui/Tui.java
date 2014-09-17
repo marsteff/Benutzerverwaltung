@@ -1,5 +1,6 @@
 package de.oszimt.ui;
 
+import de.oszimt.conzept.impl.Concept;
 import org.fusesource.jansi.AnsiConsole;
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
@@ -9,21 +10,28 @@ import static org.fusesource.jansi.Ansi.Color.*;
  */
 public class Tui {
 
-    public Tui(){
-        AnsiConsole.systemInstall();
-        println(GREEN, "dududu");
+    private Concept concept;
+    public Tui(Concept concept){
+        this.concept = concept;
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        clean();
-        println(BLUE, "Hallo");
+        AnsiConsole.systemInstall();
+
+        showMainMenu();
     }
 
-    public void showMainMenu() {
 
+    public void showMainMenu() {
+        writeHeader(3);
+    }
+
+    private void writeHeader(int length){
+        println(BLACK, "*****************************************");
+        print(BLACK, "*");
+        for(int i = 0; i < length; i++)print(BLACK, " ");
+        print(BLACK, concept.getTitle());
+        for(int i = 0; i < length; i++)print(BLACK, " ");
+        println(BLACK, "*");
+        println(BLACK, "*****************************************");
     }
 
     private void println(Color color, String text){

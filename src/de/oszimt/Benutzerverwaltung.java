@@ -12,6 +12,6 @@ import de.oszimt.ui.Tui;
 public class Benutzerverwaltung {
     public static void main(String[] args) {
 //        new Gui(new Concept(PersistanceFactory.buildPersistance(PersistanceMethod.SQLITE)));
-        new Tui();
+        new Tui(new Concept(PersistanceFactory.buildPersistance(PersistanceMethod.SQLITE)));
     }
 }
