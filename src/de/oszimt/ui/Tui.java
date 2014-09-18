@@ -1,6 +1,6 @@
 package de.oszimt.ui;
 
-import de.oszimt.conzept.impl.Concept;
+import de.oszimt.concept.iface.IConcept;
 
 import de.oszimt.model.User;
 import org.fusesource.jansi.AnsiConsole;
@@ -18,8 +18,8 @@ import static org.fusesource.jansi.Ansi.Color.*;
 public class Tui {
 
     private final Color STANDARD_COLOR = WHITE;
-    private Concept concept;
-    public Tui(Concept concept){
+    private IConcept concept;
+    public Tui(IConcept concept){
         this.concept = concept;
 
         AnsiConsole.systemInstall();
@@ -120,7 +120,7 @@ public class Tui {
         params[5] = user.getStreet();
         params[6] = user.getStreetnr();
         params[7] = user.getLastname();
-        params[8] = new String(user.getId() + "");
+        params[8] = user.getDepartment();
 
         return params;
     }
