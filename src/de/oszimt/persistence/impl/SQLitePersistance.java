@@ -46,7 +46,6 @@ public class SQLitePersistance implements IPersistance {
 	}
 	
 	private void createTable(){
-       System.out.println("before create table");
        Connection con = this.getConnection();
        Statement stmt = null;
        String sql = "";
@@ -63,7 +62,7 @@ public class SQLitePersistance implements IPersistance {
                       " zip_code INTEGER NOT NULL, " +
                       " birthday TEXT NOT NULL)";
          stmt.executeUpdate(sql);
-         
+         con.commit();
        } catch ( Exception e ) {
          System.err.println( e.getClass().getName() + ": " + e.getMessage() );
          System.out.println(sql);
