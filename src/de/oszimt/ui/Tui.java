@@ -2,9 +2,11 @@ package de.oszimt.ui;
 
 import de.oszimt.conzept.impl.Concept;
 
+import de.oszimt.model.User;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 import static org.fusesource.jansi.Ansi.*;
@@ -69,7 +71,58 @@ public class Tui {
     }
 
     private void showUser() {
+        writeHeader(2);
+        clean();
+        String[] entrys = { "Vorname",
+                            "Nachname",
+                            "Geburtstag",
+                            "Stadt",
+                            "Postleitzahl",
+                            "Strasse",
+                            "Strassen-Nummer",
+                            "Abteilung"};
+        print("Benutzer ID eingeben");
+        int id = readInt();
 
+        //TODO need this from Concept
+        User user = getUser(id);
+        String[] params = getUserParameter(user);
+        int max = getMaxEntry(entrys);
+        for (int i = 0; i < entrys.length; i++) {
+            print(entrys[i]);
+            for (int j = 0; j < max - entrys[i].length() + 2; j++) {
+                print(" ");
+            }
+            println(": " + params[i]);
+        }
+    }
+
+    //TODO need this from concept
+    private User getUser(int id) {
+        List<User> users = concept.getAllUser();
+        User user = null;
+        for (int i = 0; i < users.size(); i++) {
+            if(users.get(i).getId() == id) {
+                user = users.get(i);
+                return user;
+            }
+        }
+        return user;
+    }
+
+    private String[] getUserParameter(User user){
+        String[] params = new String[9];
+        params[0] = user.getFirstname();
+        params[1] = user.getLastname();
+        params[2] = user.getBirthday().toString();
+        params[8] = user.getCity();
+        params[4] = new String(user.getZipcode() + "");
+        params[5] = user.getStreet();
+        params[6] = user.getStreetnr();
+        params[7] = user.getLastname();
+        params[8] = new String(user.getId() + "");
+
+        return params;
     }
 
     private void editUser() {
@@ -118,10 +171,21 @@ public class Tui {
             showMainMenu();
             return -1;
         }
-        if(choice > length || choice < 1) {
-            printWrongEntryErrorMessage(length);
-            sleep(2000);
-            showMainMenu();
+//        if(choice > length || choice < 1) {
+//            printWrongEntryErrorMessage(length);
+//            sleep(2000);
+//            showMainMenu();
+//            return -1;
+//        }
+        return choice;
+    }
+
+    private int readInt() {
+        Scanner scan = new Scanner(System.in);
+        int choice = 0;
+        try {
+            choice = scan.nextInt();
+        } catch(InputMismatchException e){
             return -1;
         }
         return choice;
