@@ -84,9 +84,7 @@ public class Tui {
         print("Benutzer ID eingeben");
         int id = readInt();
 
-        //TODO need this from Concept
-        User user = getUser(id);
-        String[] params = getUserParameter(user);
+        String[] params = getUserParameter(concept.getUser(id));
         int max = getMaxEntry(entrys);
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
@@ -95,19 +93,6 @@ public class Tui {
             }
             println(": " + params[i]);
         }
-    }
-
-    //TODO need this from concept
-    private User getUser(int id) {
-        List<User> users = concept.getAllUser();
-        User user = null;
-        for (int i = 0; i < users.size(); i++) {
-            if(users.get(i).getId() == id) {
-                user = users.get(i);
-                return user;
-            }
-        }
-        return user;
     }
 
     private String[] getUserParameter(User user){
