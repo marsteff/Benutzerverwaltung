@@ -40,6 +40,8 @@ public class Tui {
                             "Abbrechen"};
         writeHeader(3);
         int max = getMaxEntry(entrys);
+
+        //Aufbauen des Menue´s
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
             for (int j = 0; j < max - entrys[i].length() + 2; j++) {
@@ -50,10 +52,18 @@ public class Tui {
         println("");
         print("Menuepunkt eingeben: ");
 
-        byte input = readInput(entrys.length);
-        //check,
-        if(input == -1)
+        //einlesen des Input´s
+        int input = readInt();
+
+        //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
+        if(input == -1 || input > entrys.length || input < 1) {
+            printWrongEntryErrorMessage(6);
+            sleep(1500);
+            showMainMenu();
             return;
+        }
+
+        //Prüfung, welches Menue aufgerufen werden soll
         switch (input){
             case 1: showUser();
                     return;
@@ -84,7 +94,15 @@ public class Tui {
         print("Benutzer ID eingeben");
         int id = readInt();
 
-        String[] params = getUserParameter(concept.getUser(id));
+        User user = null;
+        try {
+            user = concept.getUser(id);
+        } catch(Exception e) {
+            printErrorMessage("User wurde nicht gefunden");
+            showUser();
+            return;
+        }
+        String[] params = getUserParameter(user);
         int max = getMaxEntry(entrys);
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
@@ -93,6 +111,20 @@ public class Tui {
             }
             println(": " + params[i]);
         }
+        String input = null;
+        while(true) {
+            println("");
+            print("nach weiterem Benutzer suchen ? (j/n) ");
+            input = readString();
+            if (input.length() == 1) {
+                break;
+            }
+        }
+        if(input.toLowerCase().equals("j")) {
+            showUser();
+            return;
+        }
+        showMainMenu();
     }
 
     private String[] getUserParameter(User user){
@@ -151,9 +183,6 @@ public class Tui {
         try {
             choice = scan.nextByte();
         } catch(InputMismatchException e){
-            printWrongEntryErrorMessage(length);
-            sleep(2000);
-            showMainMenu();
             return -1;
         }
 //        if(choice > length || choice < 1) {
@@ -165,6 +194,10 @@ public class Tui {
         return choice;
     }
 
+    /**
+     *  Liest eine Benutzereingabe ein, und gibt im Fehlerfall gleich eine Fehlermeldung aus (z. B. wenn die Auswahl ausserhalb des Bereiches liegt
+     * @return -1 im Fehlerfall, ansonsten die eingegebene Zahl
+     */
     private int readInt() {
         Scanner scan = new Scanner(System.in);
         int choice = 0;
@@ -174,6 +207,15 @@ public class Tui {
             return -1;
         }
         return choice;
+    }
+
+    /**
+     * Liest eine Benutzereingabe ein
+     * @return eingelesenen String
+     */
+    private String readString() {
+        Scanner scan = new Scanner(System.in);
+        return scan.next();
     }
 
     /**
@@ -195,6 +237,15 @@ public class Tui {
     private void printWrongEntryErrorMessage(int length){
         println("");
         println(RED, "Falsche Eingabe, bitte eine Zahl zwischen 1 und " + length + " eingeben");
+    }
+
+    /**
+     * Schreibt eine Fehlermeldung in die Konsole
+     * @param text der Fehlermeldungstext
+     */
+    private void printErrorMessage(String text) {
+        println("");
+        println(RED, text);
     }
 
     /**
