@@ -47,7 +47,7 @@ public class Tui {
         print(STANDARD_COLOR, "Menuepunkt eingeben: ");
 
         byte input = readInput(entrys.length);
-        //check, 
+        //check,
         if(input == -1)
             return;
         switch (input){
@@ -72,6 +72,11 @@ public class Tui {
         println(STANDARD_COLOR, "*****************************************");
     }
 
+    /**
+     *  Liest eine Benutzereingabe ein, und gibt im Fehlerfall gleich eine Fehlermeldung aus (z. B. wenn die Auswahl ausserhalb des Bereiches liegt
+     * @param length - gibt die Anzahl der Menüpunkte an
+     * @return -1 im Fehlerfall, ansonsten die eingegebene Zahl
+     */
     private byte readInput(int length){
         Scanner scan = new Scanner(System.in);
         byte choice = 0;
