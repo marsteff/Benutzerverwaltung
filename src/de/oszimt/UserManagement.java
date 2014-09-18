@@ -8,9 +8,9 @@ import de.oszimt.ui.Gui;
 /**
  * Created by Philipp on 17.09.14.
  */
-public class Benutzerverwaltung {
+public class UserManagement {
     public static void main(String[] args) {
-        new Gui(new Concept(PersistanceFactory.buildPersistance(PersistanceMethod.SQLITE)));
+        new Gui(new Concept(PersistanceFactory.buildPersistance(PersistanceMethod.MONGODB)));
         //System.out.println("xs");
     }
 }

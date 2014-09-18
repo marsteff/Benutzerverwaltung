@@ -1,6 +1,7 @@
 package de.oszimt.ui;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
@@ -265,10 +266,15 @@ public class Controller {
 	 * Dieses erfolgt Live.
 	 */
 	private void searchInTable() {
+        List<User> ulist = this.gui.getConcept().getAllUser();
+
+        if(ulist != null){
+            return;
+        }
+
         //kapsel user liste zum observieren
-		ObservableList<User> masterDate = FXCollections.observableList(
-                this.gui.getConcept().getAllUser()
-        );
+		ObservableList<User> masterDate = FXCollections.observableList(ulist);
+
 
 		FilteredList<User> filteredDate = new FilteredList<>(masterDate, p -> true);
 

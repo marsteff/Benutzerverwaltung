@@ -11,7 +11,7 @@ import java.util.List;
 public class Concept {
 
 
-    private String title = "Oszimt Projekt Benutzerverwaltung";
+    private String title = "Oszimt Projekt UserManagement";
     private IPersistance database;
 
     public Concept(IPersistance db){
