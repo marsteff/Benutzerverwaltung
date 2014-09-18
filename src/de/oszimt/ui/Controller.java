@@ -2,6 +2,7 @@ package de.oszimt.ui;
 
 import java.time.LocalDate;
 
+import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -182,7 +183,10 @@ public class Controller {
 		String streetNr = streetNrField.getText();
 		int zipcode = Integer.parseInt(zipCodeField.getText());
 		
-		User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode);
+		User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode,new Department(
+                3, //@todo department id
+                "Entwicklung"//@todo department name
+        ));
 		
 		//to specify if is it a new user or only a change
 		boolean isNew = false;

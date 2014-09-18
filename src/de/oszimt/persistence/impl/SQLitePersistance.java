@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,10 +17,10 @@ import de.oszimt.persistence.iface.IPersistance;
 public class SQLitePersistance implements IPersistance {
 
 	private static SQLitePersistance obj;
-	private static final String DATABASEPATH = "customer.db";
+	private static final String DATABASEPATH = "SQLiteDatabase.db";
 	
 	private SQLitePersistance() {
-		this.createTable();
+		this.createTables();
 	}
 	
 	public static SQLitePersistance getInstance(){
@@ -40,19 +41,10 @@ public class SQLitePersistance implements IPersistance {
 		
 		return connection;
 	}
-	
-	public void createInitTable(){
-		this.createTable();
-	}
-	
-	private void createTable(){
-       Connection con = this.getConnection();
-       Statement stmt = null;
-       String sql = "";
-       try {
 
-         stmt = con.createStatement();
-         sql = "CREATE TABLE IF NOT EXISTS Usertable " +
+	
+	private void createTables(){
+        String User_sql = "CREATE TABLE IF NOT EXISTS User " +
                       "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                       " first_name TEXT NOT NULL, " +
                       " last_name TEXT NOT NULL, " +
@@ -60,16 +52,15 @@ public class SQLitePersistance implements IPersistance {
                       " street TEXT NOT NULL, " +
                       " street_nr TEXT NOT NULL, " +
                       " zip_code INTEGER NOT NULL, " +
-                      " birthday TEXT NOT NULL)";
-         stmt.executeUpdate(sql);
-         con.commit();
-       } catch ( Exception e ) {
-         System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-         System.out.println(sql);
-         System.exit(0);
-       } finally {
-    	   this.closeConnection(con, stmt);
-       }
+                      " birthday TEXT NOT NULL," +
+                      " department_id INTEGER NOT NULL)";
+
+        String Department_sql = "CREATE TABLE IF NOT EXISTS Department " +
+                            "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            "name TEXT NOT NULL)";
+        this.dbUpdate(User_sql);
+        this.dbUpdate(Department_sql);
+
 	}
 	
 	@Override
@@ -82,82 +73,98 @@ public class SQLitePersistance implements IPersistance {
 	}
 
 	private void update(User user) {
-		Connection con = this.getConnection();
-		Statement stmt = null;
-        String sql = "";
-		try{
-			stmt = con.createStatement();
 
-			sql = "UPDATE Usertable set " +
-                        "first_name 		= '" + user.getFirstname() + "', " +
-                        "last_name		= '" + user.getLastname() + "', " +
-                        "city 			= '" + user.getCity() + "', " +
-                        "street 		= '" + user.getStreet() + "', " +
-                        "street_nr  	= '" + user.getStreetnr() + "', " +
-                        "zip_code 		= " + user.getZipcode() + ", " +
-                        "birthday		= '" + user.getBirthday() + "' " + //@todo check format
-                        "WHERE id = " + user.getId();
-        stmt.executeUpdate(sql);
-			con.commit();
+        this.dbUpdate("UPDATE User set " +
+                "first_name 		= '" + user.getFirstname() + "', " +
+                "last_name		= '" + user.getLastname() + "', " +
+                "city 			= '" + user.getCity() + "', " +
+                "street 		= '" + user.getStreet() + "', " +
+                "street_nr  	= '" + user.getStreetnr() + "', " +
+                "zip_code 		= " + user.getZipcode() + ", " +
+                "birthday		= '" + user.getBirthday() + "'," +
+                " department_id = '"+user.getDepartmentId()+"'" +
+                "WHERE id = " + user.getId());
 
-		} catch(Exception e) {
-			System.err.println("Problem beim Aktualiseren eines Benutzers aufgetreten");
-			System.out.println(e.getMessage());
-		} finally{
-			this.closeConnection(con, stmt);
-			System.out.println(user + " erfolgreich bearbeitet");
-		}
 	}
+
+    private void dbUpdate(String sql){
+        Connection con = this.getConnection();
+        Statement stmt = null;
+        try{
+            stmt = con.createStatement();
+            stmt.executeUpdate(sql);
+            con.commit();
+
+        } catch(Exception e) {
+            System.err.println(sql);
+            System.out.println(e.getMessage());
+        } finally{
+            this.closeConnection(con, stmt);
+            System.out.println(sql + " erfolgreich");
+        }
+    }
 
     @Override
     public void deleteUser(User user) {
-        Connection con = this.getConnection();
+        this.dbUpdate("DELETE FROM User WHERE id = " + user.getId());
+    }
+
+    public void createDepartment(Department dep){
+        this.dbUpdate("INSERT INTO Department (name) VALUES ('"+dep.getName()+"')");
+    }
+
+    public void updateDepartment(Department dep){
+        this.dbUpdate("UPDATE Department SET name = '"+dep.getName()+"'" +
+                       "WHERE id = id = '"+dep.getId()+"'");
+    }
+
+    public void remoteDepartment(Department dep){
+        this.dbUpdate("DELETE FROM Department WHERE id = id = '"+dep.getId()+"'");
+    }
+
+    public List<Department> getAllDepartments(){
+        List<Department> list = new ArrayList<Department>();
+
+        Connection con = obj.getConnection();
         Statement stmt = null;
 
-        try {
+        try{
+
             stmt = con.createStatement();
+            String sql = "SELECT * FROM Department;";
 
-            String sql = "DELETE FROM Usertable WHERE id = " + user.getId();
+            ResultSet rs = stmt.executeQuery(sql);
 
-            stmt.executeUpdate(sql);
+            while(rs.next()){
+                Department dep = new Department(
+                        rs.getInt("id"),
+                        rs.getString("name")
+                );
 
-            con.commit();
+                list.add(dep);
+            }
+            rs.close();
 
-        } catch (Exception e) {
-
-        } finally {
+        } catch(Exception e) {
+            System.err.println("Fehler beim Laden aller Abteilungen");
+        } finally{
             this.closeConnection(con, stmt);
         }
+        return list;
     }
 
 	@Override
 	public void createUser(User user) {
-		Connection con = this.getConnection();
-		Statement stmt = null;
-        String sql = "";
-
-		try{
-			stmt = con.createStatement();
 			
-			sql = "INSERT INTO Usertable (first_name,last_name,city,street,street_nr,zip_code,birthday)" +
-						"VALUES (	'" + user.getFirstname() + "', " +
+	    this.dbUpdate("INSERT INTO User (first_name,last_name,city,street,street_nr,zip_code,birthday,department_id)" +
+					 "VALUES (	'" + user.getFirstname() + "', " +
 									"'" + user.getLastname() + "', " +
 									"'" + user.getCity() + "', " +
 									"'" + user.getStreet() + "', " +
 									"'" + user.getStreetnr() + "', " +
 									"'" + user.getZipcode() + "', " +
-									"'" + user.getBirthday() + "');";
-			stmt.executeUpdate(sql);
-			con.commit();
-			
-		} catch(Exception e) {
-			System.err.println("Fehler beim erstellen des Benutzers" );
-			System.err.println(e.getMessage());
-			System.err.println(sql);
-		} finally {
-			this.closeConnection(con, stmt);
-		}
-
+									"'" + user.getBirthday() + "'," +
+                                    "'" + user.getDepartmentId()+"');");
 	}
 	
 	public boolean existCustomer(User user){
@@ -168,7 +175,9 @@ public class SQLitePersistance implements IPersistance {
 		try{
 			stmt = con.createStatement();
 			
-			String sql = "SELECT * FROM Usertable WHERE id = " + user.getId();
+			String sql = "SELECT *" +
+                    "FROM User " +
+                    "WHERE id = " + user.getId();
 			
 			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next())
@@ -189,14 +198,19 @@ public class SQLitePersistance implements IPersistance {
 	@Override
 	public List<User> getAllUser() {
 		List<User> list = new ArrayList<User>();
-
+        String sql = "";
 		Connection con = obj.getConnection();
 		Statement stmt = null;
 		
 		try{
 			
 			stmt = con.createStatement();
-			String sql = "SELECT * FROM Usertable;";
+			sql = "SELECT " +
+                    "User.id, User.first_name,User.last_name,User.city,User.street, " +
+                    "User.street_nr, User.zip_code,User.birthday,Department.id as department_id, " +
+                    "Department.name as department_name " +
+                    "FROM User " +
+                    "LEFT JOIN Department ON User.department_id = Department.id;";
 			
 			ResultSet rs = stmt.executeQuery(sql);
 			
@@ -208,7 +222,11 @@ public class SQLitePersistance implements IPersistance {
                         rs.getString("city"),
                         rs.getString("street"),
                         rs.getString("street_nr"),
-                        rs.getInt("zip_code")
+                        rs.getInt("zip_code"),
+                        new Department(
+                            rs.getInt("department_id"),
+                            rs.getString("department_name")
+                        )
                 );
 				u.setId(rs.getInt("id"));
 				list.add(u);
@@ -216,7 +234,7 @@ public class SQLitePersistance implements IPersistance {
 			rs.close();
 			                                       
 		} catch(Exception e) {                  
-			System.err.println("Fehler beim Laden aller Benutzer");
+			System.err.println("Fehler beim Laden aller Benutzer: " + e.getMessage() + sql);
 		} finally{
 			this.closeConnection(con, stmt);
 		}

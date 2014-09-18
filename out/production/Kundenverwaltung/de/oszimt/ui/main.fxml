@@ -145,6 +145,11 @@
 								<PropertyValueFactory property="streetnr" />
 							</cellValueFactory>
 						</TableColumn>
+                        <TableColumn text="Abteilung" fx:id="DepartmentColumn">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="department" />
+                            </cellValueFactory>
+                        </TableColumn>
 					</columns>
 					<contextMenu>
 						<ContextMenu>

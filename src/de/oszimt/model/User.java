@@ -10,16 +10,19 @@ import javafx.beans.property.StringProperty;
 public class User {
 
 	private int id;
+    private int department_id;
 	private final SimpleStringProperty firstname;
     private final SimpleStringProperty lastname;
     private final SimpleStringProperty city;
     private final SimpleStringProperty street;
     private final SimpleStringProperty streetnr;
     private final SimpleIntegerProperty zipcode;
+    private final SimpleStringProperty department;
     private final SimpleObjectProperty<LocalDate> birthday;
     
     public User(String fname, String lname, LocalDate bday,
-                String city, String street, String streetnr, int zipcode) {
+                String city, String street, String streetnr, int zipcode,
+                Department department) {
 		this.firstname = new SimpleStringProperty(fname);
 		this.lastname = new SimpleStringProperty(lname);
 		this.city = new SimpleStringProperty(city);
@@ -27,6 +30,8 @@ public class User {
 		this.streetnr = new SimpleStringProperty(streetnr);
 		this.zipcode = new SimpleIntegerProperty(zipcode);
 		this.birthday = new SimpleObjectProperty<LocalDate>(bday);
+        this.department = new SimpleStringProperty(department.getName());
+        this.department_id = department.getId();
 	}
 
 	public int getId() {
@@ -92,7 +97,23 @@ public class User {
     public void setBirthday(LocalDate geb){
     	birthday.set(geb);
     }
- 
+
+    public String getDepartment(){
+        return this.department.get();
+    }
+
+    public void setDepartment(String name){
+        this.department.set(name);
+    }
+
+    public int getDepartmentId(){
+        return this.department_id;
+    }
+
+    public void setDepartmentId(int id){
+        this.department_id = id;
+    };
+
     public StringProperty getVorProp(){
     	return this.firstname;
     }

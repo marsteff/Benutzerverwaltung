@@ -1,5 +1,6 @@
 package de.oszimt.conzept.impl;
 
+import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import de.oszimt.persistence.iface.IPersistance;
 import de.oszimt.util.Util;
@@ -36,16 +37,27 @@ public class Concept {
     }
 
     public void createRandomUsers(boolean useRest){
-        ObservableList<User> customerList = Util.createCustomers(useRest);
+       String[] departments = new String[]{
+                "Geschäftsführung","Entwicklung","Marketing",
+                "Rechungsabteilung", "Kundenservice", "Verkauf",
+                "Logistik","Lager", "Fahrer","Projektmanagement"
+        };
+
+
+
+        for(String dep : departments){
+            this.database.createDepartment(new Department(dep));
+        }
+
+        ObservableList<User> customerList = Util.createCustomers(useRest, this.database.getAllDepartments());
         for(User user : customerList){
             this.createUser(user);
         }
     }
 
-    public void createInitTable(){
-        this.database.createInitTable();
+    public List<Department> getAllDepartments(){
+        return this.database.getAllDepartments();
     }
-
 
     public List<User> getAllUser(){
         return this.database.getAllUser();
