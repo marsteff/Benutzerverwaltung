@@ -5,6 +5,8 @@ import de.oszimt.persistence.iface.IPersistance;
 import de.oszimt.util.Util;
 import javafx.collections.ObservableList;
 
+import java.util.List;
+
 public class Concept {
 
 
@@ -41,7 +43,7 @@ public class Concept {
     }
 
 
-    public ObservableList<User> getAllUser(){
+    public List<User> getAllUser(){
         return this.database.getAllUser();
     }
 

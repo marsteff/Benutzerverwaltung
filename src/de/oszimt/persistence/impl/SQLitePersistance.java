@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.oszimt.model.User;
 import javafx.collections.FXCollections;
@@ -181,9 +183,9 @@ public class SQLitePersistance implements IPersistance {
 	}
 
 	@Override
-	public ObservableList<User> getAllUser() {
-		ObservableList<User> obList = FXCollections.observableArrayList();
-		
+	public List<User> getAllUser() {
+		List<User> list = new ArrayList<User>();
+
 		Connection con = obj.getConnection();
 		Statement stmt = null;
 		
@@ -195,30 +197,26 @@ public class SQLitePersistance implements IPersistance {
 			ResultSet rs = stmt.executeQuery(sql);
 			
 			while(rs.next()){
-				int 	id 				= rs.getInt("ID");
-				String 	vorname 		= rs.getString("VORNAME");
-				String 	nachname 		= rs.getString("NACHNAME");
-				String 	ort				= rs.getString("ORT");
-				String strasse			= rs.getString("STRASSE"); 		
-				String strassenNummer	= rs.getString("STRASSENNUMMER");  
-				int plz 				= rs.getInt("PLZ"); 
-				String geburt			= rs.getString("GEBURTSTAG");
-				
-				LocalDate geburtstag 	= LocalDate.parse(geburt);
-				
-				User k = new User(vorname, nachname, geburtstag, ort, strasse, strassenNummer, plz);
-				k.setId(id);
-				
-				obList.add(k);
+				User k = new User(
+                        rs.getString("VORNAME"),
+                        rs.getString("NACHNAME"),
+                        LocalDate.parse(rs.getString("GEBURTSTAG")),
+                        rs.getString("ORT"),
+                        rs.getString("STRASSE"),
+                        rs.getString("STRASSENNUMMER"),
+                        rs.getInt("PLZ")
+                );
+				k.setId(rs.getInt("ID"));
+				list.add(k);
 			}   
 			rs.close();
 			                                       
 		} catch(Exception e) {                  
-			System.err.println("Fehler beim Laden aller Kunden");
+			System.err.println("Fehler beim Laden aller Benutzer");
 		} finally{
 			this.closeConnection(con, stmt);
 		}
-		return obList;
+		return list;
 	}
 	
 	private void closeConnection(Connection con, Statement stmt){

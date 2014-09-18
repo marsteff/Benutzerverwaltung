@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import de.oszimt.model.User;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -213,7 +214,9 @@ public class Controller {
 	
     @FXML
     private void deleteAllCustomersAction(){
-    	ObservableList<User> list = this.gui.getConcept().getAllUser();
+    	ObservableList<User> list = FXCollections.observableList(
+                this.gui.getConcept().getAllUser()
+        );
     	list.forEach(e -> this.gui.getConcept().deleteUser(e));
     	this.searchInTable();
     }
@@ -256,7 +259,10 @@ public class Controller {
 	 * Dieses erfolgt Live.
 	 */
 	private void searchInTable() {
-		ObservableList<User> masterDate = this.gui.getConcept().getAllUser();
+        //kapsel user liste zum observieren
+		ObservableList<User> masterDate = FXCollections.observableList(
+                this.gui.getConcept().getAllUser()
+        );
 
 		FilteredList<User> filteredDate = new FilteredList<>(masterDate, p -> true);
 
