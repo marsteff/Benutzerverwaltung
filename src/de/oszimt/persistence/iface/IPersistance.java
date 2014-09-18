@@ -9,5 +9,6 @@ public interface IPersistance {
 	void upsertUser(User user);
 	void deleteUser(User user);
 	void createUser(User user);
+    void createInitTable();
 	List<User> getAllUser();
 }

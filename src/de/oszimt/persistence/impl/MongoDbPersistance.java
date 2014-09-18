@@ -33,4 +33,9 @@ public class MongoDbPersistance implements IPersistance{
     public ObservableList<User> getAllUser() {
         return null;
     }
+
+    @Override
+    public void createInitTable(){
+
+    }
 }

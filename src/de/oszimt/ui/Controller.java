@@ -103,6 +103,8 @@ public class Controller {
     public void initSearchInTable(){
         //Tabelle mit Daten fuellen und Livesuche ermöglichen
         searchInTable();
+
+        //this.gui.getConcept().createInitTable();
     }
 
 	public void setStage(Stage stage){

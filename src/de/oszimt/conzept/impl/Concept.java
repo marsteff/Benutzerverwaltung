@@ -42,6 +42,10 @@ public class Concept {
         }
     }
 
+    public void createInitTable(){
+        this.database.createInitTable();
+    }
+
 
     public List<User> getAllUser(){
         return this.database.getAllUser();

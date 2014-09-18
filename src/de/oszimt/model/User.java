@@ -7,9 +7,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-/**
- * Created by Marci on 03.07.2014.
- */
 public class User {
 
 	private int id;

@@ -35,7 +35,7 @@ public class SQLitePersistance implements IPersistance {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + DATABASEPATH);
 			connection.setAutoCommit(false);
 		} catch (Exception e) {
-			System.err.println("bei Erstellung der Connection ist was schief gelaufen");
+			System.err.println("bei Erstellung der Verbindung ist was schief gelaufen");
 		}
 		
 		return connection;
@@ -46,24 +46,27 @@ public class SQLitePersistance implements IPersistance {
 	}
 	
 	private void createTable(){
-		 Connection con = this.getConnection();
+       System.out.println("before create table");
+       Connection con = this.getConnection();
        Statement stmt = null;
+       String sql = "";
        try {
 
          stmt = con.createStatement();
-         String sql = "CREATE TABLE IF NOT EXISTS CUSTOMERS " +
-                      "(ID 				INTEGER PRIMARY KEY     AUTOINCREMENT," +
-                      " VORNAME         TEXT    			NOT NULL, " + 
-                      " NACHNAME        TEXT    			NOT NULL, " + 
-                      " ORT        		TEXT				NOT NULL, " + 
-                      " STRASSE    		TEXT				NOT NULL, " +
-                      " STRASSENNUMMER	TEXT				NOT NULL, " +
-                      " PLZ        		INTEGER				NOT NULL, " +
-                      " GEBURTSTAG      TEXT				NOT NULL)"; 
+         sql = "CREATE TABLE IF NOT EXISTS Usertable " +
+                      "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                      " first_name TEXT NOT NULL, " +
+                      " last_name TEXT NOT NULL, " +
+                      " city TEXT NOT NULL, " +
+                      " street TEXT NOT NULL, " +
+                      " street_nr TEXT NOT NULL, " +
+                      " zip_code INTEGER NOT NULL, " +
+                      " birthday TEXT NOT NULL)";
          stmt.executeUpdate(sql);
          
        } catch ( Exception e ) {
          System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+         System.out.println(sql);
          System.exit(0);
        } finally {
     	   this.closeConnection(con, stmt);
@@ -82,24 +85,24 @@ public class SQLitePersistance implements IPersistance {
 	private void update(User user) {
 		Connection con = this.getConnection();
 		Statement stmt = null;
-
+        String sql = "";
 		try{
 			stmt = con.createStatement();
 
-			String sql = "UPDATE CUSTOMERS set " +
-												"VORNAME 		= '" + user.getFirstname() + "', " +
-												"NACHNAME 		= '" + user.getLastname() + "', " +
-												"ORT 			= '" + user.getCity() + "', " +
-												"STRASSE 		= '" + user.getStreet() + "', " +
-												"STRASSENNUMMER	= '" + user.getStreetnr() + "', " +
-												"PLZ 			= " + user.getZipcode() + ", " +
-												"GEBURTSTAG		= '" + user.getBirthday() + "' " +
-												"WHERE ID=" + user.getId();
-			stmt.executeUpdate(sql);
+			sql = "UPDATE Usertable set " +
+                        "first_name 		= '" + user.getFirstname() + "', " +
+                        "last_name		= '" + user.getLastname() + "', " +
+                        "city 			= '" + user.getCity() + "', " +
+                        "street 		= '" + user.getStreet() + "', " +
+                        "street_nr  	= '" + user.getStreetnr() + "', " +
+                        "zip_code 		= " + user.getZipcode() + ", " +
+                        "birthday		= '" + user.getBirthday() + "' " + //@todo check format
+                        "WHERE id = " + user.getId();
+        stmt.executeUpdate(sql);
 			con.commit();
 
 		} catch(Exception e) {
-			System.err.println("Problem beim Aktualiseren eines Kunden aufgetreten");
+			System.err.println("Problem beim Aktualiseren eines Benutzers aufgetreten");
 			System.out.println(e.getMessage());
 		} finally{
 			this.closeConnection(con, stmt);
@@ -115,7 +118,7 @@ public class SQLitePersistance implements IPersistance {
         try {
             stmt = con.createStatement();
 
-            String sql = "DELETE FROM CUSTOMERS WHERE ID=" + user.getId();
+            String sql = "DELETE FROM Usertable WHERE id = " + user.getId();
 
             stmt.executeUpdate(sql);
 
@@ -132,11 +135,12 @@ public class SQLitePersistance implements IPersistance {
 	public void createUser(User user) {
 		Connection con = this.getConnection();
 		Statement stmt = null;
-		
+        String sql = "";
+
 		try{
 			stmt = con.createStatement();
 			
-			String sql = "INSERT INTO CUSTOMERS (VORNAME,NACHNAME,ORT,STRASSE,STRASSENNUMMER,PLZ,GEBURTSTAG)" +
+			sql = "INSERT INTO Usertable (first_name,last_name,city,street,street_nr,zip_code,birthday)" +
 						"VALUES (	'" + user.getFirstname() + "', " +
 									"'" + user.getLastname() + "', " +
 									"'" + user.getCity() + "', " +
@@ -148,8 +152,9 @@ public class SQLitePersistance implements IPersistance {
 			con.commit();
 			
 		} catch(Exception e) {
-			System.err.println("Fehler beim erstellen des Kunden" );
+			System.err.println("Fehler beim erstellen des Benutzers" );
 			System.err.println(e.getMessage());
+			System.err.println(sql);
 		} finally {
 			this.closeConnection(con, stmt);
 		}
@@ -164,7 +169,7 @@ public class SQLitePersistance implements IPersistance {
 		try{
 			stmt = con.createStatement();
 			
-			String sql = "SELECT * FROM CUSTOMERS WHERE ID=" + user.getId();
+			String sql = "SELECT * FROM Usertable WHERE id = " + user.getId();
 			
 			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next())
@@ -173,7 +178,7 @@ public class SQLitePersistance implements IPersistance {
 			rs.close();
 			
 		} catch(Exception e) {
-			System.err.println("Fehler beim ermitteln ob User vorhanden ist");
+			System.err.println("Fehler beim ermitteln ob Benutzer vorhanden ist");
 			System.out.println(e.getMessage());
 		} finally {
 			this.closeConnection(con, stmt);
@@ -192,22 +197,22 @@ public class SQLitePersistance implements IPersistance {
 		try{
 			
 			stmt = con.createStatement();
-			String sql = "SELECT * FROM CUSTOMERS;";
+			String sql = "SELECT * FROM Usertable;";
 			
 			ResultSet rs = stmt.executeQuery(sql);
 			
 			while(rs.next()){
-				User k = new User(
-                        rs.getString("VORNAME"),
-                        rs.getString("NACHNAME"),
-                        LocalDate.parse(rs.getString("GEBURTSTAG")),
-                        rs.getString("ORT"),
-                        rs.getString("STRASSE"),
-                        rs.getString("STRASSENNUMMER"),
-                        rs.getInt("PLZ")
+				User u = new User(
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        LocalDate.parse(rs.getString("birthday")),
+                        rs.getString("city"),
+                        rs.getString("street"),
+                        rs.getString("street_nr"),
+                        rs.getInt("zip_code")
                 );
-				k.setId(rs.getInt("ID"));
-				list.add(k);
+				u.setId(rs.getInt("id"));
+				list.add(u);
 			}   
 			rs.close();
 			                                       

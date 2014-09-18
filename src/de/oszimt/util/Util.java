@@ -22,7 +22,7 @@ public class Util {
 		
 		String[] vornamen = {"Dieter", "Ralf", "Bernd", "Matthias", "Tilo", "Steffen", "Marcus"};
 		String[] nachnamen = {"Müller", "Heinz", "Kunt", "Schumacher", "Bäcker", "Münzberg", "Dahse"};
-		String[] strassen = {"Achenbachstraße", "Bockenheimer Warte", "Galvanistraße", "Peter-Böhler-Straße", "Tillystra�e", "Triftstra�e", "Zentmarkweg"};
+		String[] strassen = {"Achenbachstraße", "Bockenheimer Warte", "Galvanistraße", "Peter-Böhler-Straße", "Tillystraße", "Triftstra�e", "Zentmarkweg"};
 		
 		ObservableList<User> liste = FXCollections.observableArrayList();
 		Random rand = new Random();
