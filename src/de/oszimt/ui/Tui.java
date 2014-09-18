@@ -177,7 +177,7 @@ public class Tui {
      * @param text der anzuzeigende Text
      */
     private void print(String text){
-        System.out.println(ansi().fg(STANDARD_COLOR).a(text).fg(STANDARD_COLOR));
+        print(STANDARD_COLOR, text);
     }
 
     /**
@@ -194,7 +194,7 @@ public class Tui {
      * @param text der anzuzeigende Text
      */
     private void println(String text){
-        System.out.println(ansi().fg(STANDARD_COLOR).a(text).fg(STANDARD_COLOR));
+        println(STANDARD_COLOR, text);
     }
 
     /**
