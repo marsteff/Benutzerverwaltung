@@ -13,12 +13,16 @@ public class Util {
 	 * Stupide Erzeugung von Zufallskunden mit richtiger PLZ und Stadt
 	 * @return neu erzeugten Kunden
 	 */
-	public static ObservableList<User> createCustomers(){
-		RestService service = new RestService();
+	public static ObservableList<User> createCustomers(boolean userest){
+        RestService service = null;
+
+        if(userest){
+		   service = new RestService();
+        }
 		
 		String[] vornamen = {"Dieter", "Ralf", "Bernd", "Matthias", "Tilo", "Steffen", "Marcus"};
-		String[] nachnamen = {"M�ller", "Heinz", "Kunt", "Schumacher", "B�cker", "M�nzberg", "Dahse"};
-		String[] strassen = {"Achenbachstra�e", "Bockenheimer Warte", "Galvanistra�e", "Peter-B�hler-Stra�e", "Tillystra�e", "Triftstra�e", "Zentmarkweg"};
+		String[] nachnamen = {"Müller", "Heinz", "Kunt", "Schumacher", "Bäcker", "Münzberg", "Dahse"};
+		String[] strassen = {"Achenbachstraße", "Bockenheimer Warte", "Galvanistraße", "Peter-Böhler-Straße", "Tillystra�e", "Triftstra�e", "Zentmarkweg"};
 		
 		ObservableList<User> liste = FXCollections.observableArrayList();
 		Random rand = new Random();
@@ -27,7 +31,7 @@ public class Util {
 			int plz = 0;
 			do{
 				plz = rand.nextInt(80000)+10000;
-				ort = service.getTown(new String(plz + ""));
+				ort = userest && service != null ? service.getTown(new String(plz + "")) : "Berlin";
 			} while(ort.equals(""));
 			
 			liste.add(new User(vornamen[rand.nextInt(7)],

@@ -53,11 +53,11 @@
 						<!-- Kontakdaten -->
 						<VBox AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" spacing="5">
 							<HBox spacing="5">
-								<TextField  promptText="Vorname" fx:id="vornameField" onAction="#changeButtonAction"/>
-								<TextField  promptText="Nachname" fx:id="nachnameField"	onAction="#changeButtonAction"/>
+								<TextField  promptText="Vorname" fx:id="firstnameField" onAction="#changeButtonAction"/>
+								<TextField  promptText="Nachname" fx:id="lastnameField"	onAction="#changeButtonAction"/>
 							</HBox>
 							<HBox >
-								<DatePicker fx:id="geburtstagField" editable="false" promptText="Geburtstag"/>
+								<DatePicker fx:id="birthdayField" editable="false" promptText="Geburtstag"/>
 							</HBox>		
 							<HBox>
 								<padding>
@@ -70,8 +70,8 @@
 						<!-- Stadt und Strasse -->
 						<VBox spacing="5" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
 							<HBox spacing="5">
-								<TextField  promptText="Stadt" fx:id="ortField" onAction="#changeButtonAction"/>
-								<TextField  promptText="PLZ" fx:id="plzField" onAction="#changeButtonAction">
+								<TextField  promptText="Stadt" fx:id="cityField" onAction="#changeButtonAction"/>
+								<TextField  promptText="PLZ" fx:id="zipCodeField" onAction="#changeButtonAction">
 									<tooltip>
 										<Tooltip text="Bei eingeben einer Validen Postleitzahl wird die Stadt automatisch ausgefüllt" />
 									</tooltip>
@@ -85,8 +85,8 @@
 								</TextField>
 							</HBox>
 							<HBox spacing="5">
-								<TextField  promptText="Strasse" fx:id="strasseField" onAction="#changeButtonAction"/>
-								<TextField  promptText="Nummer" fx:id="strassenNummerField" onAction="#changeButtonAction"/>
+								<TextField  promptText="Strasse" fx:id="streetField" onAction="#changeButtonAction"/>
+								<TextField  promptText="Nummer" fx:id="streetNrField" onAction="#changeButtonAction"/>
 							</HBox>
 							<HBox spacing="5">
 								<Button text="Übernehmen" fx:id="changeButton" onAction="#changeButtonAction" disable="true"/>
@@ -110,39 +110,39 @@
 			<!-- !!!!!!!!!!!!!!!!!! Nutzertabelle !!!!!!!!!! -->
 				<TableView fx:id="customerTable">
 					<columns>
-						<TableColumn text="Vorname" fx:id="vornameColumn">
+						<TableColumn text="Vorname" fx:id="firstnmaeColumn">
 							<cellValueFactory>
-								<PropertyValueFactory property="vorname" />
+								<PropertyValueFactory property="firstname" />
 							</cellValueFactory>
 						</TableColumn>
-						<TableColumn text="Nachname" fx:id="nachnameColumn">
+						<TableColumn text="Nachname" fx:id="lastnameColumn">
 							<cellValueFactory>
-								<PropertyValueFactory property="nachname" />
+								<PropertyValueFactory property="lastname" />
 							</cellValueFactory>
 						</TableColumn>
-						<TableColumn text="Geburtstag" fx:id="geburtstagColumn">
+						<TableColumn text="Geburtstag" fx:id="birthdayColumn">
 							<cellValueFactory>
-								<PropertyValueFactory property="geburtstag" />
+								<PropertyValueFactory property="birthday" />
 							</cellValueFactory>
 						</TableColumn>
-						<TableColumn text="Stadt" fx:id="ortColumn">
+						<TableColumn text="Stadt" fx:id="cityColumn">
 							<cellValueFactory>
-								<PropertyValueFactory property="ort" />
+								<PropertyValueFactory property="city" />
 							</cellValueFactory>
 						</TableColumn>
-						<TableColumn text="Postleitzahl" fx:id="plzColumn">
+						<TableColumn text="Postleitzahl" fx:id="zipcodeColumn">
 							<cellValueFactory>
-								<PropertyValueFactory property="plz" />
+								<PropertyValueFactory property="zipcode" />
 							</cellValueFactory>
 						</TableColumn>
-						<TableColumn text="Strasse" fx:id="strasseColumn">
+						<TableColumn text="Strasse" fx:id="streetColumn">
 							<cellValueFactory>
-								<PropertyValueFactory property="strasse" />
+								<PropertyValueFactory property="street" />
 							</cellValueFactory>
 						</TableColumn>
-						<TableColumn text="Nummer" fx:id="strassenNummerColumn">
+						<TableColumn text="Nummer" fx:id="streetNrColumn">
 							<cellValueFactory>
-								<PropertyValueFactory property="strassenNummer" />
+								<PropertyValueFactory property="streetnr" />
 							</cellValueFactory>
 						</TableColumn>
 					</columns>

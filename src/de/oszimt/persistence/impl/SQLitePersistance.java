@@ -69,7 +69,7 @@ public class SQLitePersistance implements IPersistance {
 	}
 	
 	@Override
-	public void updateUser(User user) {
+	public void upsertUser(User user) {
 		if(existCustomer(user))
 			update(user);
 		else
