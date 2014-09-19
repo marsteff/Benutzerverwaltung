@@ -83,14 +83,6 @@ public class Tui {
     private void showUser() {
         writeHeader(2);
         clean();
-        String[] entrys = { "Vorname",
-                            "Nachname",
-                            "Geburtstag",
-                            "Stadt",
-                            "Postleitzahl",
-                            "Strasse",
-                            "Strassen-Nummer",
-                            "Abteilung"};
         print("Benutzer ID eingeben");
         int id = readInt();
 
@@ -102,15 +94,7 @@ public class Tui {
             showUser();
             return;
         }
-        String[] params = getUserParameter(user);
-        int max = getMaxEntry(entrys);
-        for (int i = 0; i < entrys.length; i++) {
-            print(entrys[i]);
-            for (int j = 0; j < max - entrys[i].length() + 2; j++) {
-                print(" ");
-            }
-            println(": " + params[i]);
-        }
+        writeUserStats(user);
         String input = null;
         while(true) {
             println("");
@@ -127,6 +111,69 @@ public class Tui {
         showMainMenu();
     }
 
+    private void editUser() {
+
+    }
+
+    private void deleteUser() {
+        writeHeader(2);
+        clean();
+        print("Benutzer ID eingeben");
+        int id = readInt();
+
+        User user = null;
+        try {
+            user = concept.getUser(id);
+        } catch(Exception e) {
+            printErrorMessage("User wurde nicht gefunden");
+            showUser();
+            return;
+        }
+        writeUserStats(user);
+        String input = null;
+        while(true) {
+            println("");
+            print("User wirklich löschen ? (j/n) ");
+            input = readString();
+            if (input.length() == 1) {
+                break;
+            }
+        }
+        if(input.toLowerCase().equals("j")) {
+            concept.deleteUser(user);
+        }
+        showMainMenu();
+    }
+
+    private void searchUser() {
+
+    }
+
+    private void showAllUsers() {
+
+    }
+
+    private void writeUserStats(User user){
+        String[] entrys = { "Vorname",
+                "Nachname",
+                "Geburtstag",
+                "Stadt",
+                "Postleitzahl",
+                "Strasse",
+                "Strassen-Nummer",
+                "Abteilung"};
+
+        String[] params = getUserParameter(user);
+        int max = getMaxEntry(entrys);
+        for (int i = 0; i < entrys.length; i++) {
+            print(entrys[i]);
+            for (int j = 0; j < max - entrys[i].length() + 2; j++) {
+                print(" ");
+            }
+            println(": " + params[i]);
+        }
+    }
+
     private String[] getUserParameter(User user){
         String[] params = new String[9];
         params[0] = user.getFirstname();
@@ -140,22 +187,6 @@ public class Tui {
         params[8] = user.getDepartment();
 
         return params;
-    }
-
-    private void editUser() {
-
-    }
-
-    private void deleteUser() {
-
-    }
-
-    private void searchUser() {
-
-    }
-
-    private void showAllUsers() {
-
     }
 
     /**
