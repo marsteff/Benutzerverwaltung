@@ -24,7 +24,8 @@
     <orderEntry type="library" name="javax.ws.rs-api-2.0" level="project" />
     <orderEntry type="library" name="aopalliance-repackaged-2.3.0-b05" level="project" />
     <orderEntry type="library" name="jersey-client" level="project" />
-    <orderEntry type="library" name="mongo-java-driver-2.12.3" level="project" />
+    <orderEntry type="library" name="jansi-1.11" level="project" />
+    <orderEntry type="library" name="db4o-8.0.249.16098-all-java51" level="project" />
   </component>
 </module>
 

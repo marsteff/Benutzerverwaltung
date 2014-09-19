@@ -1,8 +1,6 @@
 package de.oszimt.ui;
 
-import de.oszimt.conzept.impl.Concept;
-import de.oszimt.factory.PersistanceFactory;
-import de.oszimt.persistence.enumeration.PersistanceMethod;
+import de.oszimt.concept.iface.IConcept;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,8 +9,7 @@ import javafx.stage.Stage;
 
 public class Gui extends Application {
 
-
-    private static Concept concept;
+    private static IConcept concept;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -20,7 +17,7 @@ public class Gui extends Application {
     	FXMLLoader loader = new FXMLLoader(getClass().getResource("main.fxml"));
         Parent root = loader.load();
         
-        //setzen der Stage Variable im Controller um zuverlässigdas Fenster schliessen zu können
+        //setzen der Stage Variable im Controller um zuverlaessig das Fenster schliessen zu können
         Controller contr = loader.getController();
         contr.setGui(this);
         contr.initSearchInTable();
@@ -39,7 +36,7 @@ public class Gui extends Application {
 
     }
 
-    public Gui(Concept concept){
+    public Gui(IConcept concept){
         this.setConcept(concept);
         this.run();
     }
@@ -48,11 +45,11 @@ public class Gui extends Application {
         launch();
     }
 
-    public Concept getConcept() {
+    public IConcept getConcept() {
         return concept;
     }
 
-    public void setConcept(Concept concept) {
+    public void setConcept(IConcept concept) {
         this.concept = concept;
     }
 
