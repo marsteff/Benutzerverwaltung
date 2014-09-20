@@ -8,7 +8,6 @@ import org.fusesource.jansi.AnsiConsole;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 
 import static org.fusesource.jansi.Ansi.*;
@@ -83,9 +82,13 @@ public class Tui {
     }
 
     private void showUser() {
-        User user = searchAndPrintUserStats("showUser");
+        //hole den aktuellen StackTrace
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
+        User user = searchAndPrintUserStats(stack[1].getMethodName());
 
-        if(bla("nach weiterem Benutzer suchen ? (j/n) ")) {
+        //Soll nach einem weiteren Benutzer gesucht werden ?
+        if(checkInputForYesOrNo("Nach weiterem Benutzer suchen ? (j/n)")) {
             showUser();
             return;
         }
@@ -97,26 +100,42 @@ public class Tui {
     }
 
     private void deleteUser() {
-        User user = searchAndPrintUserStats("deleteUser");
+        //hole den aktuellen StackTrace
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
+        User user = searchAndPrintUserStats(stack[1].getMethodName());
 
         //Soll der Benutzer wirklich gelöscht werden ?
-        if(bla("Benutzer wirklich löschen ? (j/n) ")) {
+        if(checkInputForYesOrNo("Benutzer wirklich löschen ? (j/n)")) {
             concept.deleteUser(user);
         }
 
         //Soll ein weiterer Benutzer gelöscht werden ?
-        if(bla("Weiteren Benutzer loeschen ? (j/n) ")) {
+        if(checkInputForYesOrNo("Weiteren Benutzer loeschen ? (j/n)")) {
             this.deleteUser();
             return;
         }
         showMainMenu();
     }
 
-    private boolean bla(String message){
+    private void searchUser() {
+
+    }
+
+    private void showAllUsers() {
+
+    }
+
+    /**
+     * Schreibt eine Nachricht in die Konsole und prüft, ob mit 'j' oder 'n' eingegeben wurde
+     * @param message die anzuzeigende Nachricht
+     * @return true, wenn 'j' eingegeben wurde. Andernfalls falls
+     */
+    private boolean checkInputForYesOrNo(String message){
         String input = null;
         while(true) {
             println("");
-            print(message);
+            print(message + " ");
             input = readString();
             if (input.length() == 1 && input.toLowerCase().charAt(0) == 'j' || input.toLowerCase().charAt(0) == 'n') {
                 break;
@@ -130,14 +149,12 @@ public class Tui {
         return false;
     }
 
-    private void searchUser() {
-
-    }
-
-    private void showAllUsers() {
-
-    }
-
+    /**
+     * Schreibt die Benutzer Informationen in die Konsole. Da Dies in mehreren Methoden benutzt wird und dieses
+     * sich selbst wieder aufrufen, wird mit Hilfe von Reflection gearbeit, um dieses dynamisch gestalten zu können
+     * @param methodName
+     * @return
+     */
     private User searchAndPrintUserStats(String methodName){
         //hole Methode um über Reflection diese aufrufen zu können
         Method method = null;
