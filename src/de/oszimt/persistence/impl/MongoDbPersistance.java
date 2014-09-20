@@ -15,6 +15,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.ParallelScanOptions;
 import org.omg.CORBA.BAD_CONTEXT;
+import org.joda.time.DateTime;
 
 import java.net.UnknownHostException;
 import java.time.Instant;
@@ -122,19 +123,38 @@ public class MongoDbPersistance implements IPersistance{
 
     private User cursorNextToUser(DBCursor cursor){
         Map tmp = cursor.next().toMap();
-        return new User(
-                tmp.get("first_name").toString(),
-                tmp.get("last_name").toString(),
-                LocalDate.now(),//tmp.get("birthday"), "test"//@todo invalid date
-                tmp.get("city").toString(),
-                tmp.get("street").toString(),
-                tmp.get("street_nr").toString(),
-                Integer.parseInt(tmp.get("zip_code").toString()),
-                new Department(
-                        Integer.parseInt(tmp.get("department_id").toString()),
-                        "test"//@todo invalid name
-                )
-        );
+
+        DBCollection coll = this.getCollection("Departments");
+        DBObject depDBO = coll.findOne(new BasicDBObject("id",Integer.parseInt(
+                tmp.get("department_id").toString()
+        )));
+
+        if(depDBO != null) {
+            Map depMap =depDBO.toMap();
+
+            Department dep = new Department(
+                    Integer.parseInt(depMap.get("id").toString()),
+                    depMap.get("name").toString()
+            );
+
+
+
+            return new User(
+                    tmp.get("first_name").toString(),
+                    tmp.get("last_name").toString(),
+                    new DateTime(
+                            tmp.get("birthday")
+                    ).toDate().toInstant().atZone(
+                            ZoneId.systemDefault()
+                    ).toLocalDate(),
+                    tmp.get("city").toString(),
+                    tmp.get("street").toString(),
+                    tmp.get("street_nr").toString(),
+                    Integer.parseInt(tmp.get("zip_code").toString()),
+                    dep
+            );
+        }
+        return null;
     }
 
     @Override
@@ -193,6 +213,7 @@ public class MongoDbPersistance implements IPersistance{
         DBObject doc = coll.findOne(new BasicDBObject("id",dep.getId()));
         coll.remove(doc);
     }
+
 
     @Override
     public List<Department> getAllDepartments(){
