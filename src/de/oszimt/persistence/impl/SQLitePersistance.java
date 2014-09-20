@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
@@ -16,7 +17,7 @@ import de.oszimt.persistence.iface.IPersistance;
 
 public class SQLitePersistance implements IPersistance {
 
-	private static SQLitePersistance obj;
+	private static SQLitePersistance instance;
 	private static final String DATABASEPATH = "SQLiteDatabase.db";
 	
 	private SQLitePersistance() {
@@ -24,9 +25,10 @@ public class SQLitePersistance implements IPersistance {
 	}
 	
 	public static SQLitePersistance getInstance(){
-		if(obj == null)
-			obj = new SQLitePersistance();
-		return obj;
+		if(instance == null) {
+            instance = new SQLitePersistance();
+        }
+		return instance;
 	}
 	
 	private Connection getConnection(){
@@ -42,18 +44,79 @@ public class SQLitePersistance implements IPersistance {
 		return connection;
 	}
 
+
+    @Override
+    public String getKeyUserId() {
+        return "id";
+    }
+
+    @Override
+    public String getKeyUserFirstname() {
+        return "first_name";
+    }
+
+    @Override
+    public String getKeyUserLastname() {
+        return "last_name";
+    }
+
+    @Override
+    public String getKeyUserCity() {
+        return "city";
+    }
+
+    @Override
+    public String getKeyUserStreet() {
+        return "street";
+    }
+
+    @Override
+    public String getKeyUserStreetNr() {
+        return "street_nr";
+    }
+
+    @Override
+    public String getKeyUserZipCode() {
+        return "zip_code";
+    }
+
+    @Override
+    public String getKeyUserBirthday() {
+        return "birthday";
+    }
+
+    @Override
+    public String getKeyUserDepartmentId() {
+        return "department_id";
+    }
+
+    @Override
+    public String getKeyDepartmentId() {
+        return "id";
+    }
+
+    @Override
+    public String getKeyDepartmentName() {
+        return "name";
+    }
+
+    @Override
+    public String getKeyUserDepartment() {
+        return "department";
+    }
+
 	
 	private void createTables(){
         String User_sql = "CREATE TABLE IF NOT EXISTS User " +
-                      "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                      " first_name TEXT NOT NULL, " +
-                      " last_name TEXT NOT NULL, " +
-                      " city TEXT NOT NULL, " +
-                      " street TEXT NOT NULL, " +
-                      " street_nr TEXT NOT NULL, " +
-                      " zip_code INTEGER NOT NULL, " +
-                      " birthday TEXT NOT NULL," +
-                      " department_id INTEGER NOT NULL)";
+                      "(" + this.getKeyUserId() + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            this.getKeyUserFirstname() + " TEXT NOT NULL, " +
+                            this.getKeyUserLastname() + " TEXT NOT NULL, " +
+                            this.getKeyUserCity() + " TEXT NOT NULL, " +
+                            this.getKeyUserStreet() + " TEXT NOT NULL, " +
+                            this.getKeyUserStreetNr() + " TEXT NOT NULL, " +
+                            this.getKeyUserZipCode() + " INTEGER NOT NULL, " +
+                            this.getKeyUserBirthday() + " TEXT NOT NULL," +
+                            this.getKeyUserDepartmentId() + " INTEGER NOT NULL)";
 
         String Department_sql = "CREATE TABLE IF NOT EXISTS Department " +
                             "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -62,9 +125,9 @@ public class SQLitePersistance implements IPersistance {
         this.dbUpdate(Department_sql);
 
 	}
-	
-	@Override
-	public void upsertUser(User user) {
+
+    @Override
+	public void upsertUser(Map<String, Object> user) {
 		if(existCustomer(user))
 			update(user);
 		else
@@ -72,7 +135,17 @@ public class SQLitePersistance implements IPersistance {
 
 	}
 
-	private void update(User user) {
+    @Override
+    public void deleteUser(int id) {
+
+    }
+
+    @Override
+    public void createUser(Map<String, Object> user) {
+
+    }
+
+    private void update(User user) {
 
         this.dbUpdate("UPDATE User set " +
                 "first_name 		= '" + user.getFirstname() + "', " +
@@ -167,7 +240,7 @@ public class SQLitePersistance implements IPersistance {
                                     "'" + user.getDepartmentId()+"');");
 	}
 	
-	public boolean existCustomer(User user){
+	public boolean existCustomer(int id){
 		boolean exist = false;
 		Connection con = this.getConnection();
 		Statement stmt = null;
@@ -177,7 +250,7 @@ public class SQLitePersistance implements IPersistance {
 			
 			String sql = "SELECT *" +
                     "FROM User " +
-                    "WHERE id = " + user.getId();
+                    "WHERE id = " + id;
 			
 			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next())
@@ -240,8 +313,28 @@ public class SQLitePersistance implements IPersistance {
 		}
 		return list;
 	}
-	
-	private void closeConnection(Connection con, Statement stmt){
+
+    @Override
+    public void createDepartment(Map<String, Object> dep) {
+
+    }
+
+    @Override
+    public void updateDepartment(Map<String, Object> dep) {
+
+    }
+
+    @Override
+    public void remoteDepartment(int id) {
+
+    }
+
+    @Override
+    public Map<String, Object> getUserById(int id) {
+        return null;
+    }
+
+    private void closeConnection(Connection con, Statement stmt){
 		try{
 			stmt.close();
 			con.close();

@@ -1,19 +1,28 @@
 package de.oszimt.persistence.iface;
-
-import de.oszimt.model.Department;
-import de.oszimt.model.User;
-import javafx.collections.ObservableList;
-
 import java.util.List;
+import java.util.Map;
 
 public interface IPersistance {
-	void upsertUser(User user);
-	void deleteUser(User user);
-	void createUser(User user);
-	List<User> getAllUser();
-    void createDepartment(Department dep);
-    void updateDepartment(Department dep);
-    void remoteDepartment(Department dep);
-    List<Department> getAllDepartments();
+    String getKeyUserId();
+    String getKeyUserFirstname();
+    String getKeyUserLastname();
+    String getKeyUserCity();
+    String getKeyUserStreet();
+    String getKeyUserStreetNr();
+    String getKeyUserZipCode();
+    String getKeyUserBirthday();
+    String getKeyUserDepartmentId();
+    String getKeyDepartmentId();
+    String getKeyDepartmentName();
+    String getKeyUserDepartment();
+	void upsertUser(Map<String,Object> user);
+	void deleteUser(int id);
+	void createUser(Map<String,Object> user);
+	List<Map<String,Object>> getAllUser();
+    void createDepartment(Map<String,Object> dep);
+    void updateDepartment(Map<String,Object> dep);
+    void remoteDepartment(int id);
+    Map<String,Object> getUserById(int id);
+    List<Map<String,Object>> getAllDepartments();
 
 }
