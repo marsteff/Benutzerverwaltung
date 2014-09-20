@@ -197,8 +197,8 @@ public class Controller {
         String department = departmentComboBox.getValue().toString();
 		
 		User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode,new Department(
-                3, //@todo department id
-                "Entwicklung"//@todo department name
+                3, //@todo department id !!
+                "Entwicklung"//@todo department name !!
         ));
 		
 		//to specify if is it a new user or only a change
