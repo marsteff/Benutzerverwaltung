@@ -40,6 +40,8 @@ public class Controller {
 	private TableColumn<User, LocalDate> birthdayColumn;
 	@FXML 
 	private TableColumn<User, Integer> zipcodeColumn;
+    @FXML
+    public TableColumn<User, Department> departmentColumn;
 	
 	@FXML
 	private TextField firstnameField;
@@ -99,7 +101,7 @@ public class Controller {
 		//bei klicken auf einen Nutzer Felder mit Daten fuellen
 		fillControls();
 
-		//
+		//setzt die Listener der Controls
 		setListenerForControls();
 
 		//service = new RestService();
@@ -108,7 +110,11 @@ public class Controller {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                //Initialisiert die ComboBox
                 setDepartmentComboBox();
+
+                //Tabelle mit Daten fuellen und Livesuche ermöglichen
+                searchInTable();
             }
         });
 	}
@@ -116,13 +122,6 @@ public class Controller {
     private void setDepartmentComboBox() {
         ObservableList<Department> departmentList = FXCollections.observableArrayList(gui.getConcept().getAllDepartments());
         departmentComboBox.setItems(departmentList);
-    }
-
-    public void initSearchInTable(){
-        //Tabelle mit Daten fuellen und Livesuche ermöglichen
-        searchInTable();
-
-        //this.gui.getConcept().createInitTable();
     }
 
 	public void setStage(Stage stage){
@@ -142,6 +141,7 @@ public class Controller {
 		zipCodeField.setText("");
 		streetField.setText("");
 		streetNrField.setText("");
+        departmentComboBox.setValue(null);
 		
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().clearSelection();
@@ -188,7 +188,7 @@ public class Controller {
 
 	@FXML
 	private void changeButtonAction(){
-		//get index of actual selection to make double chnage possible
+		//get index of actual selection to make double change possible
 		int index = customerTable.getSelectionModel().getSelectedIndex();
 		
 		//get content of fields to make new customer
@@ -291,7 +291,6 @@ public class Controller {
         //kapsel user liste zum observieren
 		ObservableList<User> masterDate = FXCollections.observableList(ulist);
 
-
 		FilteredList<User> filteredDate = new FilteredList<>(masterDate, p -> true);
 
 		searchField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -339,13 +338,15 @@ public class Controller {
 	 */
 	private void bindingOfControls() {
 		//Breiten Binding der Columns an die Breite des Fensters
-				firstnmaeColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
-				lastnameColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
-				cityColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
-				streetColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
-				streetNrColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
-				birthdayColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
-				zipcodeColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
+				firstnmaeColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.122));
+				lastnameColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.122));
+				cityColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.122));
+				streetColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.122));
+				streetNrColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.122));
+				birthdayColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.122));
+				zipcodeColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.122));
+                departmentColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.122));
+
 				
 				//Breiten Binding der TextFields an die Breite des Fensters
 				firstnameField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
@@ -444,6 +445,12 @@ public class Controller {
 				//Prüfen, ob der ÜbernehmenButton aktiviert werden darf
 				activateChangeButton(oldValue, newValue, null);
 		};
+
+        ChangeListener<Department> departmentListener = (observable, oldValue, newValue) -> {
+            if(oldValue != null)
+                //Prüfen, ob der ÜbernehmenButton aktiviert werden darf
+                activateChangeButton(oldValue, newValue, null);
+        };
 		
 		//setzen der ebend definierten Listener
 		firstnameField.textProperty().addListener(textListener);
@@ -454,16 +461,7 @@ public class Controller {
 		streetNrField.textProperty().addListener(textListener);
 		zipCodeField.textProperty().addListener(plzListener);
 		birthdayField.valueProperty().addListener(dateListener);
-        departmentComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            changeButton.setDisable(true);
-            if(oldValue != null)
-                if(		isAllFieldsFillt() &&
-                        !newValue.equals(null) &&
-                        !oldValue.equals(newValue) &&
-                        !isNewSelection)
-    
-                    changeButton.setDisable(false);
-        });
+        departmentComboBox.valueProperty().addListener(departmentListener);
 	}
 	
 	/**
@@ -477,7 +475,8 @@ public class Controller {
 				streetField.getText().equals("") ||
 				streetNrField.getText().equals("") ||
 				zipCodeField.getText().equals("") ||
-				birthdayField.getValue() == null
+				birthdayField.getValue() == null ||
+               departmentComboBox.getValue() == null
 			) 
 			return false;
 		
