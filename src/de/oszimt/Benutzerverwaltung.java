@@ -15,8 +15,8 @@ import java.lang.reflect.Method;
  */
 public class Benutzerverwaltung {
     public static void main(String[] args) {
-//        new Gui(ConceptFactory.buildConcept(ConceptMethod.STANDARD_CONCEPT, PersistanceFactory.buildPersistance(PersistanceMethod.SQLITE)));
-        new Tui(ConceptFactory.buildConcept(ConceptMethod.STANDARD_CONCEPT, PersistanceFactory.buildPersistance(PersistanceMethod.SQLITE)));
+        new Gui(ConceptFactory.buildConcept(ConceptMethod.STANDARD_CONCEPT, PersistanceFactory.buildPersistance(PersistanceMethod.SQLITE)));
+//        new Tui(ConceptFactory.buildConcept(ConceptMethod.STANDARD_CONCEPT, PersistanceFactory.buildPersistance(PersistanceMethod.SQLITE)));
     }
 
 

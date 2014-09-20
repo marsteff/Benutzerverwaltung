@@ -60,23 +60,7 @@
 							</HBox>
 							<HBox spacing="5">
 								<DatePicker fx:id="birthdayField" editable="false" promptText="Geburtstag"/>
-                                <ComboBox fx:id="departmentComboBox" promptText="Abteilung">
-                                    <!-- TODO nur für Testzwecke, wieder entfernen wenn ich aus dem Controller zugriff auf das Concept habe -->
-                                    <items>
-                                        <FXCollections fx:factory="observableArrayList">
-                                            <String fx:value="Fahrer" />
-                                            <String fx:value="Lager" />
-                                            <String fx:value="Rechnungsabteilung" />
-                                            <String fx:value="Marketing" />
-                                            <String fx:value="Verkauf" />
-                                            <String fx:value="Geschäftsführung" />
-                                            <String fx:value="Entwicklung" />
-                                            <String fx:value="Logistik" />
-                                            <String fx:value="Kundenservice" />
-                                            <String fx:value="Projektmanagement" />
-                                        </FXCollections>
-                                    </items>
-                                </ComboBox>
+                                <ComboBox fx:id="departmentComboBox" promptText="Abteilung" />
 							</HBox>		
 							<HBox>
 								<padding>

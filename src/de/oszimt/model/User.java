@@ -17,7 +17,7 @@ public class User {
     private final SimpleStringProperty street;
     private final SimpleStringProperty streetnr;
     private final SimpleIntegerProperty zipcode;
-    private final SimpleStringProperty department;
+    private final SimpleObjectProperty<Department> department;
     private final SimpleObjectProperty<LocalDate> birthday;
     
     public User(String fname, String lname, LocalDate bday,
@@ -30,7 +30,7 @@ public class User {
 		this.streetnr = new SimpleStringProperty(streetnr);
 		this.zipcode = new SimpleIntegerProperty(zipcode);
 		this.birthday = new SimpleObjectProperty<LocalDate>(bday);
-        this.department = new SimpleStringProperty(department.getName());
+        this.department = new SimpleObjectProperty<Department>(department);
         this.department_id = department.getId();
 	}
 
@@ -98,12 +98,12 @@ public class User {
     	birthday.set(geb);
     }
 
-    public String getDepartment(){
+    public Department getDepartment(){
         return this.department.get();
     }
 
-    public void setDepartment(String name){
-        this.department.set(name);
+    public void setDepartment(Department department){
+        this.department.set(department);
     }
 
     public int getDepartmentId(){

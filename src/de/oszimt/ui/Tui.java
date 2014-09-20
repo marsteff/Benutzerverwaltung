@@ -85,7 +85,7 @@ public class Tui {
         //hole den aktuellen StackTrace
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
-        User user = searchAndPrintUserStats(stack[1].getMethodName(), false);
+        searchAndPrintUserStats(stack[1].getMethodName(), false);
 
         //Soll nach einem weiteren Benutzer gesucht werden ?
         if(checkInputForYesOrNo("Nach weiterem Benutzer suchen ? (j/n)")) {
@@ -96,6 +96,11 @@ public class Tui {
     }
 
     private void editUser() {
+        //hole den aktuellen StackTrace
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
+        User user = searchAndPrintUserStats(stack[1].getMethodName(), false);
+
 
     }
 
@@ -172,32 +177,38 @@ public class Tui {
         User user = null;
         try {
             user = concept.getUser(id);
+            if (user == null) {
+                throw new Exception();
+            }
         } catch(Exception e) {
             printErrorMessage("User wurde nicht gefunden");
-            try {
-                method.invoke(this);
-            } catch (IllegalAccessException e1) {
-                e1.printStackTrace();
-            } catch (InvocationTargetException e1) {
-                e1.printStackTrace();
-            }
-            return null;
-        }
-        if(user == null){
-            printErrorMessage("User wurde nicht gefunden");
-            try {
-                method.invoke(this);
-            } catch (IllegalAccessException e1) {
-                e1.printStackTrace();
-            } catch (InvocationTargetException e1) {
-                e1.printStackTrace();
-            }
+            methodCall(method, this);
             return null;
         }
         writeUserStats(user, editMenu);
         return user;
     }
 
+    /**
+     * Ruft die jeweilige Methode auf.
+     * @param method Methode, die aufgerufen werden soll
+     */
+    private void methodCall(Method method, Object obj) {
+        try {
+            method.invoke(obj);
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();
+        }
+    }
+
+    /**
+     * Schreibt die Benutzerdaten in die Konsole.
+     * Wenn editMenu true ist, wird hinter Attributen eine Nummerierung gelistet
+     * @param user Benutzer, dessen Attribute angezeigt werden sollen
+     * @param editMenu Wenn true, wird hinter den Attributen eine Nummerierung gelistet
+     */
     private void writeUserStats(User user, boolean editMenu){
         String[] entrys = { "Vorname",
                             "Nachname",
@@ -208,7 +219,7 @@ public class Tui {
                             "Strassen-Nummer",
                             "Abteilung"};
 
-        String[] params = getUserParameter(user);
+        String[] params = userParameterToArray(user);
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
             printWhitespace(entrys, i);
@@ -221,6 +232,11 @@ public class Tui {
         }
     }
 
+    /**
+     * Sorgt für den gleichen Abstand in der Konsole von z.B. Doppelpunkten bei einer Liste
+     * @param array Das Array mit den Werten, an denen die Abstände angepasst werden sollen
+     * @param iteratorIndex Iterator der eigentlichen Aufzählung
+     */
     private void printWhitespace(String[] array, int iteratorIndex){
         int maxLength = getMaxEntry(array);
         for (int j = 0; j < maxLength - array[iteratorIndex].length() + 2; j++) {
@@ -228,7 +244,12 @@ public class Tui {
         }
     }
 
-    private String[] getUserParameter(User user){
+    /**
+     * Wandelt die Attribute von User in ein String Array um
+     * @param user der entsprechende User
+     * @return Array mit den Attributen von User
+     */
+    private String[] userParameterToArray(User user){
         String[] params = new String[9];
         params[0] = user.getFirstname();
         params[1] = user.getLastname();
@@ -237,7 +258,7 @@ public class Tui {
         params[4] = new String(user.getZipcode() + "");
         params[5] = user.getStreet();
         params[6] = user.getStreetnr();
-        params[7] = user.getDepartment();
+        params[7] = user.getDepartment().getName();
 
         return params;
     }
