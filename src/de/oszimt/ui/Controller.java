@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
+import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -55,7 +56,7 @@ public class Controller {
 	@FXML
 	private DatePicker birthdayField;
     @FXML
-    public ComboBox departmentComboBox;
+    public ComboBox<Department> departmentComboBox;
 	
 	@FXML
 	private Button changeButton;
@@ -101,16 +102,20 @@ public class Controller {
 		//
 		setListenerForControls();
 
-        //Abteilungs-ComboBox mit Daten füllen
-        setDepartmentComboBox();
-		
 		//service = new RestService();
+
+        //Hiermit ist es möglich, nach der Initialierung Code auszuführen. Notwendig, um in der initialize Methode auf das GUI Objekt zugreifen zu können
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                setDepartmentComboBox();
+            }
+        });
 	}
 
-    //TODO Brauche Zugriff auf Concept
     private void setDepartmentComboBox() {
-//        ObservableList<Department> departmentList = FXCollections.observableArrayList(gui.getConcept().getAllDepartments());
-//        departmentComboBox.setItems(departmentList);
+        ObservableList<Department> departmentList = FXCollections.observableArrayList(gui.getConcept().getAllDepartments());
+        departmentComboBox.setItems(departmentList);
     }
 
     public void initSearchInTable(){
@@ -194,12 +199,9 @@ public class Controller {
 		String street = streetField.getText();
 		String streetNr = streetNrField.getText();
 		int zipcode = Integer.parseInt(zipCodeField.getText());
-        String department = departmentComboBox.getValue().toString();
-		
-		User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode,new Department(
-                3, //@todo department id !!
-                "Entwicklung"//@todo department name !!
-        ));
+        Department department = departmentComboBox.getValue();
+
+        User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode,new Department(department.getId(), department.getName()));
 		
 		//to specify if is it a new user or only a change
 		boolean isNew = false;
@@ -268,6 +270,7 @@ public class Controller {
 				streetNrField.setText(newValue.getStreetnr());
 				birthdayField.setValue(newValue.getBirthday());
                 departmentComboBox.setValue(newValue.getDepartment());
+
 				isNewSelection = false;
 				serviceTown = false;
 			}

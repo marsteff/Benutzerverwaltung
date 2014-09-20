@@ -85,7 +85,7 @@ public class Tui {
         //hole den aktuellen StackTrace
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
-        User user = searchAndPrintUserStats(stack[1].getMethodName());
+        searchAndPrintUserStats(stack[1].getMethodName(), false);
 
         //Soll nach einem weiteren Benutzer gesucht werden ?
         if(checkInputForYesOrNo("Nach weiterem Benutzer suchen ? (j/n)")) {
@@ -96,6 +96,11 @@ public class Tui {
     }
 
     private void editUser() {
+        //hole den aktuellen StackTrace
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
+        User user = searchAndPrintUserStats(stack[1].getMethodName(), false);
+
 
     }
 
@@ -103,7 +108,7 @@ public class Tui {
         //hole den aktuellen StackTrace
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
-        User user = searchAndPrintUserStats(stack[1].getMethodName());
+        User user = searchAndPrintUserStats(stack[1].getMethodName(), false);
 
         //Soll der Benutzer wirklich gelöscht werden ?
         if(checkInputForYesOrNo("Benutzer wirklich löschen ? (j/n)")) {
@@ -155,7 +160,7 @@ public class Tui {
      * @param methodName
      * @return
      */
-    private User searchAndPrintUserStats(String methodName){
+    private User searchAndPrintUserStats(String methodName, boolean editMenu){
         //hole Methode um über Reflection diese aufrufen zu können
         Method method = null;
         try {
@@ -172,33 +177,39 @@ public class Tui {
         User user = null;
         try {
             user = concept.getUser(id);
+            if (user == null) {
+                throw new Exception();
+            }
         } catch(Exception e) {
             printErrorMessage("User wurde nicht gefunden");
-            try {
-                method.invoke(this);
-            } catch (IllegalAccessException e1) {
-                e1.printStackTrace();
-            } catch (InvocationTargetException e1) {
-                e1.printStackTrace();
-            }
+            methodCall(method, this);
             return null;
         }
-        if(user == null){
-            printErrorMessage("User wurde nicht gefunden");
-            try {
-                method.invoke(this);
-            } catch (IllegalAccessException e1) {
-                e1.printStackTrace();
-            } catch (InvocationTargetException e1) {
-                e1.printStackTrace();
-            }
-            return null;
-        }
-        writeUserStats(user);
+        writeUserStats(user, editMenu);
         return user;
     }
 
-    private void writeUserStats(User user){
+    /**
+     * Ruft die jeweilige Methode auf.
+     * @param method Methode, die aufgerufen werden soll
+     */
+    private void methodCall(Method method, Object obj) {
+        try {
+            method.invoke(obj);
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();
+        }
+    }
+
+    /**
+     * Schreibt die Benutzerdaten in die Konsole.
+     * Wenn editMenu true ist, wird hinter Attributen eine Nummerierung gelistet
+     * @param user Benutzer, dessen Attribute angezeigt werden sollen
+     * @param editMenu Wenn true, wird hinter den Attributen eine Nummerierung gelistet
+     */
+    private void writeUserStats(User user, boolean editMenu){
         String[] entrys = { "Vorname",
                             "Nachname",
                             "Geburtstag",
@@ -208,18 +219,37 @@ public class Tui {
                             "Strassen-Nummer",
                             "Abteilung"};
 
-        String[] params = getUserParameter(user);
-        int max = getMaxEntry(entrys);
+        String[] params = userParameterToArray(user);
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
-            for (int j = 0; j < max - entrys[i].length() + 2; j++) {
-                print(" ");
+            printWhitespace(entrys, i);
+            print(": " + params[i]);
+            if(editMenu) {
+                printWhitespace(params, i);
+                print("(" + i + 1 + ")");
             }
-            println(": " + params[i]);
+            println("");
         }
     }
 
-    private String[] getUserParameter(User user){
+    /**
+     * Sorgt für den gleichen Abstand in der Konsole von z.B. Doppelpunkten bei einer Liste
+     * @param array Das Array mit den Werten, an denen die Abstände angepasst werden sollen
+     * @param iteratorIndex Iterator der eigentlichen Aufzählung
+     */
+    private void printWhitespace(String[] array, int iteratorIndex){
+        int maxLength = getMaxEntry(array);
+        for (int j = 0; j < maxLength - array[iteratorIndex].length() + 2; j++) {
+            print(" ");
+        }
+    }
+
+    /**
+     * Wandelt die Attribute von User in ein String Array um
+     * @param user der entsprechende User
+     * @return Array mit den Attributen von User
+     */
+    private String[] userParameterToArray(User user){
         String[] params = new String[9];
         params[0] = user.getFirstname();
         params[1] = user.getLastname();
@@ -228,7 +258,7 @@ public class Tui {
         params[4] = new String(user.getZipcode() + "");
         params[5] = user.getStreet();
         params[6] = user.getStreetnr();
-        params[7] = user.getDepartment();
+        params[7] = user.getDepartment().getName();
 
         return params;
     }
@@ -245,28 +275,6 @@ public class Tui {
         for(int i = 0; i < length; i++)print(BLACK, " ");
         println("*");
         println("*****************************************");
-    }
-
-    /**
-     *  Liest eine Benutzereingabe ein, und gibt im Fehlerfall gleich eine Fehlermeldung aus (z. B. wenn die Auswahl ausserhalb des Bereiches liegt
-     * @param length gibt die Anzahl der Menüpunkte an
-     * @return -1 im Fehlerfall, ansonsten die eingegebene Zahl
-     */
-    private byte readInput(int length){
-        Scanner scan = new Scanner(System.in);
-        byte choice = 0;
-        try {
-            choice = scan.nextByte();
-        } catch(InputMismatchException e){
-            return -1;
-        }
-//        if(choice > length || choice < 1) {
-//            printWrongEntryErrorMessage(length);
-//            sleep(2000);
-//            showMainMenu();
-//            return -1;
-//        }
-        return choice;
     }
 
     /**
