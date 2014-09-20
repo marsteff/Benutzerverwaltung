@@ -5,8 +5,9 @@ import de.oszimt.concept.iface.IConcept;
 import de.oszimt.model.User;
 import org.fusesource.jansi.AnsiConsole;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 
 import static org.fusesource.jansi.Ansi.*;
@@ -40,6 +41,8 @@ public class Tui {
                             "Abbrechen"};
         writeHeader(3);
         int max = getMaxEntry(entrys);
+
+        //Aufbauen des Menue´s
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
             for (int j = 0; j < max - entrys[i].length() + 2; j++) {
@@ -50,10 +53,18 @@ public class Tui {
         println("");
         print("Menuepunkt eingeben: ");
 
-        byte input = readInput(entrys.length);
-        //check,
-        if(input == -1)
+        //einlesen des Input´s
+        int input = readInt();
+
+        //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
+        if(input == -1 || input > entrys.length || input < 1) {
+            printWrongEntryErrorMessage(6);
+            sleep(1500);
+            showMainMenu();
             return;
+        }
+
+        //Prüfung, welches Menue aufgerufen werden soll
         switch (input){
             case 1: showUser();
                     return;
@@ -71,8 +82,123 @@ public class Tui {
     }
 
     private void showUser() {
-        writeHeader(2);
+        //hole den aktuellen StackTrace
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
+        User user = searchAndPrintUserStats(stack[1].getMethodName());
+
+        //Soll nach einem weiteren Benutzer gesucht werden ?
+        if(checkInputForYesOrNo("Nach weiterem Benutzer suchen ? (j/n)")) {
+            showUser();
+            return;
+        }
+        showMainMenu();
+    }
+
+    private void editUser() {
+
+    }
+
+    private void deleteUser() {
+        //hole den aktuellen StackTrace
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
+        User user = searchAndPrintUserStats(stack[1].getMethodName());
+
+        //Soll der Benutzer wirklich gelöscht werden ?
+        if(checkInputForYesOrNo("Benutzer wirklich löschen ? (j/n)")) {
+            concept.deleteUser(user);
+        }
+
+        //Soll ein weiterer Benutzer gelöscht werden ?
+        if(checkInputForYesOrNo("Weiteren Benutzer loeschen ? (j/n)")) {
+            this.deleteUser();
+            return;
+        }
+        showMainMenu();
+    }
+
+    private void searchUser() {
+
+    }
+
+    private void showAllUsers() {
+
+    }
+
+    /**
+     * Schreibt eine Nachricht in die Konsole und prüft, ob mit 'j' oder 'n' eingegeben wurde
+     * @param message die anzuzeigende Nachricht
+     * @return true, wenn 'j' eingegeben wurde. Andernfalls falls
+     */
+    private boolean checkInputForYesOrNo(String message){
+        String input = null;
+        while(true) {
+            println("");
+            print(message + " ");
+            input = readString();
+            if (input.length() == 1 && input.toLowerCase().charAt(0) == 'j' || input.toLowerCase().charAt(0) == 'n') {
+                break;
+            }
+            println("");
+            printErrorMessage("Bitte 'j' oder 'n' eingeben");
+        }
+        if(input.toLowerCase().equals("j")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Schreibt die Benutzer Informationen in die Konsole. Da Dies in mehreren Methoden benutzt wird und dieses
+     * sich selbst wieder aufrufen, wird mit Hilfe von Reflection gearbeit, um dieses dynamisch gestalten zu können
+     * @param methodName
+     * @return
+     */
+    private User searchAndPrintUserStats(String methodName){
+        //hole Methode um über Reflection diese aufrufen zu können
+        Method method = null;
+        try {
+            method = this.getClass().getDeclaredMethod(methodName);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
         clean();
+        writeHeader(2);
+        print("Benutzer ID eingeben: ");
+        int id = readInt();
+
+        User user = null;
+        try {
+            user = concept.getUser(id);
+        } catch(Exception e) {
+            printErrorMessage("User wurde nicht gefunden");
+            try {
+                method.invoke(this);
+            } catch (IllegalAccessException e1) {
+                e1.printStackTrace();
+            } catch (InvocationTargetException e1) {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+        if(user == null){
+            printErrorMessage("User wurde nicht gefunden");
+            try {
+                method.invoke(this);
+            } catch (IllegalAccessException e1) {
+                e1.printStackTrace();
+            } catch (InvocationTargetException e1) {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+        writeUserStats(user);
+        return user;
+    }
+
+    private void writeUserStats(User user){
         String[] entrys = { "Vorname",
                             "Nachname",
                             "Geburtstag",
@@ -81,10 +207,8 @@ public class Tui {
                             "Strasse",
                             "Strassen-Nummer",
                             "Abteilung"};
-        print("Benutzer ID eingeben");
-        int id = readInt();
 
-        String[] params = getUserParameter(concept.getUser(id));
+        String[] params = getUserParameter(user);
         int max = getMaxEntry(entrys);
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
@@ -100,30 +224,13 @@ public class Tui {
         params[0] = user.getFirstname();
         params[1] = user.getLastname();
         params[2] = user.getBirthday().toString();
-        params[8] = user.getCity();
+        params[3] = user.getCity();
         params[4] = new String(user.getZipcode() + "");
         params[5] = user.getStreet();
         params[6] = user.getStreetnr();
-        params[7] = user.getLastname();
-        params[8] = user.getDepartment();
+        params[7] = user.getDepartment();
 
         return params;
-    }
-
-    private void editUser() {
-
-    }
-
-    private void deleteUser() {
-
-    }
-
-    private void searchUser() {
-
-    }
-
-    private void showAllUsers() {
-
     }
 
     /**
@@ -151,9 +258,6 @@ public class Tui {
         try {
             choice = scan.nextByte();
         } catch(InputMismatchException e){
-            printWrongEntryErrorMessage(length);
-            sleep(2000);
-            showMainMenu();
             return -1;
         }
 //        if(choice > length || choice < 1) {
@@ -165,6 +269,10 @@ public class Tui {
         return choice;
     }
 
+    /**
+     *  Liest eine Benutzereingabe ein, und gibt im Fehlerfall gleich eine Fehlermeldung aus (z. B. wenn die Auswahl ausserhalb des Bereiches liegt
+     * @return -1 im Fehlerfall, ansonsten die eingegebene Zahl
+     */
     private int readInt() {
         Scanner scan = new Scanner(System.in);
         int choice = 0;
@@ -174,6 +282,15 @@ public class Tui {
             return -1;
         }
         return choice;
+    }
+
+    /**
+     * Liest eine Benutzereingabe ein
+     * @return eingelesenen String
+     */
+    private String readString() {
+        Scanner scan = new Scanner(System.in);
+        return scan.next();
     }
 
     /**
@@ -195,6 +312,15 @@ public class Tui {
     private void printWrongEntryErrorMessage(int length){
         println("");
         println(RED, "Falsche Eingabe, bitte eine Zahl zwischen 1 und " + length + " eingeben");
+    }
+
+    /**
+     * Schreibt eine Fehlermeldung in die Konsole
+     * @param text der Fehlermeldungstext
+     */
+    private void printErrorMessage(String text) {
+        println("");
+        println(RED, text);
     }
 
     /**
