@@ -148,7 +148,7 @@
 								<PropertyValueFactory property="streetnr" />
 							</cellValueFactory>
 						</TableColumn>
-                        <TableColumn text="Abteilung" fx:id="DepartmentColumn">
+                        <TableColumn text="Abteilung" fx:id="departmentColumn">
                             <cellValueFactory>
                                 <PropertyValueFactory property="department" />
                             </cellValueFactory>

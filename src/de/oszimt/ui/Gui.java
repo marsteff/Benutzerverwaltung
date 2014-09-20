@@ -20,7 +20,6 @@ public class Gui extends Application {
         //setzen der Stage Variable im Controller um zuverlaessig das Fenster schliessen zu können
         Controller contr = loader.getController();
         contr.setGui(this);
-        contr.initSearchInTable();
         contr.setStage(primaryStage);
 
         //Initialisieren des Fensters

@@ -18,7 +18,7 @@ public class Benutzerverwaltung {
                 ConceptFactory.buildConcept(
                         ConceptMethod.STANDARD_CONCEPT,
                         PersistanceFactory.buildPersistance(
-                                PersistanceMethod.MONGODB
+                                PersistanceMethod.SQLITE
                         )
                 )
         );
