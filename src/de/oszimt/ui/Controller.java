@@ -268,7 +268,7 @@ public class Controller {
 	private void searchInTable() {
         List<User> ulist = this.gui.getConcept().getAllUser();
 
-        if(ulist != null){
+        if(ulist == null){
             return;
         }
 

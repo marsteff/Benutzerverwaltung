@@ -26,6 +26,7 @@
     <orderEntry type="library" name="jersey-client" level="project" />
     <orderEntry type="library" name="jansi-1.11" level="project" />
     <orderEntry type="library" name="db4o-8.0.249.16098-all-java51" level="project" />
+    <orderEntry type="library" name="mongo-java-driver-2.12.31" level="project" />
   </component>
 </module>
 

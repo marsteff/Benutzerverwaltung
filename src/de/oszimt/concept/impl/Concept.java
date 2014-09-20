@@ -13,7 +13,7 @@ import java.util.List;
 public class Concept implements IConcept {
 
 
-    private String title = "Oszimt Projekt UserManagement";
+    private String title = "Oszimt Projekt Benutzerverwaltung";
     private IPersistance database;
 
     public Concept(IPersistance db){
