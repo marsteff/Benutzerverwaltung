@@ -5,6 +5,8 @@ import de.oszimt.concept.iface.IConcept;
 import de.oszimt.model.User;
 import org.fusesource.jansi.AnsiConsole;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -81,30 +83,9 @@ public class Tui {
     }
 
     private void showUser() {
-        writeHeader(2);
-        clean();
-        print("Benutzer ID eingeben");
-        int id = readInt();
+        User user = searchAndPrintUserStats("showUser");
 
-        User user = null;
-        try {
-            user = concept.getUser(id);
-        } catch(Exception e) {
-            printErrorMessage("User wurde nicht gefunden");
-            showUser();
-            return;
-        }
-        writeUserStats(user);
-        String input = null;
-        while(true) {
-            println("");
-            print("nach weiterem Benutzer suchen ? (j/n) ");
-            input = readString();
-            if (input.length() == 1) {
-                break;
-            }
-        }
-        if(input.toLowerCase().equals("j")) {
+        if(bla("nach weiterem Benutzer suchen ? (j/n) ")) {
             showUser();
             return;
         }
@@ -116,33 +97,37 @@ public class Tui {
     }
 
     private void deleteUser() {
-        writeHeader(2);
-        clean();
-        print("Benutzer ID eingeben");
-        int id = readInt();
+        User user = searchAndPrintUserStats("deleteUser");
 
-        User user = null;
-        try {
-            user = concept.getUser(id);
-        } catch(Exception e) {
-            printErrorMessage("User wurde nicht gefunden");
-            showUser();
+        //Soll der Benutzer wirklich gelöscht werden ?
+        if(bla("Benutzer wirklich löschen ? (j/n) ")) {
+            concept.deleteUser(user);
+        }
+
+        //Soll ein weiterer Benutzer gelöscht werden ?
+        if(bla("Weiteren Benutzer loeschen ? (j/n) ")) {
+            this.deleteUser();
             return;
         }
-        writeUserStats(user);
+        showMainMenu();
+    }
+
+    private boolean bla(String message){
         String input = null;
         while(true) {
             println("");
-            print("User wirklich löschen ? (j/n) ");
+            print(message);
             input = readString();
-            if (input.length() == 1) {
+            if (input.length() == 1 && input.toLowerCase().charAt(0) == 'j' || input.toLowerCase().charAt(0) == 'n') {
                 break;
             }
+            println("");
+            printErrorMessage("Bitte 'j' oder 'n' eingeben");
         }
         if(input.toLowerCase().equals("j")) {
-            concept.deleteUser(user);
+            return true;
         }
-        showMainMenu();
+        return false;
     }
 
     private void searchUser() {
@@ -153,15 +138,58 @@ public class Tui {
 
     }
 
+    private User searchAndPrintUserStats(String methodName){
+        //hole Methode um über Reflection diese aufrufen zu können
+        Method method = null;
+        try {
+            method = this.getClass().getDeclaredMethod(methodName);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+        clean();
+        writeHeader(2);
+        print("Benutzer ID eingeben: ");
+        int id = readInt();
+
+        User user = null;
+        try {
+            user = concept.getUser(id);
+        } catch(Exception e) {
+            printErrorMessage("User wurde nicht gefunden");
+            try {
+                method.invoke(this);
+            } catch (IllegalAccessException e1) {
+                e1.printStackTrace();
+            } catch (InvocationTargetException e1) {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+        if(user == null){
+            printErrorMessage("User wurde nicht gefunden");
+            try {
+                method.invoke(this);
+            } catch (IllegalAccessException e1) {
+                e1.printStackTrace();
+            } catch (InvocationTargetException e1) {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+        writeUserStats(user);
+        return user;
+    }
+
     private void writeUserStats(User user){
         String[] entrys = { "Vorname",
-                "Nachname",
-                "Geburtstag",
-                "Stadt",
-                "Postleitzahl",
-                "Strasse",
-                "Strassen-Nummer",
-                "Abteilung"};
+                            "Nachname",
+                            "Geburtstag",
+                            "Stadt",
+                            "Postleitzahl",
+                            "Strasse",
+                            "Strassen-Nummer",
+                            "Abteilung"};
 
         String[] params = getUserParameter(user);
         int max = getMaxEntry(entrys);
@@ -179,12 +207,11 @@ public class Tui {
         params[0] = user.getFirstname();
         params[1] = user.getLastname();
         params[2] = user.getBirthday().toString();
-        params[8] = user.getCity();
+        params[3] = user.getCity();
         params[4] = new String(user.getZipcode() + "");
         params[5] = user.getStreet();
         params[6] = user.getStreetnr();
-        params[7] = user.getLastname();
-        params[8] = user.getDepartment();
+        params[7] = user.getDepartment();
 
         return params;
     }
