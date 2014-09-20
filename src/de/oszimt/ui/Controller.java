@@ -21,8 +21,8 @@ import de.oszimt.ui.templates.AdvancedSearch;
 import de.oszimt.util.RestService;
 
 public class Controller {
-	
-	@FXML
+
+    @FXML
 	private TableView<User> customerTable;
 	
 	@FXML 
@@ -54,6 +54,8 @@ public class Controller {
 	private TextField streetNrField;
 	@FXML
 	private DatePicker birthdayField;
+    @FXML
+    public ComboBox departmentComboBox;
 	
 	@FXML
 	private Button changeButton;
@@ -98,9 +100,18 @@ public class Controller {
 
 		//
 		setListenerForControls();
+
+        //Abteilungs-ComboBox mit Daten füllen
+        setDepartmentComboBox();
 		
 		//service = new RestService();
 	}
+
+    //TODO Brauche Zugriff auf Concept
+    private void setDepartmentComboBox() {
+//        ObservableList<Department> departmentList = FXCollections.observableArrayList(gui.getConcept().getAllDepartments());
+//        departmentComboBox.setItems(departmentList);
+    }
 
     public void initSearchInTable(){
         //Tabelle mit Daten fuellen und Livesuche ermöglichen
@@ -183,6 +194,7 @@ public class Controller {
 		String street = streetField.getText();
 		String streetNr = streetNrField.getText();
 		int zipcode = Integer.parseInt(zipCodeField.getText());
+        String department = departmentComboBox.getValue().toString();
 		
 		User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode,new Department(
                 3, //@todo department id
@@ -200,7 +212,7 @@ public class Controller {
 		this.gui.getConcept().upsertUser(newUser);
 		
 		//create a nice Message of Action
-		this.setSuccedMessage(newUser + " erfolgreich" + (isNew ?  " bearbeitet" : " erfolgreich als User hinzugefügt"));
+		this.setSuccedMessage(newUser + " erfolgreich" + (isNew ?  " bearbeitet" : " als User hinzugefügt"));
 		
 		this.searchInTable();
 		
@@ -255,6 +267,7 @@ public class Controller {
 				streetField.setText(newValue.getStreet());
 				streetNrField.setText(newValue.getStreetnr());
 				birthdayField.setValue(newValue.getBirthday());
+                departmentComboBox.setValue(newValue.getDepartment());
 				isNewSelection = false;
 				serviceTown = false;
 			}
@@ -323,18 +336,19 @@ public class Controller {
 	 */
 	private void bindingOfControls() {
 		//Breiten Binding der Columns an die Breite des Fensters
-				firstnmaeColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
-				lastnameColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
-				cityColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
-				streetColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
-				streetNrColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
-				birthdayColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
-				zipcodeColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.14));
+				firstnmaeColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
+				lastnameColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
+				cityColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
+				streetColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
+				streetNrColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
+				birthdayColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
+				zipcodeColumn.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.12));
 				
 				//Breiten Binding der TextFields an die Breite des Fensters
 				firstnameField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
 				lastnameField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
 				birthdayField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
+                departmentComboBox.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
 				
 				cityField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.25));
 				zipCodeField.prefWidthProperty().bind(customerTable.widthProperty().multiply(0.15));
@@ -437,6 +451,16 @@ public class Controller {
 		streetNrField.textProperty().addListener(textListener);
 		zipCodeField.textProperty().addListener(plzListener);
 		birthdayField.valueProperty().addListener(dateListener);
+        departmentComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            changeButton.setDisable(true);
+            if(oldValue != null)
+                if(		isAllFieldsFillt() &&
+                        !newValue.equals(null) &&
+                        !oldValue.equals(newValue) &&
+                        !isNewSelection)
+    
+                    changeButton.setDisable(false);
+        });
 	}
 	
 	/**

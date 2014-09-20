@@ -14,6 +14,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.control.CheckMenuItem?>
 
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <BorderPane fx:controller="de.oszimt.ui.Controller" xmlns:fx="http://javafx.com/fxml">
     <!-- !!!!!!!!!!!!!!!!!!! Menubar !!!!!!!!!!-->
     <top>
@@ -56,8 +58,25 @@
 								<TextField  promptText="Vorname" fx:id="firstnameField" onAction="#changeButtonAction"/>
 								<TextField  promptText="Nachname" fx:id="lastnameField"	onAction="#changeButtonAction"/>
 							</HBox>
-							<HBox >
+							<HBox spacing="5">
 								<DatePicker fx:id="birthdayField" editable="false" promptText="Geburtstag"/>
+                                <ComboBox fx:id="departmentComboBox" promptText="Abteilung">
+                                    <!-- TODO nur für Testzwecke, wieder entfernen wenn ich aus dem Controller zugriff auf das Concept habe -->
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="Fahrer" />
+                                            <String fx:value="Lager" />
+                                            <String fx:value="Rechnungsabteilung" />
+                                            <String fx:value="Marketing" />
+                                            <String fx:value="Verkauf" />
+                                            <String fx:value="Geschäftsführung" />
+                                            <String fx:value="Entwicklung" />
+                                            <String fx:value="Logistik" />
+                                            <String fx:value="Kundenservice" />
+                                            <String fx:value="Projektmanagement" />
+                                        </FXCollections>
+                                    </items>
+                                </ComboBox>
 							</HBox>		
 							<HBox>
 								<padding>
