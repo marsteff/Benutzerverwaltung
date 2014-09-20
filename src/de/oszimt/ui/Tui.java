@@ -85,7 +85,7 @@ public class Tui {
         //hole den aktuellen StackTrace
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
-        User user = searchAndPrintUserStats(stack[1].getMethodName());
+        User user = searchAndPrintUserStats(stack[1].getMethodName(), false);
 
         //Soll nach einem weiteren Benutzer gesucht werden ?
         if(checkInputForYesOrNo("Nach weiterem Benutzer suchen ? (j/n)")) {
@@ -103,7 +103,7 @@ public class Tui {
         //hole den aktuellen StackTrace
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
-        User user = searchAndPrintUserStats(stack[1].getMethodName());
+        User user = searchAndPrintUserStats(stack[1].getMethodName(), false);
 
         //Soll der Benutzer wirklich gelöscht werden ?
         if(checkInputForYesOrNo("Benutzer wirklich löschen ? (j/n)")) {
@@ -155,7 +155,7 @@ public class Tui {
      * @param methodName
      * @return
      */
-    private User searchAndPrintUserStats(String methodName){
+    private User searchAndPrintUserStats(String methodName, boolean editMenu){
         //hole Methode um über Reflection diese aufrufen zu können
         Method method = null;
         try {
@@ -194,11 +194,11 @@ public class Tui {
             }
             return null;
         }
-        writeUserStats(user);
+        writeUserStats(user, editMenu);
         return user;
     }
 
-    private void writeUserStats(User user){
+    private void writeUserStats(User user, boolean editMenu){
         String[] entrys = { "Vorname",
                             "Nachname",
                             "Geburtstag",
@@ -209,13 +209,22 @@ public class Tui {
                             "Abteilung"};
 
         String[] params = getUserParameter(user);
-        int max = getMaxEntry(entrys);
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
-            for (int j = 0; j < max - entrys[i].length() + 2; j++) {
-                print(" ");
+            printWhitespace(entrys, i);
+            print(": " + params[i]);
+            if(editMenu) {
+                printWhitespace(params, i);
+                print("(" + i + 1 + ")");
             }
-            println(": " + params[i]);
+            println("");
+        }
+    }
+
+    private void printWhitespace(String[] array, int iteratorIndex){
+        int maxLength = getMaxEntry(array);
+        for (int j = 0; j < maxLength - array[iteratorIndex].length() + 2; j++) {
+            print(" ");
         }
     }
 
@@ -245,28 +254,6 @@ public class Tui {
         for(int i = 0; i < length; i++)print(BLACK, " ");
         println("*");
         println("*****************************************");
-    }
-
-    /**
-     *  Liest eine Benutzereingabe ein, und gibt im Fehlerfall gleich eine Fehlermeldung aus (z. B. wenn die Auswahl ausserhalb des Bereiches liegt
-     * @param length gibt die Anzahl der Menüpunkte an
-     * @return -1 im Fehlerfall, ansonsten die eingegebene Zahl
-     */
-    private byte readInput(int length){
-        Scanner scan = new Scanner(System.in);
-        byte choice = 0;
-        try {
-            choice = scan.nextByte();
-        } catch(InputMismatchException e){
-            return -1;
-        }
-//        if(choice > length || choice < 1) {
-//            printWrongEntryErrorMessage(length);
-//            sleep(2000);
-//            showMainMenu();
-//            return -1;
-//        }
-        return choice;
     }
 
     /**
