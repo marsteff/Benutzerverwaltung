@@ -72,9 +72,14 @@ public class Concept implements IConcept {
         return this.database.getAllUser();
     }
 
-    //TODO implement method
+    //TODO implement method - for now only for test purposes
     @Override
     public User getUser(int id) {
+        List<User> list = this.getAllUser();
+        for (int i = 0; i < list.size(); i++) {
+            if(list.get(i).getId() == id)
+                return list.get(i);
+        }
         return null;
     }
 
