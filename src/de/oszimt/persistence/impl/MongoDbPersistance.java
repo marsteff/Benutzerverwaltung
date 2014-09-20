@@ -218,7 +218,7 @@ public class MongoDbPersistance implements IPersistance{
     }
 
     @Override
-    public void createDepartment(Map<String,Object> dep){
+    public void createDepartment(String name){
         DBCollection coll = this.getCollection("Departments");
         DBCursor cursor = coll.find().sort(new BasicDBObject(
                 this.getKeyDepartmentId(), -1));
@@ -231,7 +231,9 @@ public class MongoDbPersistance implements IPersistance{
             nextId++;
         }
 
+        Map<String,Object> dep = new HashMap<String,Object>();
         dep.put(this.getKeyDepartmentId(), nextId);
+        dep.put(this.getKeyDepartmentName(), name);
 
         BasicDBObject doc = this.departmentToBasicDBObject(dep);
         coll.insert(doc);
@@ -247,7 +249,7 @@ public class MongoDbPersistance implements IPersistance{
     }
 
     @Override
-    public void remoteDepartment(int id){
+    public void removeDepartment(int id){
         DBCollection coll = this.getCollection("Departments");
         DBObject doc = coll.findOne(new BasicDBObject(
                 this.getKeyDepartmentId(),id));

@@ -6,8 +6,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
@@ -119,8 +121,8 @@ public class SQLitePersistance implements IPersistance {
                             this.getKeyUserDepartmentId() + " INTEGER NOT NULL)";
 
         String Department_sql = "CREATE TABLE IF NOT EXISTS Department " +
-                            "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                            "name TEXT NOT NULL)";
+                            "(" +   this.getKeyDepartmentId() + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                                    this.getKeyDepartmentName() + " TEXT NOT NULL)";
         this.dbUpdate(User_sql);
         this.dbUpdate(Department_sql);
 
@@ -128,35 +130,26 @@ public class SQLitePersistance implements IPersistance {
 
     @Override
 	public void upsertUser(Map<String, Object> user) {
-		if(existCustomer(user))
+		if(existCustomer((int)user.get(this.getKeyUserId())))
 			update(user);
 		else
 			createUser(user);
 
 	}
 
-    @Override
-    public void deleteUser(int id) {
 
-    }
-
-    @Override
-    public void createUser(Map<String, Object> user) {
-
-    }
-
-    private void update(User user) {
+    private void update(Map<String, Object> user) {
 
         this.dbUpdate("UPDATE User set " +
-                "first_name 		= '" + user.getFirstname() + "', " +
-                "last_name		= '" + user.getLastname() + "', " +
-                "city 			= '" + user.getCity() + "', " +
-                "street 		= '" + user.getStreet() + "', " +
-                "street_nr  	= '" + user.getStreetnr() + "', " +
-                "zip_code 		= " + user.getZipcode() + ", " +
-                "birthday		= '" + user.getBirthday() + "'," +
-                " department_id = '"+user.getDepartmentId()+"'" +
-                "WHERE id = " + user.getId());
+                "first_name 		= '" + user.get(this.getKeyUserFirstname()) + "', " +
+                "last_name		= '" + user.get(this.getKeyUserLastname()) + "', " +
+                "city 			= '" + user.get(this.getKeyUserCity()) + "', " +
+                "street 		= '" + user.get(this.getKeyUserStreet()) + "', " +
+                "street_nr  	= '" + user.get(this.getKeyUserStreetNr()) + "', " +
+                "zip_code 		= " + user.get(this.getKeyUserZipCode()) + ", " +
+                "birthday		= '" + user.get(this.getKeyUserBirthday()) + "'," +
+                " department_id = '"+user.get(this.getKeyUserDepartmentId())+"'" +
+                "WHERE id = " + user.get(this.getKeyUserId()));
 
 	}
 
@@ -178,27 +171,33 @@ public class SQLitePersistance implements IPersistance {
     }
 
     @Override
-    public void deleteUser(User user) {
-        this.dbUpdate("DELETE FROM User WHERE id = " + user.getId());
+    public void deleteUser(int id) {
+        this.dbUpdate("DELETE FROM User WHERE id = " + id);
     }
 
-    public void createDepartment(Department dep){
-        this.dbUpdate("INSERT INTO Department (name) VALUES ('"+dep.getName()+"')");
+    public void createDepartment(String name){
+        this.dbUpdate("INSERT INTO Department (name) VALUES ('"+name+"')");
     }
 
-    public void updateDepartment(Department dep){
-        this.dbUpdate("UPDATE Department SET name = '"+dep.getName()+"'" +
-                       "WHERE id = id = '"+dep.getId()+"'");
+    @Override
+    public void updateDepartment(Map<String,Object> dep){
+        this.dbUpdate("UPDATE Department SET name = '" +
+                        dep.get(this.getKeyDepartmentName()) +
+                        "' WHERE id = id = '" + dep.get(this.getKeyDepartmentId()) +
+                        "'"
+        );
     }
 
-    public void remoteDepartment(Department dep){
-        this.dbUpdate("DELETE FROM Department WHERE id = id = '"+dep.getId()+"'");
+    @Override
+    public void removeDepartment(int id){
+        this.dbUpdate("DELETE FROM Department WHERE id = id = '" + id + "'");
     }
 
-    public List<Department> getAllDepartments(){
-        List<Department> list = new ArrayList<Department>();
+    @Override
+    public List<Map<String,Object>> getAllDepartments(){
+        List<Map<String,Object>> list = new ArrayList<Map<String, Object>>();
 
-        Connection con = obj.getConnection();
+        Connection con = this.getConnection();
         Statement stmt = null;
 
         try{
@@ -209,11 +208,9 @@ public class SQLitePersistance implements IPersistance {
             ResultSet rs = stmt.executeQuery(sql);
 
             while(rs.next()){
-                Department dep = new Department(
-                        rs.getInt("id"),
-                        rs.getString("name")
-                );
-
+                Map<String,Object> dep = new HashMap<String, Object>();
+                dep.put(this.getKeyDepartmentId(),rs.getInt(this.getKeyDepartmentId()));
+                dep.put(this.getKeyDepartmentName(),rs.getString(this.getKeyDepartmentName()));
                 list.add(dep);
             }
             rs.close();
@@ -227,17 +224,17 @@ public class SQLitePersistance implements IPersistance {
     }
 
 	@Override
-	public void createUser(User user) {
+	public void createUser(Map<String,Object> user) {
 			
 	    this.dbUpdate("INSERT INTO User (first_name,last_name,city,street,street_nr,zip_code,birthday,department_id)" +
-					 "VALUES (	'" + user.getFirstname() + "', " +
-									"'" + user.getLastname() + "', " +
-									"'" + user.getCity() + "', " +
-									"'" + user.getStreet() + "', " +
-									"'" + user.getStreetnr() + "', " +
-									"'" + user.getZipcode() + "', " +
-									"'" + user.getBirthday() + "'," +
-                                    "'" + user.getDepartmentId()+"');");
+					 "VALUES (	'" + user.get(this.getKeyUserFirstname()) + "', " +
+									"'" + user.get(this.getKeyUserLastname()) + "', " +
+									"'" + user.get(this.getKeyUserCity()) + "', " +
+									"'" + user.get(this.getKeyUserStreet()) + "', " +
+									"'" + user.get(this.getKeyUserStreetNr()) + "', " +
+									"'" + user.get(this.getKeyUserZipCode()) + "', " +
+									"'" + user.get(this.getKeyUserBirthday()) + "'," +
+                                    "'" + user.get(this.getKeyDepartmentId())+"');");
 	}
 	
 	public boolean existCustomer(int id){
@@ -269,27 +266,39 @@ public class SQLitePersistance implements IPersistance {
 	}
 
 	@Override
-	public List<User> getAllUser() {
-		List<User> list = new ArrayList<User>();
+	public List<Map<String ,Object>> getAllUser() {
+		List<Map<String ,Object>> list = new ArrayList<Map<String ,Object>>();
         String sql = "";
-		Connection con = obj.getConnection();
+		Connection con = this.getConnection();
 		Statement stmt = null;
 		
 		try{
 			
 			stmt = con.createStatement();
 			sql = "SELECT " +
-                    "User.id, User.first_name,User.last_name,User.city,User.street, " +
-                    "User.street_nr, User.zip_code,User.birthday,Department.id as department_id, " +
-                    "Department.name as department_name " +
+                    "User." + this.getKeyUserId() + ", " +
+                    "User." + this.getKeyUserFirstname() + ", " +
+                    "User." + this.getKeyUserLastname() + ", " +
+                    "User." + this.getKeyUserCity() + ", " +
+                    "User." + this.getKeyUserStreet() + ", " +
+                    "User." + this.getKeyUserStreetNr() + ", " +
+                    "User." + this.getKeyUserZipCode() + ", " +
+                    "User." + this.getKeyUserBirthday() + ", " +
+                    "Department." + this.getKeyDepartmentId() + " as " + this.getKeyUserDepartmentId() + ", " +
+                    "Department." + this.getKeyDepartmentName() + " as " + this.getKeyDepartmentName() + " " +
                     "FROM User " +
-                    "LEFT JOIN Department ON User.department_id = Department.id;";
+                    "LEFT JOIN Department ON User." + this.getKeyUserDepartmentId() +
+                    " = Department." + this.getKeyDepartmentId() + ";";
 			
 			ResultSet rs = stmt.executeQuery(sql);
 			
 			while(rs.next()){
+                Map<String, Object> user = new HashMap<String, Object>();
+                user.put(this.getKeyUserFirstname(),rs.getString("first_name"));
+                //@todo go on
+
 				User u = new User(
-                        rs.getString("first_name"),
+                        rs.getString(""),
                         rs.getString("last_name"),
                         LocalDate.parse(rs.getString("birthday")),
                         rs.getString("city"),
@@ -313,22 +322,6 @@ public class SQLitePersistance implements IPersistance {
 		}
 		return list;
 	}
-
-    @Override
-    public void createDepartment(Map<String, Object> dep) {
-
-    }
-
-    @Override
-    public void updateDepartment(Map<String, Object> dep) {
-
-    }
-
-    @Override
-    public void remoteDepartment(int id) {
-
-    }
-
     @Override
     public Map<String, Object> getUserById(int id) {
         return null;

@@ -19,9 +19,9 @@ public interface IPersistance {
 	void deleteUser(int id);
 	void createUser(Map<String,Object> user);
 	List<Map<String,Object>> getAllUser();
-    void createDepartment(Map<String,Object> dep);
+    void createDepartment(String name);
     void updateDepartment(Map<String,Object> dep);
-    void remoteDepartment(int id);
+    void removeDepartment(int id);
     Map<String,Object> getUserById(int id);
     List<Map<String,Object>> getAllDepartments();
 
