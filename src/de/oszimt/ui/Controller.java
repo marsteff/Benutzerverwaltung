@@ -172,7 +172,7 @@ public class Controller {
         /*
          * @todo ist es möglich den user hier mit der korrekten id zu bekommen??
          *    ansonsten funktioniert das delete nicht da nicht eindeutig ermittelt
-         *    werden kann welcher User gelöscht werden soll
+         *    werden kann welcher User gelöscht werden soll!
          */
         this.gui.getConcept().deleteUser(user);
 		searchInTable();
