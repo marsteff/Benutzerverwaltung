@@ -31,6 +31,9 @@ public class Concept implements IConcept {
 
     @Override
     public boolean deleteUser(User user){
+
+
+
         this.database.deleteUser(user.getId());
         return true;
     }
