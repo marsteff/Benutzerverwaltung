@@ -155,7 +155,7 @@ public class Tui {
                 user.setLastname(value);
                 break;
 
-            //Geburtstag 
+            //Geburtstag
             case 3:
                 LocalDate date = null;
                 do {
@@ -236,6 +236,34 @@ public class Tui {
         showMainMenu();
     }
 
+    private void deleteUser() {
+        //hole den aktuellen StackTrace
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
+        User user = searchAndPrintUserStats(stack[1].getMethodName(), false);
+
+        //Soll der Benutzer wirklich gelöscht werden ?
+        if(checkInputForYesOrNo("Benutzer wirklich löschen ? (j/n)")) {
+            concept.deleteUser(user);
+        }
+
+        //Soll ein weiterer Benutzer gelöscht werden ?
+        if(checkInputForYesOrNo("Weiteren Benutzer loeschen ? (j/n)")) {
+            this.deleteUser();
+            return;
+        }
+        showMainMenu();
+    }
+
+    private void searchUser(User user) {
+        User searchUser = user;
+        
+    }
+
+    private void showAllUsers() {
+
+    }
+
     private int buildDepartmentView(String[] departmentArray, int input) {
 
         //Aufbauen der Struktur
@@ -266,33 +294,6 @@ public class Tui {
             }
             println(RED, "Der Wert muss zwischen " + min + " und " + max + " liegen");
         } while (true);
-    }
-
-    private void deleteUser() {
-        //hole den aktuellen StackTrace
-        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-        //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
-        User user = searchAndPrintUserStats(stack[1].getMethodName(), false);
-
-        //Soll der Benutzer wirklich gelöscht werden ?
-        if(checkInputForYesOrNo("Benutzer wirklich löschen ? (j/n)")) {
-            concept.deleteUser(user);
-        }
-
-        //Soll ein weiterer Benutzer gelöscht werden ?
-        if(checkInputForYesOrNo("Weiteren Benutzer loeschen ? (j/n)")) {
-            this.deleteUser();
-            return;
-        }
-        showMainMenu();
-    }
-
-    private void searchUser() {
-
-    }
-
-    private void showAllUsers() {
-
     }
 
     /**
