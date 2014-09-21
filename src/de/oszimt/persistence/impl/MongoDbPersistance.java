@@ -222,7 +222,7 @@ public class MongoDbPersistance implements IPersistance{
         DBCollection coll = this.getCollection("Departments");
         DBCursor cursor = coll.find().sort(new BasicDBObject(
                 this.getKeyDepartmentId(), -1));
-        int nextId = 0;
+        int nextId = 1;
 
         if(cursor.count() > 0){
             nextId = Integer.parseInt(cursor.next().toMap().get(
