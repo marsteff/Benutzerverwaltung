@@ -8,7 +8,9 @@ import de.oszimt.util.Util;
 
 import javafx.collections.ObservableList;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class Concept implements IConcept {
 
@@ -26,8 +28,42 @@ public class Concept implements IConcept {
 
     @Override
     public boolean deleteUser(User user){
-        this.database.deleteUser(user);
+        this.database.deleteUser(user.getId());
         return true;
+    }
+
+    private User userMapToUser(Map<String,Object> userMap){
+        IPersistance keys = this.database;
+        return new User(
+                userMap.containsKey(keys.getKeyUserFirstname()) ? userMap.get(keys.getKeyUserFirstname()).toString() : null,
+                userMap.containsKey(keys.getKeyUserLastname()) ? userMap.get(keys.getKeyUserLastname()).toString() : null,
+                userMap.containsKey(keys.getKeyUserBirthday()) ? (LocalDate) userMap.get(keys.getKeyUserBirthday()) : null,
+                userMap.containsKey(keys.getKeyUserCity()) ? userMap.get(keys.getKeyUserCity()).toString() : null,
+                userMap.containsKey(keys.getKeyUserStreet()) ? userMap.get(keys.getKeyUserStreet()).toString() : null,
+                userMap.containsKey(keys.getKeyUserStreetNr()) ? userMap.get(keys.getKeyUserStreetNr()).toString() : null,
+                userMap.containsKey(keys.getKeyUserZipCode()) ? (int) userMap.get(keys.getKeyUserZipCode()) : null,
+                new Department(
+                        (int) ((Map) userMap.get(keys.getKeyUserDepartment())).get(keys.getKeyDepartmentId()),
+                        ((Map) userMap.get(keys.getKeyUserDepartment())).get(keys.getKeyDepartmentName()).toString()
+                )
+        );
+    }
+
+    private Map<String,Object> userToUserMap(User user){
+        IPersistance keys = this.database;
+        return new User(
+                userMap.containsKey(keys.getKeyUserFirstname()) ? userMap.get(keys.getKeyUserFirstname()).toString() : null,
+                userMap.containsKey(keys.getKeyUserLastname()) ? userMap.get(keys.getKeyUserLastname()).toString() : null,
+                userMap.containsKey(keys.getKeyUserBirthday()) ? (LocalDate) userMap.get(keys.getKeyUserBirthday()) : null,
+                userMap.containsKey(keys.getKeyUserCity()) ? userMap.get(keys.getKeyUserCity()).toString() : null,
+                userMap.containsKey(keys.getKeyUserStreet()) ? userMap.get(keys.getKeyUserStreet()).toString() : null,
+                userMap.containsKey(keys.getKeyUserStreetNr()) ? userMap.get(keys.getKeyUserStreetNr()).toString() : null,
+                userMap.containsKey(keys.getKeyUserZipCode()) ? (int) userMap.get(keys.getKeyUserZipCode()) : null,
+                new Department(
+                        (int) ((Map) userMap.get(keys.getKeyUserDepartment())).get(keys.getKeyDepartmentId()),
+                        ((Map) userMap.get(keys.getKeyUserDepartment())).get(keys.getKeyDepartmentName()).toString()
+                )
+        );
     }
 
     @Override
