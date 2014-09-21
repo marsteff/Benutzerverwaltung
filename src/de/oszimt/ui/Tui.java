@@ -2,6 +2,7 @@ package de.oszimt.ui;
 
 import de.oszimt.concept.iface.IConcept;
 
+import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import org.fusesource.jansi.AnsiConsole;
 
@@ -10,6 +11,7 @@ import java.lang.reflect.Method;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 import static org.fusesource.jansi.Ansi.*;
@@ -110,10 +112,19 @@ public class Tui {
         //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
         User user = searchAndPrintUserStats(stack[1].getMethodName(), true);
 
+        buildEditUser(user, true, false);
+    }
+
+    private void buildEditUser(User user, boolean editMenu, boolean print) {
+        if (print) {
+            writeUserStats(user, editMenu);
+        }
+
         int input = 0;
-        do{
+        do {
             println("");
             print("Welches Attribut soll bearbeitet werden ? (1-" + entrys.length + "): ");
+            println("");
 
             //einlesen des Input´s
             input = readInt();
@@ -124,20 +135,11 @@ public class Tui {
                 break;
             }
             println(RED, "Falsche Eingabe");
-            }while (true);
+        } while (true);
 
-
-//        if(input == -1 || input > entrys.length || input < 1) {
-//            printWrongEntryErrorMessage(6);
-//            sleep(1500);
-//            editUser();
-//            return;
-//        }
-
-//        print("Neuer Wert für " + entrys[input-1] + ": ");
         String value = null;
         //Prüfung, welches Menue aufgerufen werden soll
-        switch (input){
+        switch (input) {
 
             //Vorname
             case 1:
@@ -148,23 +150,24 @@ public class Tui {
 
             //Nachname
             case 2:
-                print("Neuen Wert fuer " + entrys[input-1] + " eingeben: ");
+                print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
                 value = readString();
                 user.setLastname(value);
                 break;
 
-            //Geburtstag TODO
+            //Geburtstag 
             case 3:
                 LocalDate date = null;
                 do {
                     println("Neuen Geburtstag eingeben ");
                     int day = determineBirthday("Tag", 0, 31);
-                    int month = determineBirthday("Monat",0, 12);
+                    int month = determineBirthday("Monat", 0, 12);
                     int year = determineBirthday("Jahr", 1900, LocalDate.now().getYear());
                     String birthdayString = year + "-" + month + "-" + day;
                     try {
                         date = LocalDate.of(year, month, day);
-                    } catch (DateTimeException e) { }
+                    } catch (DateTimeException e) {
+                    }
                     if (date != null) {
                         break;
                     }
@@ -176,7 +179,7 @@ public class Tui {
 
             //Stadt
             case 4:
-                print("Neuen Wert fuer " + entrys[input-1] + " eingeben: ");
+                print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
                 value = readString();
                 user.setCity(value);
                 break;
@@ -190,34 +193,67 @@ public class Tui {
 
             //Strasse
             case 6:
-                print("Neuen Wert fuer " + entrys[input-1] + " eingeben: ");
+                print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
                 value = readString();
                 user.setStreet(value);
                 break;
 
             //Stassen-Nummer
             case 7:
-                print("Neuen Wert fuer " + entrys[input-1] + " eingeben: ");
+                print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
                 value = readString();
                 user.setStreetnr(value);
                 break;
 
             //Abteilung
             case 8:
-                print("Neuen Wert fuer " + entrys[input-1] + " eingeben: ");
-                value = readString();
-                user.setLastname(value);
+                List<Department> departmentList = concept.getAllDepartments();
+                String[] departmentArray = new String[departmentList.size()];
+
+                for (int i = 0; i < departmentArray.length; i++) {
+                    departmentArray[i] = toAscii(departmentList.get(i).getName());
+                }
+
+                int departmentValue = buildDepartmentView(departmentArray, input);
+                user.setDepartment(departmentList.get(departmentValue - 1));
                 break;
 
         }
         concept.upsertUser(user);
 
+        //weitere Attribute bearbeiten ?
+        if (checkInputForYesOrNo("Weitere Attribute bearbeiten ? (j/n)")) {
+            println("");
+            buildEditUser(user, editMenu, true);
+            return;
+        }
+
         //Soll nach ein weiterer Benutzer bearbeitet werden ?
-        if(checkInputForYesOrNo("Weiteren Benutzer bearbeiten ? (j/n)")) {
+        if (checkInputForYesOrNo("Weiteren Benutzer bearbeiten ? (j/n)")) {
             editUser();
             return;
         }
         showMainMenu();
+    }
+
+    private int buildDepartmentView(String[] departmentArray, int input) {
+
+        //Aufbauen der Struktur
+        for (int i = 0; i < departmentArray.length; i++) {
+            print(departmentArray[i]);
+            printWhitespace(departmentArray, i);
+            println("(" + (i + 1) + ")");
+        }
+        int departmentValue = 0;
+        do {
+            print("Neuen Wert fuer " + entrys[input-1] + " eingeben: ");
+            departmentValue = readInt();
+            if (departmentValue > 0 && departmentValue <= departmentArray.length) {
+                break;
+            }
+            println(RED, "Eingabe nicht gültig. Wert muss zwischen 1 und " + departmentArray.length + " liegen");
+        } while (true);
+        return departmentValue;
     }
 
     private int determineBirthday(String text, int min, int max) {
@@ -285,8 +321,8 @@ public class Tui {
     /**
      * Schreibt die Benutzer Informationen in die Konsole. Da Dies in mehreren Methoden benutzt wird und dieses
      * sich selbst wieder aufrufen, wird mit Hilfe von Reflection gearbeit, um dieses dynamisch gestalten zu können
-     * @param methodName
-     * @return
+     * @param methodName Methodenname der aufgerufen wird
+     * @return den User zu der eingegebenen ID
      */
     private User searchAndPrintUserStats(String methodName, boolean editMenu){
         //hole Methode um über Reflection diese aufrufen zu können
@@ -299,8 +335,9 @@ public class Tui {
 
         clean();
         writeHeader(2);
-        println("Benutzer ID eingeben: ");
+        print("Benutzer ID eingeben: ");
         int id = readInt();
+        println("");
 
         User user = null;
         try {
