@@ -35,8 +35,6 @@ public class User {
         this.department_id = department.getId();
 	}
 
-    public User(){}
-
 	public int getId() {
 		return id;
 	}

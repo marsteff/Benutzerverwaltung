@@ -10,9 +10,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
@@ -31,7 +33,7 @@ public class Tui {
                                 "Stadt",
                                 "Postleitzahl",
                                 "Strasse",
-                                "Strassen-Nummer",
+                                "Strassennr.",
                                 "Abteilung"};
 
     public Tui(IConcept concept){
@@ -58,7 +60,7 @@ public class Tui {
         //Aufbauen des Menue´s
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
-            printWhitespace(entrys, i);
+            printWhitespace(entrys, i, 2);
             println("(" + (i + 1) + ")");
         }
         println("");
@@ -83,13 +85,17 @@ public class Tui {
                     return;
             case 3: deleteUser();
                     return;
-            case 4: searchUser();
+            case 4: searchUser(createDummyUser());
                     return;
             case 5: showAllUsers();
                     return;
             case 6: System.exit(0);
 
         }
+    }
+
+    private User createDummyUser(){
+        return new User("", "", null, "", "", "", 0, null);
     }
 
     private void showUser() {
@@ -257,11 +263,171 @@ public class Tui {
 
     private void searchUser(User user) {
         User searchUser = user;
-        
+
+        String[] params = userParameterToArray(user);
+        for (int i = 0; i < entrys.length; i++) {
+            print(entrys[i]);
+            printWhitespace(entrys, i, 2);
+            print(": " + params[i]);
+            printWhitespace(params, i, 2);
+            print("(" + (i + 1) + ")");
+
+            println("");
+        }
+
+        //TODO weiter kapseln
+        int input = 0;
+        do {
+            println("");
+            print("Welches Attribut zur Suche hinzufügen ? (1-" + entrys.length + "): ");
+            println("");
+
+            //einlesen des Input´s
+            input = readInt();
+
+            //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
+
+            if (input > 0 && input <= entrys.length) {
+                break;
+            }
+            println(RED, "Falsche Eingabe");
+        } while (true);
+
+        String value;
+        //Prüfung, welches Menue aufgerufen werden soll
+        switch (input) {
+
+            //Vorname
+            case 1:
+                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setFirstname(value);
+                break;
+
+            //Nachname
+            case 2:
+                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setLastname(value);
+                break;
+
+            //Geburtstag
+            case 3:
+                LocalDate date = null;
+                do {
+                    println("Geburtstag eingeben ");
+                    int day = determineBirthday("Tag", 0, 31);
+                    int month = determineBirthday("Monat", 0, 12);
+                    int year = determineBirthday("Jahr", 1900, LocalDate.now().getYear());
+                    String birthdayString = year + "-" + month + "-" + day;
+                    try {
+                        date = LocalDate.of(year, month, day);
+                    } catch (DateTimeException e) {
+                    }
+                    if (date != null) {
+                        break;
+                    }
+                    println(RED, "Das Datum ist nicht gültig");
+                } while (true);
+
+                user.setBirthday(date);
+                break;
+
+            //Stadt
+            case 4:
+                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setCity(value);
+                break;
+
+            //PLZ
+            case 5:
+                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setPLZ(Integer.parseInt(value));
+                break;
+
+            //Strasse
+            case 6:
+                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setStreet(value);
+                break;
+
+            //Stassen-Nummer
+            case 7:
+                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setStreetnr(value);
+                break;
+
+            //Abteilung
+            case 8:
+                List<Department> departmentList = concept.getAllDepartments();
+                String[] departmentArray = new String[departmentList.size()];
+
+                for (int i = 0; i < departmentArray.length; i++) {
+                    departmentArray[i] = toAscii(departmentList.get(i).getName());
+                }
+
+                int departmentValue = buildDepartmentView(departmentArray, input);
+                user.setDepartment(departmentList.get(departmentValue - 1));
+                break;
+
+        }
+
+        //weitere Attribute zur Suche hinzufügen ?
+        if (checkInputForYesOrNo("Weitere Attribute zur Suche hinzufügen ? (j/n)")) {
+            println("");
+            searchUser(user);
+            return;
+        }
+
+
+
+    }
+
+    private void buildTable(List<User> userList) {
+        userList.stream().max(Comparator.comparing(e -> e.getFirstname().length())).get();
+
+        //TODO Erster Versuch mit starren breiten
+        for (int i = 0; i < entrys.length; i++) {
+            print(entrys[i]);
+            printWhitespace(entrys, i, 1);
+            print("|");
+        }
+        println("");
+        print("------------------------------------------------------------------------");
+    }
+
+    /**
+     * Durchsucht alle Benutzer nach den Attributen von dem übergebenen User Objekt und gibt das Ergebnis als Liste zurück
+     * @param user das User Objekt mit den zu durchsuchenden Attributen
+     * @return Ergebnisliste
+     */
+    private List<User> searchUsers(User user) {
+        List<User> userList = concept.getAllUser();
+        List<User> filteredUsers;
+        //Filtert nach allen Scuhkriterien und gibt diesen als Liste zurück
+        filteredUsers = userList.stream()
+                                .filter(e -> {
+                                    if(     e.getFirstname().toLowerCase().equals(user.getFirstname()) ||
+                                            e.getLastname().toLowerCase().equals(user.getLastname()) ||
+                                            e.getBirthday().equals(user.getBirthday()) ||
+                                            e.getZipcode() == user.getZipcode() ||
+                                            e.getCity().toLowerCase().equals(user.getCity()) ||
+                                            e.getStreet().toLowerCase().equals(user.getStreet()) ||
+                                            e.getStreetnr().toLowerCase().equals(user.getStreetnr()) ||
+                                            e.getDepartmentId() == user.getDepartmentId() )
+                                        return true;
+                                    return false;
+                                })
+                                .collect(Collectors.toList());
+        return filteredUsers;
     }
 
     private void showAllUsers() {
-
+        buildTable(concept.getAllUser());
     }
 
     private int buildDepartmentView(String[] departmentArray, int input) {
@@ -269,7 +435,7 @@ public class Tui {
         //Aufbauen der Struktur
         for (int i = 0; i < departmentArray.length; i++) {
             print(departmentArray[i]);
-            printWhitespace(departmentArray, i);
+            printWhitespace(departmentArray, i, 2);
             println("(" + (i + 1) + ")");
         }
         int departmentValue = 0;
@@ -379,10 +545,10 @@ public class Tui {
         String[] params = userParameterToArray(user);
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
-            printWhitespace(entrys, i);
+            printWhitespace(entrys, i, 2);
             print(": " + params[i]);
             if(editMenu) {
-                printWhitespace(params, i);
+                printWhitespace(params, i, 2);
                 print("(" + (i + 1) + ")");
             }
             println("");
@@ -394,9 +560,9 @@ public class Tui {
      * @param array Das Array mit den Werten, an denen die Abstände angepasst werden sollen
      * @param iteratorIndex Iterator der eigentlichen Aufzählung
      */
-    private void printWhitespace(String[] array, int iteratorIndex){
+    private void printWhitespace(String[] array, int iteratorIndex, int spacing){
         int maxLength = getMaxEntry(array);
-        for (int j = 0; j < maxLength - array[iteratorIndex].length() + 2; j++) {
+        for (int j = 0; j < maxLength - array[iteratorIndex].length() + spacing; j++) {
             print(" ");
         }
     }
@@ -414,12 +580,12 @@ public class Tui {
         String[] params = new String[8];
         params[0] = toAscii(user.getFirstname());
         params[1] = toAscii(user.getLastname());
-        params[2] = toAscii(user.getBirthday().toString());
+        params[2] = toAscii(user.getBirthday() != null ? user.getBirthday().toString() : "");
         params[3] = toAscii(user.getCity());
-        params[4] = toAscii(new String(user.getZipcode() + ""));
+        params[4] = toAscii(user.getZipcode() != 0 ? new String(user.getZipcode() + "") : "");
         params[5] = toAscii(user.getStreet());
         params[6] = toAscii(user.getStreetnr());
-        params[7] = toAscii(user.getDepartment().getName());
+        params[7] = toAscii(user.getDepartment() != null ? user.getDepartment().getName() : "");
 
         return params;
     }
