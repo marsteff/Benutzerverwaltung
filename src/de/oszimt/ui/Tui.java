@@ -394,10 +394,44 @@ public class Tui {
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
             printWhitespace(entrys, i, 1);
-            print("|");
+            if(i != entrys.length - 1) {
+                print("|");
+            }
         }
         println("");
-        print("------------------------------------------------------------------------");
+        int max = getMaxEntry(entrys);
+        for (int i = 0; i < (max * entrys.length) + (entrys.length * 2); i++) {
+            print("-");
+        }
+        println("");
+        for (int i = 0; i < userList.size(); i++) {
+            printUserInTable(userList.get(i));
+        }
+    }
+
+    private void printUserInTable(User user) {
+        String[] userParams = userParameterToArray(user);
+        int maxLength = getMaxEntry(entrys);
+        for (int i = 0; i < entrys.length; i++) {
+            if(userParams[i].length() >= maxLength) {
+                userParams[i] = cutStringForList(userParams[i], maxLength);
+            }
+            print(userParams[i]);
+
+            //TODO modify printWhitespace later
+            for (int j = 0; j < maxLength - userParams[i].length() + 1; j++) {
+                print(" ");
+            }
+
+            if (i != entrys.length - 1) {
+                print("|");
+            }
+        }
+        println("");
+    }
+
+    private String cutStringForList(String text, int max) {
+        return text.substring(0, max - 2) + "..";
     }
 
     /**
