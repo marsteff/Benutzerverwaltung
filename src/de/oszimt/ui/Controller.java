@@ -174,6 +174,9 @@ public class Controller {
          *    ansonsten funktioniert das delete nicht da nicht eindeutig ermittelt
          *    werden kann welcher User gelöscht werden soll!
          */
+
+        System.out.println("User ID is " + user.getId());
+
         this.gui.getConcept().deleteUser(user);
 		searchInTable();
 	}
