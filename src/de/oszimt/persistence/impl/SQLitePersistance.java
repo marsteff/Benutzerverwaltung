@@ -237,6 +237,7 @@ public class SQLitePersistance implements IPersistance {
 	}
 	
 	public boolean existCustomer(int id){
+        //@todo by for SQL
 		boolean exist = false;
 		Connection con = this.getConnection();
 		Statement stmt = null;
