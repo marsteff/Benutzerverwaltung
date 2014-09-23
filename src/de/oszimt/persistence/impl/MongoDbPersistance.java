@@ -379,12 +379,16 @@ public class MongoDbPersistance implements IPersistance{
         Map tmp = cursor.next().toMap();
         //laden der Abteilungs Colelction
         DBCollection coll = this.getCollection("Departments");
+
+        BasicDBObject query = new BasicDBObject(
+                this.getKeyDepartmentId(),
+                Integer.parseInt(
+                        tmp.get(this.getKeyUserDepartmentId()).toString()
+                )
+        );
+
         //finden der Abteilung anhand der in der Benutzer Map gegebenen Id
-        DBObject depDBO = coll.findOne(new BasicDBObject(
-                this.getKeyUserDepartmentId()
-                ,Integer.parseInt(
-                tmp.get(this.getKeyUserDepartmentId()).toString()
-        )));
+        DBObject depDBO = coll.findOne(query);
 
         //wurde was gefunden?
         if(depDBO != null) {
