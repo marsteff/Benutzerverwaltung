@@ -14,11 +14,11 @@ import java.net.UnknownHostException;
 
 public class Benutzerverwaltung {
     public static void main(String[] args) {
-        new Tui(
+        new Gui(
                 ConceptFactory.buildConcept(
                         ConceptMethod.STANDARD_CONCEPT,
                         PersistanceFactory.buildPersistance(
-                                PersistanceMethod.MONGODB
+                                PersistanceMethod.SQLITE
                         )
                 )
         );

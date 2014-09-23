@@ -32,7 +32,7 @@ public class User {
 		this.zipcode = new SimpleIntegerProperty(zipcode);
 		this.birthday = new SimpleObjectProperty<LocalDate>(bday);
         this.department = new SimpleObjectProperty<Department>(department);
-//        this.department_id = department.getId();
+        this.department_id = department.getId();
 	}
 
 	public int getId() {

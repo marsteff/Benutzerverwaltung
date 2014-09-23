@@ -296,7 +296,10 @@ public class SQLitePersistance implements IPersistance {
 			
 			while(rs.next()){
 
-                String test = rs.getString(this.getKeyDepartmentName());
+
+
+
+                int test = rs.getInt(this.getKeyUserDepartmentId());
 
                 Map<String, Object> user = new HashMap<String, Object>();
                 Map<String, Object> depMap = new HashMap<String, Object>();
