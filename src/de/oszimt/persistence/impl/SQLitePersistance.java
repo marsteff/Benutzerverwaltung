@@ -244,11 +244,13 @@ public class SQLitePersistance implements IPersistance {
 		try{
 			stmt = con.createStatement();
 			
-			String sql = "SELECT *" +
+			String sql = "SELECT * " +
                     "FROM User " +
                     "WHERE id = " + id;
-			
-			ResultSet rs = stmt.executeQuery(sql);
+
+            System.out.println(sql);
+
+            ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next())
 				exist = true;
 			
