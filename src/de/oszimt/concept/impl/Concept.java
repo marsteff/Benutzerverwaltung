@@ -40,7 +40,7 @@ public class Concept implements IConcept {
 
     private User userMapToUser(Map<String,Object> userMap){
         IPersistance keys = this.database;
-        return new User(
+        User user = new User(
                 userMap.containsKey(keys.getKeyUserFirstname()) ? userMap.get(keys.getKeyUserFirstname()).toString() : null,
                 userMap.containsKey(keys.getKeyUserLastname()) ? userMap.get(keys.getKeyUserLastname()).toString() : null,
                 userMap.containsKey(keys.getKeyUserBirthday()) ?
@@ -58,6 +58,8 @@ public class Concept implements IConcept {
                         ((Map) userMap.get(keys.getKeyUserDepartment())).get(keys.getKeyDepartmentName()).toString()
                 )
         );
+        user.setId(userMap.containsKey(keys.getKeyUserId()) ? (int) userMap.get(keys.getKeyUserId()) : 0);
+        return user;
     }
 
     private Map<String,Object> departmentToDepMap(Department dep){
