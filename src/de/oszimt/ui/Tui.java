@@ -2,13 +2,19 @@ package de.oszimt.ui;
 
 import de.oszimt.concept.iface.IConcept;
 
+import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
@@ -20,6 +26,16 @@ public class Tui {
 
     private final Color STANDARD_COLOR = WHITE;
     private IConcept concept;
+
+    private String[] entrys = { "Vorname",
+                                "Nachname",
+                                "Geburtstag",
+                                "Stadt",
+                                "Postleitzahl",
+                                "Strasse",
+                                "Strassennr.",
+                                "Abteilung"};
+
     public Tui(IConcept concept){
         this.concept = concept;
 
@@ -40,15 +56,12 @@ public class Tui {
                             "Alle Benutzer Anzeigen",
                             "Abbrechen"};
         writeHeader(3);
-        int max = getMaxEntry(entrys);
 
         //Aufbauen des Menue´s
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
-            for (int j = 0; j < max - entrys[i].length() + 2; j++) {
-                print(" ");
-            }
-            println("(" + (i + 1) + ")" );
+            printWhitespace(entrys, i, 2);
+            println("(" + (i + 1) + ")");
         }
         println("");
         print("Menuepunkt eingeben: ");
@@ -72,13 +85,17 @@ public class Tui {
                     return;
             case 3: deleteUser();
                     return;
-            case 4: searchUser();
+            case 4: searchUser(createDummyUser());
                     return;
             case 5: showAllUsers();
                     return;
             case 6: System.exit(0);
 
         }
+    }
+
+    private User createDummyUser(){
+        return new User("", "", null, "", "", "", 0, null);
     }
 
     private void showUser() {
@@ -99,9 +116,130 @@ public class Tui {
         //hole den aktuellen StackTrace
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
-        User user = searchAndPrintUserStats(stack[1].getMethodName(), false);
+        User user = searchAndPrintUserStats(stack[1].getMethodName(), true);
 
+        buildEditUser(user, true, false);
+    }
 
+    private void buildEditUser(User user, boolean editMenu, boolean print) {
+        if (print) {
+            writeUserStats(user, editMenu);
+        }
+
+        int input = 0;
+        do {
+            println("");
+            print("Welches Attribut soll bearbeitet werden ? (1-" + entrys.length + "): ");
+            println("");
+
+            //einlesen des Input´s
+            input = readInt();
+
+            //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
+
+            if (input > 0 && input <= entrys.length) {
+                break;
+            }
+            println(RED, "Falsche Eingabe");
+        } while (true);
+
+        String value = null;
+        //Prüfung, welches Menue aufgerufen werden soll
+        switch (input) {
+
+            //Vorname
+            case 1:
+                print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setFirstname(value);
+                break;
+
+            //Nachname
+            case 2:
+                print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setLastname(value);
+                break;
+
+            //Geburtstag
+            case 3:
+                LocalDate date = null;
+                do {
+                    println("Neuen Geburtstag eingeben ");
+                    int day = determineBirthday("Tag", 0, 31);
+                    int month = determineBirthday("Monat", 0, 12);
+                    int year = determineBirthday("Jahr", 1900, LocalDate.now().getYear());
+                    String birthdayString = year + "-" + month + "-" + day;
+                    try {
+                        date = LocalDate.of(year, month, day);
+                    } catch (DateTimeException e) {
+                    }
+                    if (date != null) {
+                        break;
+                    }
+                    println(RED, "Das Datum ist nicht gültig");
+                } while (true);
+
+                user.setBirthday(date);
+                break;
+
+            //Stadt
+            case 4:
+                print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setCity(value);
+                break;
+
+            //PLZ
+            case 5:
+                print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setPLZ(Integer.parseInt(value));
+                break;
+
+            //Strasse
+            case 6:
+                print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setStreet(value);
+                break;
+
+            //Stassen-Nummer
+            case 7:
+                print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setStreetnr(value);
+                break;
+
+            //Abteilung
+            case 8:
+                List<Department> departmentList = concept.getAllDepartments();
+                String[] departmentArray = new String[departmentList.size()];
+
+                for (int i = 0; i < departmentArray.length; i++) {
+                    departmentArray[i] = toAscii(departmentList.get(i).getName());
+                }
+
+                int departmentValue = buildDepartmentView(departmentArray, input);
+                user.setDepartment(departmentList.get(departmentValue - 1));
+                break;
+
+        }
+        concept.upsertUser(user);
+
+        //weitere Attribute bearbeiten ?
+        if (checkInputForYesOrNo("Weitere Attribute bearbeiten ? (j/n)")) {
+            println("");
+            buildEditUser(user, editMenu, true);
+            return;
+        }
+
+        //Soll nach ein weiterer Benutzer bearbeitet werden ?
+        if (checkInputForYesOrNo("Weiteren Benutzer bearbeiten ? (j/n)")) {
+            editUser();
+            return;
+        }
+        showMainMenu();
     }
 
     private void deleteUser() {
@@ -123,12 +261,275 @@ public class Tui {
         showMainMenu();
     }
 
-    private void searchUser() {
+    private void searchUser(User user) {
+        User searchUser = user;
 
+        String[] params = userParameterToArray(user);
+        for (int i = 0; i < entrys.length; i++) {
+            print(entrys[i]);
+            printWhitespace(entrys, i, 2);
+            print(": " + params[i]);
+            printWhitespace(params, i, 2);
+            print("(" + (i + 1) + ")");
+
+            println("");
+        }
+
+        //TODO weiter kapseln
+        int input = 0;
+        do {
+            println("");
+            print("Welches Attribut zur Suche hinzufuegen ? (1-" + entrys.length + "): ");
+            println("");
+
+            //einlesen des Input´s
+            input = readInt();
+
+            //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
+
+            if (input > 0 && input <= entrys.length) {
+                break;
+            }
+            println(RED, "Falsche Eingabe");
+        } while (true);
+
+        String value;
+        //Prüfung, welches Menue aufgerufen werden soll
+        switch (input) {
+
+            //Vorname
+            case 1:
+                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setFirstname(value);
+                break;
+
+            //Nachname
+            case 2:
+                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setLastname(value);
+                break;
+
+            //Geburtstag
+            case 3:
+                LocalDate date = null;
+                do {
+                    println("Geburtstag eingeben ");
+                    int day = determineBirthday("Tag", 0, 31);
+                    int month = determineBirthday("Monat", 0, 12);
+                    int year = determineBirthday("Jahr", 1900, LocalDate.now().getYear());
+                    String birthdayString = year + "-" + month + "-" + day;
+                    try {
+                        date = LocalDate.of(year, month, day);
+                    } catch (DateTimeException e) {
+                    }
+                    if (date != null) {
+                        break;
+                    }
+                    println(RED, "Das Datum ist nicht gueltig");
+                } while (true);
+
+                user.setBirthday(date);
+                break;
+
+            //Stadt
+            case 4:
+                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setCity(value);
+                break;
+
+            //PLZ
+            case 5:
+                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setPLZ(Integer.parseInt(value));
+                break;
+
+            //Strasse
+            case 6:
+                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setStreet(value);
+                break;
+
+            //Stassen-Nummer
+            case 7:
+                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
+                value = readString();
+                user.setStreetnr(value);
+                break;
+
+            //Abteilung
+            case 8:
+                List<Department> departmentList = concept.getAllDepartments();
+                String[] departmentArray = new String[departmentList.size()];
+
+                for (int i = 0; i < departmentArray.length; i++) {
+                    departmentArray[i] = toAscii(departmentList.get(i).getName());
+                }
+
+                int departmentValue = buildDepartmentView(departmentArray, input);
+                user.setDepartment(departmentList.get(departmentValue - 1));
+                break;
+
+        }
+
+        //weitere Attribute zur Suche hinzufügen ?
+        if (checkInputForYesOrNo("Weitere Attribute zur Suche hinzufuegen ? (j/n)")) {
+            println("");
+            searchUser(user);
+            return;
+        }
+
+        List<User> userList = searchUsers(user);
+        println("");
+        buildTable(userList);
+    }
+
+    private void buildTable(List<User> userList) {
+//        userList.stream().max(Comparator.comparing(e -> e.getFirstname().length())).get();
+
+        //TODO Erster Versuch mit starren breiten
+        for (int i = 0; i < entrys.length; i++) {
+            print(entrys[i]);
+            printWhitespace(entrys, i, 1);
+            if(i != entrys.length - 1) {
+                print("|");
+            }
+        }
+        println("");
+        int max = getMaxEntry(entrys);
+        for (int i = 0; i < (max * entrys.length) + (entrys.length * 2); i++) {
+            print("-");
+        }
+        println("");
+        for (int i = 0; i < userList.size(); i++) {
+            printUserInTable(userList.get(i));
+        }
+    }
+
+    private void printUserInTable(User user) {
+        String[] userParams = userParameterToArray(user);
+        int maxLength = getMaxEntry(entrys);
+        for (int i = 0; i < entrys.length; i++) {
+            if(userParams[i].length() >= maxLength) {
+                userParams[i] = cutStringForList(userParams[i], maxLength);
+            }
+            print(userParams[i]);
+
+            //TODO modify printWhitespace later
+            for (int j = 0; j < maxLength - userParams[i].length() + 1; j++) {
+                print(" ");
+            }
+
+            if (i != entrys.length - 1) {
+                print("|");
+            }
+        }
+        println("");
+    }
+
+    private String cutStringForList(String text, int max) {
+        return text.substring(0, max - 2) + "..";
+    }
+
+    /**
+     * Durchsucht alle Benutzer nach den Attributen von dem übergebenen User Objekt und gibt das Ergebnis als Liste zurück
+     * @param user das User Objekt mit den zu durchsuchenden Attributen
+     * @return Ergebnisliste
+     */
+    private List<User> searchUsers(User user) {
+        List<User> userList = concept.getAllUser();
+        List<User> filteredUsers;
+        //Filtert nach allen Scuhkriterien und gibt diesen als Liste zurück
+        filteredUsers = userList.stream()
+                                .filter(e -> {
+                                    final User bUser = user;
+                                    int paramNumber = getSettedParamsNumber(user);
+                                    int checkNumber = 0;
+                                    if (!bUser.getFirstname().equals("") && e.getFirstname().toLowerCase().contains(bUser.getFirstname().toLowerCase()))
+                                        checkNumber++;
+                                    if (!bUser.getLastname().equals("") && e.getLastname().toLowerCase().contains(bUser.getLastname().toLowerCase()))
+                                        checkNumber++;
+                                    if (bUser.getBirthday() != null && e.getBirthday().equals(bUser.getBirthday()))
+                                        checkNumber++;
+                                    if (e.getZipcode() == bUser.getZipcode())
+                                        checkNumber++;
+                                    if (!bUser.getCity().equals("") && e.getCity().toLowerCase().contains(bUser.getCity().toLowerCase()))
+                                        checkNumber++;
+                                    if (!bUser.getStreet().equals("") && e.getStreet().toLowerCase().contains(bUser.getStreet().toLowerCase()))
+                                        checkNumber++;
+                                    if (!bUser.getStreetnr().equals("") && e.getStreetnr().toLowerCase().contains(bUser.getStreetnr().toLowerCase()))
+                                        checkNumber++;
+                                    if (e.getDepartmentId() != bUser.getDepartmentId())
+                                        checkNumber++;
+                                    return paramNumber == checkNumber;
+                                })
+                                .collect(Collectors.toList());
+        return filteredUsers;
+    }
+
+    private int getSettedParamsNumber(User user) {
+        int number = 0;
+        if (!user.getFirstname().equals(""))
+            number++;
+        if (!user.getLastname().equals(""))
+            number++;
+        if (user.getBirthday() != null)
+            number++;
+        if (user.getZipcode() != 0)
+            number++;
+        if (!user.getCity().equals(""))
+            number++;
+        if (!user.getStreet().equals(""))
+            number++;
+        if (!user.getStreetnr().equals(""))
+            number++;
+        if (user.getDepartmentId() != 0)
+            number++;
+        return number;
     }
 
     private void showAllUsers() {
+        buildTable(concept.getAllUser());
+        println("");
+        print("Zum Abbrechen Taste drücken");
+        readString();
+        showMainMenu();
+    }
 
+    private int buildDepartmentView(String[] departmentArray, int input) {
+
+        //Aufbauen der Struktur
+        for (int i = 0; i < departmentArray.length; i++) {
+            print(departmentArray[i]);
+            printWhitespace(departmentArray, i, 2);
+            println("(" + (i + 1) + ")");
+        }
+        int departmentValue = 0;
+        do {
+            print("Neuen Wert fuer " + entrys[input-1] + " eingeben: ");
+            departmentValue = readInt();
+            if (departmentValue > 0 && departmentValue <= departmentArray.length) {
+                break;
+            }
+            println(RED, "Eingabe nicht gültig. Wert muss zwischen 1 und " + departmentArray.length + " liegen");
+        } while (true);
+        return departmentValue;
+    }
+
+    private int determineBirthday(String text, int min, int max) {
+        do {
+            print(text + ": ");
+            int value = readInt();
+            println("");
+            if (value > 0 && value <= max) {
+                return value;
+            }
+            println(RED, "Der Wert muss zwischen " + min + " und " + max + " liegen");
+        } while (true);
     }
 
     /**
@@ -157,8 +558,8 @@ public class Tui {
     /**
      * Schreibt die Benutzer Informationen in die Konsole. Da Dies in mehreren Methoden benutzt wird und dieses
      * sich selbst wieder aufrufen, wird mit Hilfe von Reflection gearbeit, um dieses dynamisch gestalten zu können
-     * @param methodName
-     * @return
+     * @param methodName Methodenname der aufgerufen wird
+     * @return den User zu der eingegebenen ID
      */
     private User searchAndPrintUserStats(String methodName, boolean editMenu){
         //hole Methode um über Reflection diese aufrufen zu können
@@ -173,6 +574,7 @@ public class Tui {
         writeHeader(2);
         print("Benutzer ID eingeben: ");
         int id = readInt();
+        println("");
 
         User user = null;
         try {
@@ -210,23 +612,14 @@ public class Tui {
      * @param editMenu Wenn true, wird hinter den Attributen eine Nummerierung gelistet
      */
     private void writeUserStats(User user, boolean editMenu){
-        String[] entrys = { "Vorname",
-                            "Nachname",
-                            "Geburtstag",
-                            "Stadt",
-                            "Postleitzahl",
-                            "Strasse",
-                            "Strassen-Nummer",
-                            "Abteilung"};
-
         String[] params = userParameterToArray(user);
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
-            printWhitespace(entrys, i);
+            printWhitespace(entrys, i, 2);
             print(": " + params[i]);
             if(editMenu) {
-                printWhitespace(params, i);
-                print("(" + i + 1 + ")");
+                printWhitespace(params, i, 2);
+                print("(" + (i + 1) + ")");
             }
             println("");
         }
@@ -237,11 +630,15 @@ public class Tui {
      * @param array Das Array mit den Werten, an denen die Abstände angepasst werden sollen
      * @param iteratorIndex Iterator der eigentlichen Aufzählung
      */
-    private void printWhitespace(String[] array, int iteratorIndex){
+    private void printWhitespace(String[] array, int iteratorIndex, int spacing){
         int maxLength = getMaxEntry(array);
-        for (int j = 0; j < maxLength - array[iteratorIndex].length() + 2; j++) {
+        for (int j = 0; j < maxLength - array[iteratorIndex].length() + spacing; j++) {
             print(" ");
         }
+    }
+
+    private String toAscii(String text) {
+        return text.replaceAll("ü", "ue"). replaceAll("ö", "oe").replaceAll("ä", "ae").replaceAll("ß", "ss");
     }
 
     /**
@@ -250,15 +647,15 @@ public class Tui {
      * @return Array mit den Attributen von User
      */
     private String[] userParameterToArray(User user){
-        String[] params = new String[9];
-        params[0] = user.getFirstname();
-        params[1] = user.getLastname();
-        params[2] = user.getBirthday().toString();
-        params[3] = user.getCity();
-        params[4] = new String(user.getZipcode() + "");
-        params[5] = user.getStreet();
-        params[6] = user.getStreetnr();
-        params[7] = user.getDepartment().getName();
+        String[] params = new String[8];
+        params[0] = toAscii(user.getFirstname());
+        params[1] = toAscii(user.getLastname());
+        params[2] = toAscii(user.getBirthday() != null ? user.getBirthday().toString() : "");
+        params[3] = toAscii(user.getCity());
+        params[4] = toAscii(user.getZipcode() != 0 ? new String(user.getZipcode() + "") : "");
+        params[5] = toAscii(user.getStreet());
+        params[6] = toAscii(user.getStreetnr());
+        params[7] = toAscii(user.getDepartment() != null ? user.getDepartment().getName() : "");
 
         return params;
     }
