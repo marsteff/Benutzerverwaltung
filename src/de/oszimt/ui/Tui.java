@@ -279,7 +279,7 @@ public class Tui {
         int input = 0;
         do {
             println("");
-            print("Welches Attribut zur Suche hinzufügen ? (1-" + entrys.length + "): ");
+            print("Welches Attribut zur Suche hinzufuegen ? (1-" + entrys.length + "): ");
             println("");
 
             //einlesen des Input´s
@@ -327,7 +327,7 @@ public class Tui {
                     if (date != null) {
                         break;
                     }
-                    println(RED, "Das Datum ist nicht gültig");
+                    println(RED, "Das Datum ist nicht gueltig");
                 } while (true);
 
                 user.setBirthday(date);
@@ -377,18 +377,19 @@ public class Tui {
         }
 
         //weitere Attribute zur Suche hinzufügen ?
-        if (checkInputForYesOrNo("Weitere Attribute zur Suche hinzufügen ? (j/n)")) {
+        if (checkInputForYesOrNo("Weitere Attribute zur Suche hinzufuegen ? (j/n)")) {
             println("");
             searchUser(user);
             return;
         }
 
-
-
+        List<User> userList = searchUsers(user);
+        println("");
+        buildTable(userList);
     }
 
     private void buildTable(List<User> userList) {
-        userList.stream().max(Comparator.comparing(e -> e.getFirstname().length())).get();
+//        userList.stream().max(Comparator.comparing(e -> e.getFirstname().length())).get();
 
         //TODO Erster Versuch mit starren breiten
         for (int i = 0; i < entrys.length; i++) {
@@ -445,23 +446,58 @@ public class Tui {
         //Filtert nach allen Scuhkriterien und gibt diesen als Liste zurück
         filteredUsers = userList.stream()
                                 .filter(e -> {
-                                    if(     e.getFirstname().toLowerCase().equals(user.getFirstname()) ||
-                                            e.getLastname().toLowerCase().equals(user.getLastname()) ||
-                                            e.getBirthday().equals(user.getBirthday()) ||
-                                            e.getZipcode() == user.getZipcode() ||
-                                            e.getCity().toLowerCase().equals(user.getCity()) ||
-                                            e.getStreet().toLowerCase().equals(user.getStreet()) ||
-                                            e.getStreetnr().toLowerCase().equals(user.getStreetnr()) ||
-                                            e.getDepartmentId() == user.getDepartmentId() )
-                                        return true;
-                                    return false;
+                                    final User bUser = user;
+                                    int paramNumber = getSettedParamsNumber(user);
+                                    int checkNumber = 0;
+                                    if (!bUser.getFirstname().equals("") && e.getFirstname().toLowerCase().contains(bUser.getFirstname().toLowerCase()))
+                                        checkNumber++;
+                                    if (!bUser.getLastname().equals("") && e.getLastname().toLowerCase().contains(bUser.getLastname().toLowerCase()))
+                                        checkNumber++;
+                                    if (bUser.getBirthday() != null && e.getBirthday().equals(bUser.getBirthday()))
+                                        checkNumber++;
+                                    if (e.getZipcode() == bUser.getZipcode())
+                                        checkNumber++;
+                                    if (!bUser.getCity().equals("") && e.getCity().toLowerCase().contains(bUser.getCity().toLowerCase()))
+                                        checkNumber++;
+                                    if (!bUser.getStreet().equals("") && e.getStreet().toLowerCase().contains(bUser.getStreet().toLowerCase()))
+                                        checkNumber++;
+                                    if (!bUser.getStreetnr().equals("") && e.getStreetnr().toLowerCase().contains(bUser.getStreetnr().toLowerCase()))
+                                        checkNumber++;
+                                    if (e.getDepartmentId() != bUser.getDepartmentId())
+                                        checkNumber++;
+                                    return paramNumber == checkNumber;
                                 })
                                 .collect(Collectors.toList());
         return filteredUsers;
     }
 
+    private int getSettedParamsNumber(User user) {
+        int number = 0;
+        if (!user.getFirstname().equals(""))
+            number++;
+        if (!user.getLastname().equals(""))
+            number++;
+        if (user.getBirthday() != null)
+            number++;
+        if (user.getZipcode() != 0)
+            number++;
+        if (!user.getCity().equals(""))
+            number++;
+        if (!user.getStreet().equals(""))
+            number++;
+        if (!user.getStreetnr().equals(""))
+            number++;
+        if (user.getDepartmentId() != 0)
+            number++;
+        return number;
+    }
+
     private void showAllUsers() {
         buildTable(concept.getAllUser());
+        println("");
+        print("Zum Abbrechen Taste drücken");
+        readString();
+        showMainMenu();
     }
 
     private int buildDepartmentView(String[] departmentArray, int input) {
