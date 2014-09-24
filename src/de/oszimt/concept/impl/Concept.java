@@ -43,19 +43,19 @@ public class Concept implements IConcept {
         User user = new User(
                 userMap.containsKey(keys.getKeyUserFirstname()) ? userMap.get(keys.getKeyUserFirstname()).toString() : null,
                 userMap.containsKey(keys.getKeyUserLastname()) ? userMap.get(keys.getKeyUserLastname()).toString() : null,
-                userMap.containsKey(keys.getKeyUserBirthday()) ?
-                        LocalDateTime.ofInstant(
-                            Instant.ofEpochMilli(
-                                ((Date) userMap.get(keys.getKeyUserBirthday())).getTime()
-                        ),
-                        ZoneId.systemDefault()).toLocalDate() : null,
+                userMap.containsKey(keys.getKeyUserBirthday()) ? LocalDate.parse(userMap.get(keys.getKeyUserBirthday()).toString()) : null,
+//                        LocalDateTime.ofInstant(
+//                            Instant.ofEpochMilli(
+//                                ((Date) userMap.get(keys.getKeyUserBirthday())).getTime()
+//                        ),
+//                        ZoneId.systemDefault()).toLocalDate() : null,
                 userMap.containsKey(keys.getKeyUserCity()) ? userMap.get(keys.getKeyUserCity()).toString() : null,
                 userMap.containsKey(keys.getKeyUserStreet()) ? userMap.get(keys.getKeyUserStreet()).toString() : null,
                 userMap.containsKey(keys.getKeyUserStreetNr()) ? userMap.get(keys.getKeyUserStreetNr()).toString() : null,
                 userMap.containsKey(keys.getKeyUserZipCode()) ? Integer.parseInt(userMap.get(keys.getKeyUserZipCode()).toString()) : null,
                 new Department(
-                        (int) ((Map) userMap.get(keys.getKeyUserDepartment())).get(keys.getKeyDepartmentId()),
-                        ((Map) userMap.get(keys.getKeyUserDepartment())).get(keys.getKeyDepartmentName()).toString()
+                        ((Department)userMap.get(keys.getKeyUserDepartment())).getId(),
+                        ((Department)userMap.get(keys.getKeyUserDepartment())).getName()
                 )
         );
         user.setId(userMap.containsKey(keys.getKeyUserId()) ? (int) userMap.get(keys.getKeyUserId()) : 0);
