@@ -1,13 +1,11 @@
 package de.oszimt.persistence.impl;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.Date;
 import java.util.regex.Matcher;
 
 import de.oszimt.model.Department;
@@ -86,10 +84,6 @@ public class SQLitePersistance implements IPersistance {
         return "birthday";
     }
 
-    @Override
-    public String getKeyUserDepartmentId() {
-        return "department_id";
-    }
 
     @Override
     public String getKeyDepartmentId() {
@@ -117,7 +111,7 @@ public class SQLitePersistance implements IPersistance {
                             this.getKeyUserStreetNr() + " TEXT NOT NULL, " +
                             this.getKeyUserZipCode() + " INTEGER NOT NULL, " +
                             this.getKeyUserBirthday() + " TEXT NOT NULL," +
-                            this.getKeyUserDepartmentId() + " INTEGER NOT NULL)";
+                            "department_id INTEGER NOT NULL)";
 
         String Department_sql = "CREATE TABLE IF NOT EXISTS Department " +
                             "(" +   this.getKeyDepartmentId() + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -146,7 +140,7 @@ public class SQLitePersistance implements IPersistance {
                 "street_nr  	= '" + user.get(this.getKeyUserStreetNr()) + "', " +
                 "zip_code 		= " + user.get(this.getKeyUserZipCode()) + ", " +
                 "birthday		= '" + user.get(this.getKeyUserBirthday()) + "'," +
-                " department_id = '"+user.get(this.getKeyUserDepartmentId())+"'" +
+                " department_id = '" + ((Map)user.get(this.getKeyUserDepartment())).get(this.getKeyDepartmentId()) + "'" +
                 "WHERE id = " + user.get(this.getKeyUserId()));
 
 	}
@@ -231,7 +225,7 @@ public class SQLitePersistance implements IPersistance {
                 "'" + user.get(this.getKeyUserStreetNr()) + "', " +
                 "'" + user.get(this.getKeyUserZipCode()) + "', " +
                 "'" + user.get(this.getKeyUserBirthday()) + "'," +
-                "'" + user.get(this.getKeyUserDepartmentId())+"');";
+                "'" + ((Map)user.get(this.getKeyUserDepartment())).get(this.getKeyDepartmentId())+"');";
 
 	    this.dbUpdate(sql);
 	}
@@ -286,43 +280,16 @@ public class SQLitePersistance implements IPersistance {
                     "User." + this.getKeyUserStreetNr() + ", " +
                     "User." + this.getKeyUserZipCode() + ", " +
                     "User." + this.getKeyUserBirthday() + ", " +
-                    "Department." + this.getKeyDepartmentId() + " as " + this.getKeyUserDepartmentId() + ", " +
+                    "Department." + this.getKeyDepartmentId() + " as department_id,"  +
                     "Department." + this.getKeyDepartmentName() + " as `" + this.getKeyDepartmentName() + "` " +
                     "FROM User " +
-                    "LEFT JOIN Department ON User." + this.getKeyUserDepartmentId() +
+                    "LEFT JOIN Department ON User.department_id" +
                     " = Department." + this.getKeyDepartmentId() + ";";
             System.out.println(sql);
             ResultSet rs = stmt.executeQuery(sql);
 			
 			while(rs.next()){
-
-
-
-
-                int test = rs.getInt(this.getKeyUserDepartmentId());
-
-                Map<String, Object> user = new HashMap<String, Object>();
-                Map<String, Object> depMap = new HashMap<String, Object>();
-
-                depMap.put(this.getKeyDepartmentId(),rs.getInt(this.getKeyDepartmentId()));
-                depMap.put(this.getKeyDepartmentName(),rs.getString(this.getKeyDepartmentName()));
-
-                user.put(this.getKeyUserId(),rs.getInt(this.getKeyUserId()));
-                user.put(this.getKeyUserFirstname(),rs.getString(this.getKeyUserFirstname()));
-                user.put(this.getKeyUserLastname(),rs.getString(this.getKeyUserLastname()));
-                user.put(this.getKeyUserBirthday(), Date.from(
-                        LocalDate.parse(
-                                rs.getString(this.getKeyUserBirthday())).atStartOfDay().atZone(
-                                ZoneId.systemDefault()
-                        ).toInstant()));
-                user.put(this.getKeyUserCity(),rs.getString(this.getKeyUserCity()));
-                user.put(this.getKeyUserStreet(),rs.getString(this.getKeyUserStreet()));
-                user.put(this.getKeyUserStreetNr(),rs.getString(this.getKeyUserStreetNr()));
-                user.put(this.getKeyUserZipCode(),rs.getString(this.getKeyUserZipCode()));
-                user.put(this.getKeyUserDepartmentId(),rs.getString(this.getKeyUserDepartmentId()));
-                user.put(this.getKeyUserDepartment(),depMap);
-
-				list.add(user);
+				list.add(this.userResultSetToUserMap(rs));
 			}   
 			rs.close();
 			                                       
@@ -333,6 +300,30 @@ public class SQLitePersistance implements IPersistance {
 		}
 		return list;
 	}
+
+    private Map<String, Object> userResultSetToUserMap(ResultSet rs) throws SQLException {
+        Map<String, Object> user = new HashMap<String, Object>();
+        Map<String, Object> depMap = new HashMap<String, Object>();
+
+        depMap.put(this.getKeyDepartmentId(),rs.getInt("department_id"));
+        depMap.put(this.getKeyDepartmentName(),rs.getString(this.getKeyDepartmentName()));
+
+        user.put(this.getKeyUserId(),rs.getInt(this.getKeyUserId()));
+        user.put(this.getKeyUserFirstname(),rs.getString(this.getKeyUserFirstname()));
+        user.put(this.getKeyUserLastname(),rs.getString(this.getKeyUserLastname()));
+        user.put(this.getKeyUserBirthday(), Date.from(
+                LocalDate.parse(
+                        rs.getString(this.getKeyUserBirthday())).atStartOfDay().atZone(
+                        ZoneId.systemDefault()
+                ).toInstant()));
+        user.put(this.getKeyUserCity(),rs.getString(this.getKeyUserCity()));
+        user.put(this.getKeyUserStreet(),rs.getString(this.getKeyUserStreet()));
+        user.put(this.getKeyUserStreetNr(),rs.getString(this.getKeyUserStreetNr()));
+        user.put(this.getKeyUserZipCode(),rs.getString(this.getKeyUserZipCode()));
+        user.put(this.getKeyUserDepartment(),depMap);
+
+        return user;
+    }
     @Override
     public Map<String, Object> getUserById(int id) {
 
@@ -351,33 +342,16 @@ public class SQLitePersistance implements IPersistance {
                     "User." + this.getKeyUserStreetNr() + ", " +
                     "User." + this.getKeyUserZipCode() + ", " +
                     "User." + this.getKeyUserBirthday() + ", " +
-                    "Department." + this.getKeyDepartmentId() + " as " + this.getKeyUserDepartmentId() + ", " +
+                    "Department." + this.getKeyDepartmentId() + " as department_id, " +
                     "Department." + this.getKeyDepartmentName() + " as " + this.getKeyDepartmentName() + " " +
                     "FROM User " +
-                    "LEFT JOIN Department ON User." + this.getKeyUserDepartmentId() +
+                    "LEFT JOIN Department ON User.department_id" +
                     " = Department." + this.getKeyDepartmentId() + " " +
                     "WHERE User." + this.getKeyUserId() + " = '" + id + "';";
 
             ResultSet rs = stmt.executeQuery(sql);
             if(rs.next()){
-
-                Map<String, Object> user = new HashMap<String, Object>();
-                user.put(this.getKeyUserId(),rs.getInt(this.getKeyUserId()));
-                user.put(this.getKeyUserFirstname(),rs.getString(this.getKeyUserFirstname()));
-                user.put(this.getKeyUserLastname(),rs.getString(this.getKeyUserLastname()));
-                user.put(this.getKeyUserBirthday(),LocalDate.parse(rs.getString(this.getKeyUserBirthday())));
-                user.put(this.getKeyUserCity(),rs.getString(this.getKeyUserCity()));
-                user.put(this.getKeyUserStreet(),rs.getString(this.getKeyUserStreet()));
-                user.put(this.getKeyUserStreetNr(),rs.getString(this.getKeyUserStreetNr()));
-                user.put(this.getKeyUserZipCode(),rs.getString(this.getKeyUserZipCode()));
-                user.put(this.getKeyUserDepartmentId(),rs.getString(this.getKeyUserDepartmentId()));
-                user.put(this.getKeyUserDepartment(),new Department(
-                        rs.getInt(this.getKeyUserDepartmentId()),
-                        rs.getString(this.getKeyDepartmentName())
-                ));
-
-                return user;
-
+                return this.userResultSetToUserMap(rs);
             }
         }catch (Exception e){
             System.err.println(e.getMessage());

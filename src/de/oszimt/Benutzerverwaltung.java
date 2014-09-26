@@ -14,22 +14,13 @@ import java.net.UnknownHostException;
 
 public class Benutzerverwaltung {
     public static void main(String[] args) {
-        new Tui(
+        new Gui(
                 ConceptFactory.buildConcept(
                         ConceptMethod.STANDARD_CONCEPT,
                         PersistanceFactory.buildPersistance(
-                                PersistanceMethod.MONGODB
+                                PersistanceMethod.SQLITE
                         )
                 )
         );
-
-/*
-        MongoDbPersistance m;
-        try {
-            m = MongoDbPersistance.getInstance();
-            m.getAllUser();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }*/
     }
 }

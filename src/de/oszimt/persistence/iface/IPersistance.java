@@ -11,7 +11,6 @@ public interface IPersistance {
     String getKeyUserStreetNr();
     String getKeyUserZipCode();
     String getKeyUserBirthday();
-    String getKeyUserDepartmentId();
     String getKeyDepartmentId();
     String getKeyDepartmentName();
     String getKeyUserDepartment();

@@ -10,8 +10,6 @@ import javafx.beans.property.StringProperty;
 public class User {
 
 	private int id;
-    //TODO department ID überhaupt notwendig, wenn man über das Department Object drauf zugreifen kann
-    private int department_id;
 	private final SimpleStringProperty firstname;
     private final SimpleStringProperty lastname;
     private final SimpleStringProperty city;
@@ -32,7 +30,6 @@ public class User {
 		this.zipcode = new SimpleIntegerProperty(zipcode);
 		this.birthday = new SimpleObjectProperty<LocalDate>(bday);
         this.department = new SimpleObjectProperty<Department>(department);
-        this.department_id = department.getId();
 	}
 
 	public int getId() {
@@ -105,16 +102,7 @@ public class User {
 
     public void setDepartment(Department department){
         this.department.set(department);
-        this.department_id = this.department.get().getId();
     }
-
-    public int getDepartmentId(){
-        return this.department_id;
-    }
-
-    public void setDepartmentId(int id){
-        this.department_id = id;
-    };
 
     public StringProperty getVorProp(){
     	return this.firstname;

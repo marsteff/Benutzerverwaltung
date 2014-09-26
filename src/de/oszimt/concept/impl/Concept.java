@@ -80,7 +80,7 @@ public class Concept implements IConcept {
         Map<String, Object> depMap = new HashMap<String, Object>();
         IPersistance keys = this.database;
 
-        depMap.put(keys.getKeyDepartmentId(),user.getDepartmentId());
+        depMap.put(keys.getKeyDepartmentId(),user.getDepartment().getId());
         depMap.put(keys.getKeyDepartmentName(),user.getDepartment());
 
         userMap.put(keys.getKeyUserId(),user.getId());
@@ -91,7 +91,6 @@ public class Concept implements IConcept {
         userMap.put(keys.getKeyUserStreet(),user.getStreet());
         userMap.put(keys.getKeyUserStreetNr(),user.getStreetnr());
         userMap.put(keys.getKeyUserZipCode(),user.getZipcode());
-        userMap.put(keys.getKeyUserDepartmentId(),user.getDepartmentId());
         userMap.put(keys.getKeyUserDepartment(),depMap);
 
         return userMap;
