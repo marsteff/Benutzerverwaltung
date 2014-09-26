@@ -1,22 +1,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.control.CheckMenuItem?>
 
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
-<BorderPane fx:controller="de.oszimt.ui.Controller" xmlns:fx="http://javafx.com/fxml">
+<StackPane fx:id="rootPane" fx:controller="de.oszimt.ui.Controller" xmlns:fx="http://javafx.com/fxml">
+<BorderPane fx:id="mainPane">
     <!-- !!!!!!!!!!!!!!!!!!! Menubar !!!!!!!!!!-->
     <top>
         <MenuBar >
@@ -31,6 +19,7 @@
                         <MenuItem text="Neuer Kunde" onAction="#abortButtonAction"/>
                         <MenuItem text="Lösche alle Kunden" onAction="#deleteAllCustomersAction" />
                         <MenuItem text="Erstelle Zufallskunden" onAction="#createRandomCustomersAction" />
+                        <MenuItem text="Overlay On" onAction="#overlayOn" />
                     </items>
                 </Menu>
                 <Menu text="Einstellungen">
@@ -166,3 +155,4 @@
 		</BorderPane>
 	</center>
 </BorderPane>
+</StackPane>

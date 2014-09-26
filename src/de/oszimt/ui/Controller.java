@@ -15,6 +15,8 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -22,6 +24,11 @@ import de.oszimt.ui.templates.AdvancedSearch;
 import de.oszimt.util.RestService;
 
 public class Controller {
+
+    @FXML
+    public StackPane rootPane;
+    @FXML
+    public BorderPane mainPane;
 
     @FXML
 	private TableView<User> customerTable;
@@ -90,8 +97,8 @@ public class Controller {
 	private boolean serviceTown = false;
 	private boolean writeError = false;
 
+    StackPane glass = null;
 
-	
 	@FXML
 	public void initialize(){
 				
@@ -104,7 +111,7 @@ public class Controller {
 		//setzt die Listener der Controls
 		setListenerForControls();
 
-		//service = new RestService();
+		service = new RestService();
 
         //Hiermit ist es möglich, nach der Initialierung Code auszuführen. Notwendig, um in der initialize Methode auf das GUI Objekt zugreifen zu können
         Platform.runLater(new Runnable() {
@@ -233,14 +240,16 @@ public class Controller {
 	@FXML
 	private void createRandomCustomersAction(){
 
-        this.gui.getConcept().createRandomUsers(
-                restServiceMainMenu.isSelected()
-        );
+//       StackPane glass = new StackPane();
+//       glass.setStyle("-fx-background-color: rgba(200, 200, 200, 0.6);");
+//       rootPane.getChildren().add(glass);
+       gui.getConcept().createRandomUsers(restServiceMainMenu.isSelected());
+//       rootPane.getChildren().remove(glass);
 
     	searchInTable();
     	setSuccedMessage("Zufallsnutzer erfolgreich erstellt!");
 	}
-	
+
     @FXML
     private void deleteAllCustomersAction(){
     	ObservableList<User> list = FXCollections.observableList(
@@ -534,5 +543,16 @@ public class Controller {
     private void cleanInformationLabel(){
     	informationLabel.setText("");
     }
-    
+
+    public void overlayOn() {
+        StackPane glass = new StackPane();
+
+        glass.setStyle("-fx-background-color: rgba(200, 200, 200, 0.6);");
+
+        ProgressIndicator indicator = new ProgressIndicator();
+
+        glass.getChildren().add(indicator);
+        rootPane.getChildren().add(glass);
+
+    }
 }
