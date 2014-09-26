@@ -228,7 +228,7 @@ public class MongoDbPersistance implements IPersistance{
      */
     @Override
     public void upsertUser(Map<String,Object> user) {
-        //versuchen den Benutzer zu laden um zu prüfen ob er existiert
+        // versuchen den Benutzer zu laden um zu prüfen ob er existiert
         Map<String,Object> usr = this.getUserById((int)user.get(this.getKeyUserId()));
         //prüfen ob existiert
         if(usr != null){

@@ -2,6 +2,7 @@ package de.oszimt.concept.iface;
 
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
+import de.oszimt.persistence.iface.IPersistance;
 
 import java.util.List;
 
@@ -11,17 +12,21 @@ import java.util.List;
 public interface IConcept {
     String getTitle();
 
-    boolean deleteUser(User user);
+    void deleteUser(User user);
 
-    boolean createUser(User user);
+    void createUser(User user);
 
-    boolean upsertUser(User user);
+    void upsertUser(User user);
 
     void createRandomUsers(boolean useRest);
+
+    void createDepartment(String name);
 
     List<Department> getAllDepartments();
 
     List<User> getAllUser();
 
     User getUser(int id);
+
+    IPersistance getPersistance();
 }

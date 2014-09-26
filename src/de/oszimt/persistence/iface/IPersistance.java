@@ -23,5 +23,4 @@ public interface IPersistance {
     void removeDepartment(int id);
     Map<String,Object> getUserById(int id);
     List<Map<String,Object>> getAllDepartments();
-
 }
