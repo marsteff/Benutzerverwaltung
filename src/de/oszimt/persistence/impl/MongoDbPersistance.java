@@ -176,18 +176,6 @@ public class MongoDbPersistance implements IPersistance{
      * wie z.B. Map verwendet. Da somit nicht immer direkt klar ist wie ein Key
      * benannt ist, kann er hier abgefragt werden.
      *
-     * Gibt den Key-Namen der Benutzer Abteilungs Id zurück
-     * @return String
-     */
-    public String getKeyUserDepartmentId(){
-        return "department_id";
-    }
-
-    /**
-     * Für die Rückgabe der Datenbank-Methoden werden allgemeine Datentypen
-     * wie z.B. Map verwendet. Da somit nicht immer direkt klar ist wie ein Key
-     * benannt ist, kann er hier abgefragt werden.
-     *
      * Gibt den Key-Namen der Benutzer Abteilung zurück
      * @return String
      */
@@ -331,7 +319,7 @@ public class MongoDbPersistance implements IPersistance{
         Instant instant = ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
         Date res = Date.from(instant);
         doc.append(this.getKeyUserBirthday(), res);
-        doc.append(this.getKeyUserDepartmentId(),user.get(this.getKeyUserDepartmentId()));
+        doc.append("department_id",((Map)user.get(this.getKeyUserDepartment())).get(this.getKeyDepartmentId()));
         return doc;
     }
 
@@ -383,7 +371,7 @@ public class MongoDbPersistance implements IPersistance{
         BasicDBObject query = new BasicDBObject(
                 this.getKeyDepartmentId(),
                 Integer.parseInt(
-                        tmp.get(this.getKeyUserDepartmentId()).toString()
+                        tmp.get("department_id").toString()
                 )
         );
 
