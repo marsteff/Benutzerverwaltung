@@ -437,67 +437,97 @@ public class MongoDbPersistance implements IPersistance{
      */
     @Override
     public void createDepartment(String name){
+        //laden der Abteilungs Collection
         DBCollection coll = this.getCollection("Departments");
+        //Ermitteln der größten id
         DBCursor cursor = coll.find().sort(new BasicDBObject(
                 this.getKeyDepartmentId(), -1));
         int nextId = 1;
-
+        //setzen der neuen id
         if(cursor.count() > 0){
             nextId = Integer.parseInt(cursor.next().toMap().get(
                     this.getKeyDepartmentId()
             ).toString());
             nextId++;
         }
-
+        //erstellen einer Abteilungs map anhand der Id und dem Namen
         Map<String,Object> dep = new HashMap<String,Object>();
         dep.put(this.getKeyDepartmentId(), nextId);
         dep.put(this.getKeyDepartmentName(), name);
-
+        //Abteilungs Map zu BasicDBObject umwandeln
         BasicDBObject doc = this.departmentToBasicDBObject(dep);
+        //Abteilung der Collection hinzufügen
         coll.insert(doc);
     }
 
+    /**
+     * Aktualisieren einer Abteiung
+     *
+     * @param dep
+     */
     @Override
     public void updateDepartment(Map<String, Object> dep){
+        //laden der Abteilungs Collection
         DBCollection coll = this.getCollection("Departments");
+        //Abteilungs Map umwandeln
         BasicDBObject doc = this.departmentToBasicDBObject(dep);
+        //such Query inialisieren
         BasicDBObject serach = new BasicDBObject(
                 this.getKeyDepartmentId(),dep.get(this.getKeyDepartmentId()));
+        //Aktualisierung durchführen
         coll.update(serach,doc);
     }
 
+    /**
+     * Entfernen einer Abteilung
+     *
+     * @param id
+     */
     @Override
     public void removeDepartment(int id){
+        //laden der Abteilungs Collection
         DBCollection coll = this.getCollection("Departments");
+        //Zulöschenes Dokument finden
         DBObject doc = coll.findOne(new BasicDBObject(
                 this.getKeyDepartmentId(),id));
+        //Dokument entfernen
         coll.remove(doc);
     }
 
 
+    /**
+     * Gibt eine Liste aller Abteilungen zurück
+     *
+     * @return
+     */
     @Override
     public List<Map<String,Object>> getAllDepartments(){
+        //leere Liste erzeugen
         List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
-
+        //laden der Abteiungs Collection
         DBCollection coll = db.getCollection("Departments");
+        //Zeiger auf Anfang der Collection setzten
         DBCursor cursor = coll.find();
         try {
+            //Collection durchlaufen
             while(cursor.hasNext()) {
+                //aktuelles Dokument in den Scope laden und Zeiger einen weiter bewegen
                 DBObject tmp = cursor.next();
+                //leere map für die Abteilung initialisieren
                 Map<String, Object> map = new HashMap<String, Object>();
+                //Abteilungs Map füllen
                 map.put(this.getKeyDepartmentId(),Integer.parseInt(tmp.toMap().get(
-                        this.getKeyDepartmentId()
-                ).toString()));
+                        this.getKeyDepartmentId()).toString())
+                );
                 map.put(this.getKeyDepartmentName(),tmp.toMap().get(
                         this.getKeyDepartmentName()
                 ).toString());
+                //Abteilungs map der Liste hinzufügen
                 list.add(map);
             }
         } finally {
             cursor.close();
         }
-
         return list;
     }
-
 }
