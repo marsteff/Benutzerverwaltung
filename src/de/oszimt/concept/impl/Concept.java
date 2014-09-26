@@ -206,30 +206,50 @@ public class Concept implements IConcept {
         Util.createCustomers(useRest,this);
     }
 
+    /**
+     * Erstllen einer neuen Abteilung
+     * wird an die Datenhaltung weitergeleited
+     *
+     * @param name
+     */
     @Override
     public void createDepartment(String name){
         this.database.createDepartment(name);
     }
 
-    @Override
-    public IPersistance getPersistance(){
-        return this.database;
-    }
-
+    /**
+     * Gibt eine Liste aller Abteilungen zurück
+     *
+     * @return
+     */
     @Override
     public List<Department> getAllDepartments(){
+        //List mit Maps aus Datenhaltung empfangen und alle Elemente in Department Objekte umwandeln
         return this.database.getAllDepartments().stream().map(this::depMapToDepartment).collect(Collectors.toList());
     }
 
+    /**
+     * Gibt eine Liste aller Benutzer zurück
+     *
+     * @return
+     */
     @Override
     public List<User> getAllUser(){
+        //List mit Maps aus Datenhaltung empfangen und alle Elemente in User Objekte umwandeln
         return this.database.getAllUser().stream().map(this::userMapToUser).collect(Collectors.toList());
     }
 
 
+    /**
+     * Gibt einen einzlnen Benutzer anhand seiner ID zurück
+     *
+     * @param id
+     * @return
+     */
     @Override
     public User getUser(int id) {
+        //Hole den Benutzer aus der Datenhaltung und konvertiere die Map
+        //zu einem User Object
         return this.userMapToUser(this.database.getUserById(id));
     }
-
 }

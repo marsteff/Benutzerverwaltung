@@ -27,6 +27,4 @@ public interface IConcept {
     List<User> getAllUser();
 
     User getUser(int id);
-
-    IPersistance getPersistance();
 }
