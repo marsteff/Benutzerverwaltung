@@ -11,7 +11,6 @@ public interface IPersistance {
     String getKeyUserStreetNr();
     String getKeyUserZipCode();
     String getKeyUserBirthday();
-    String getKeyUserDepartmentId();
     String getKeyDepartmentId();
     String getKeyDepartmentName();
     String getKeyUserDepartment();
@@ -24,5 +23,4 @@ public interface IPersistance {
     void removeDepartment(int id);
     Map<String,Object> getUserById(int id);
     List<Map<String,Object>> getAllDepartments();
-
 }

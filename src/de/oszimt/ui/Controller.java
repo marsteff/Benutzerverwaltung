@@ -213,12 +213,13 @@ public class Controller {
 		//to specify if is it a new user or only a change
 		boolean isNew = false;
 		
-		if(!customerTable.getSelectionModel().isEmpty()){
-            newUser.setId(customerTable.getSelectionModel().getSelectedItem().getId());
-			isNew = true;
-		}
-		
-		this.gui.getConcept().upsertUser(newUser);
+        if(!customerTable.getSelectionModel().isEmpty()){
+            int id = customerTable.getSelectionModel().getSelectedItem().getId();
+            newUser.setId(id);
+            isNew = true;
+        }
+
+        this.gui.getConcept().upsertUser(newUser);
 		
 		//create a nice Message of Action
 		this.setSuccedMessage(newUser + " erfolgreich" + (isNew ?  " bearbeitet" : " als User hinzugefügt"));
