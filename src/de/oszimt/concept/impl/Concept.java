@@ -70,34 +70,67 @@ public class Concept implements IConcept {
     private User userMapToUser(Map<String,Object> userMap){
         //Datenhaltungsreffernce in keys speicher (erspart schreibarbeit)
         IPersistance keys = this.database;
+        //initialisieren der PLZ
+        int zipCode = 0;
+        if(userMap.containsKey(keys.getKeyUserZipCode())){
+            zipCode = Integer.parseInt(
+                    userMap.get(keys.getKeyUserZipCode()).toString()
+            );
+        }
+        //initialisieren des Geburtstages
+        LocalDate birthday = userMap.containsKey(keys.getKeyUserBirthday()) ?
+                this.DateToLocalDate((Date) userMap.get(
+                        keys.getKeyUserBirthday())
+                ) : null;
+
         //Neuen Benutzer anlegen und mittels des Konstruktor initalisieren
         //containsKey() Abfragen sollen NullPointerExceptions verhindern
         User user = new User(
-                userMap.containsKey(keys.getKeyUserFirstname()) ?
-                        userMap.get(keys.getKeyUserFirstname()).toString() : null,
-                userMap.containsKey(keys.getKeyUserLastname()) ?
-                        userMap.get(keys.getKeyUserLastname()).toString() : null,
-                userMap.containsKey(keys.getKeyUserBirthday()) ?
-                        LocalDateTime.ofInstant(
-                            Instant.ofEpochMilli(
-                                ((Date) userMap.get(keys.getKeyUserBirthday())).getTime()
-                        ),
-                        ZoneId.systemDefault()).toLocalDate() : null,
-                userMap.containsKey(keys.getKeyUserCity()) ?
-                        userMap.get(keys.getKeyUserCity()).toString() : null,
-                userMap.containsKey(keys.getKeyUserStreet()) ?
-                        userMap.get(keys.getKeyUserStreet()).toString() : null,
-                userMap.containsKey(keys.getKeyUserStreetNr()) ?
-                        userMap.get(keys.getKeyUserStreetNr()).toString() : null,
-                userMap.containsKey(keys.getKeyUserZipCode()) ?
-                        Integer.parseInt(userMap.get(keys.getKeyUserZipCode()).toString()) : null,
+                this.readSaveFromMap(userMap,keys.getKeyUserFirstname()),
+                this.readSaveFromMap(userMap, keys.getKeyUserLastname()),
+                birthday,
+                this.readSaveFromMap(userMap,keys.getKeyUserCity()),
+                this.readSaveFromMap(userMap,keys.getKeyUserStreet()),
+                this.readSaveFromMap(userMap,keys.getKeyUserStreetNr()),
+                zipCode,
                 new Department(
-                        (int) ((Map) userMap.get(keys.getKeyUserDepartment())).get(keys.getKeyDepartmentId()),
-                        ((Map) userMap.get(keys.getKeyUserDepartment())).get(keys.getKeyDepartmentName()).toString()
+                        (int) ((Map) userMap.get(
+                                keys.getKeyUserDepartment())
+                        ).get(keys.getKeyDepartmentId()),
+                        ((Map) userMap.get(
+                                keys.getKeyUserDepartment())
+                        ).get(keys.getKeyDepartmentName()).toString()
                 )
         );
-        user.setId(userMap.containsKey(keys.getKeyUserId()) ? (int) userMap.get(keys.getKeyUserId()) : 0);
+        user.setId(userMap.containsKey(keys.getKeyUserId()) ?
+                (int) userMap.get(keys.getKeyUserId()) : 0);
         return user;
+    }
+
+    /**
+     * Umwandung von LocalDate zu Date
+     *
+     * @param date
+     * @return
+     */
+    private LocalDate DateToLocalDate(Date date){
+        return LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(date.getTime()),
+                ZoneId.systemDefault()
+        ).toLocalDate();
+    }
+
+    /**
+     * Gibt den Wert einer Map zurück
+     * Prüft ob der gegebene Key existsiert.
+     * @notice Gibt bei fehlendem Key NULL zurück
+     *
+     * @param map
+     * @param key
+     * @return
+     */
+    private String readSaveFromMap(Map map, String key){
+        return map.containsKey(key) ? map.get(key).toString() : null;
     }
 
     /**
