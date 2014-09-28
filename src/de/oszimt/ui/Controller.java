@@ -564,19 +564,6 @@ public class Controller {
     	informationLabel.setText("");
     }
 
-    public void overlayOn() {
-        StackPane glass = new StackPane();
-
-        glass.setStyle("-fx-background-color: rgba(200, 200, 200, 0.6);");
-
-        ProgressIndicator indicator = new ProgressIndicator();
-        indicator.setMaxSize(100, 100);
-
-        glass.getChildren().add(indicator);
-        rootPane.getChildren().add(glass);
-
-    }
-
     private StackPane callProgress(){
         StackPane glass = new StackPane();
 
