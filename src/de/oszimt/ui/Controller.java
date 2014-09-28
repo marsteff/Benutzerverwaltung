@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -240,25 +241,44 @@ public class Controller {
 	@FXML
 	private void createRandomCustomersAction(){
 
-//       StackPane glass = new StackPane();
-//       glass.setStyle("-fx-background-color: rgba(200, 200, 200, 0.6);");
-//       rootPane.getChildren().add(glass);
-       gui.getConcept().createRandomUsers(restServiceMainMenu.isSelected());
-//       rootPane.getChildren().remove(glass);
-
-    	searchInTable();
-    	setSuccedMessage("Zufallsnutzer erfolgreich erstellt!");
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                gui.getConcept().createRandomUsers(restServiceMainMenu.isSelected());
+                return null;
+            }
+        };
+        new Thread(task).start();
+        StackPane glass = callProgress();
+        task.setOnSucceeded(e -> {
+            rootPane.getChildren().remove(glass);
+            searchInTable();
+            setSuccedMessage("Zufallsnutzer erfolgreich erstellt!");
+        });
 	}
 
     @FXML
     private void deleteAllCustomersAction(){
-    	ObservableList<User> list = FXCollections.observableList(
-                this.gui.getConcept().getAllUser()
-        );
-    	list.forEach(e -> this.gui.getConcept().deleteUser(e));
-    	this.searchInTable();
+
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                ObservableList<User> list = FXCollections.observableList(
+                        gui.getConcept().getAllUser()
+                );
+                list.forEach(e -> gui.getConcept().deleteUser(e));
+                return null;
+            }
+        };
+        new Thread(task).start();
+        StackPane glass = callProgress();
+        task.setOnSucceeded(e -> {
+            rootPane.getChildren().remove(glass);
+            searchInTable();
+            setSuccedMessage("Alle Nutzer erfolgreich gelöscht");
+        });
     }
-    
+
     @FXML
     private void newCustomerAction() {
         this.abortButtonAction();
@@ -555,5 +575,19 @@ public class Controller {
         glass.getChildren().add(indicator);
         rootPane.getChildren().add(glass);
 
+    }
+
+    private StackPane callProgress(){
+        StackPane glass = new StackPane();
+
+        glass.setStyle("-fx-background-color: rgba(200, 200, 200, 0.6);");
+
+        ProgressIndicator indicator = new ProgressIndicator();
+        indicator.setMaxSize(100, 100);
+
+        glass.getChildren().add(indicator);
+        rootPane.getChildren().add(glass);
+
+        return glass;
     }
 }
