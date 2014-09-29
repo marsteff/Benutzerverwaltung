@@ -3,6 +3,7 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.geometry.Insets?>
 
+<?import de.oszimt.NumberTextField?>
 <StackPane fx:id="rootPane" fx:controller="de.oszimt.ui.Controller" xmlns:fx="http://javafx.com/fxml">
 <BorderPane fx:id="mainPane">
     <!-- !!!!!!!!!!!!!!!!!!! Menubar !!!!!!!!!!-->
@@ -62,7 +63,7 @@
 						<VBox spacing="5" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
 							<HBox spacing="5">
 								<TextField  promptText="Stadt" fx:id="cityField" onAction="#changeButtonAction"/>
-								<TextField  promptText="PLZ" fx:id="zipCodeField" onAction="#changeButtonAction">
+								<NumberTextField  promptText="PLZ" fx:id="zipCodeField" onAction="#changeButtonAction">
 									<tooltip>
 										<Tooltip text="Bei eingeben einer Validen Postleitzahl wird die Stadt automatisch ausgefüllt" />
 									</tooltip>
@@ -73,7 +74,7 @@
 											</items>
 										</ContextMenu>
 									</contextMenu>
-								</TextField>
+								</NumberTextField>
 							</HBox>
 							<HBox spacing="5">
 								<TextField  promptText="Strasse" fx:id="streetField" onAction="#changeButtonAction"/>

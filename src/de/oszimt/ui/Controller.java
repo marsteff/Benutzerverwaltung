@@ -499,7 +499,9 @@ public class Controller {
 				((StringProperty) observable).setValue(oldValue);
 			}
 
-//            Pattern pattern = ;
+//            if(!newValue.matches("\\d+") && !oldValue.equals(newValue)){
+//                zipCodeField.setText(oldValue);
+//            }
 
 				
 			//Wenn RestService benutzt wird, soll der Ort beim löschen der 5 Stelle der PLZ auch der Ort geloescht werden
