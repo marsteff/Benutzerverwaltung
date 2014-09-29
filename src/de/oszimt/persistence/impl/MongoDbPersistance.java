@@ -65,6 +65,7 @@ public class MongoDbPersistance implements IPersistance{
      * Um die Klasse auch als Singleton nutzen zu können haben wir
      * die statische Methode getInstance(). Sie erzeugt oder gibt eine
      * bestehende Refference der Klasse zurück
+     *
      * @return MongoDbPersistance
      * @throws UnknownHostException
      */
@@ -291,8 +292,10 @@ public class MongoDbPersistance implements IPersistance{
                 this.getKeyUserId(),
                 id
         ));
-        //Dokument aus der Collection entfernen
-        coll.remove(doc);
+        if(doc != null) {
+            //Dokument aus der Collection entfernen
+            coll.remove(doc);
+        }
     }
 
     /**
@@ -433,7 +436,6 @@ public class MongoDbPersistance implements IPersistance{
     /**
      * Neue Abteilung erzeugen
      * @param name String
-     *
      */
     @Override
     public void createDepartment(String name){

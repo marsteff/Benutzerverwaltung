@@ -1,7 +1,8 @@
 package de.oszimt.concept.enumeration;
 
 /**
- * Created by Marci on 18.09.2014.
+ * Enum für die verschiedenen Datenhalungs Typen
+ * @see /src/de/oszimt/factory/ConceptFactory
  */
 public enum ConceptMethod {
     STANDARD_CONCEPT;

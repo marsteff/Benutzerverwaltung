@@ -9,8 +9,23 @@ import javafx.stage.Stage;
 
 public class Gui extends Application {
 
+    /**
+     * Instanze Variable zur Haltung des Konzepts
+     * @notice muss in diesem Fall statisch sein da
+     *         eine FX-Anwendung mittels Class-Reflection immer
+     *         eine Instance über den Default-Konstrucktor erzeugt
+     *
+     *         Wir können jedoch erst den Paramentrisierten Konstrukor
+     *         ausrufen und die Konzeptinstance setzten
+     */
     private static IConcept concept;
 
+    /**
+     * FX Start-Method Läd das GUI mittels Kontroller und FXML Dateien
+     *
+     * @param primaryStage
+     * @throws Exception
+     */
     @Override
     public void start(Stage primaryStage) throws Exception{
     	
@@ -31,25 +46,43 @@ public class Gui extends Application {
 
     }
 
-    public Gui(){
+    /**
+     * Default Konstructor
+     * Wird von FXApplication aufgerufen
+     */
+    public Gui(){}
 
-    }
-
+    /**
+     * Paramentrisierter Konstrukor
+     * wird zum setzten der Konzept Instanze benutzt
+     *
+     * @param concept
+     */
     public Gui(IConcept concept){
         this.setConcept(concept);
         this.run();
     }
 
+    /**
+     * Starten des GUIs
+     */
     public void run() {
         launch();
     }
 
+    /**
+     * Gibt die Konzept Instanze zurück
+     * @return
+     */
     public IConcept getConcept() {
         return concept;
     }
 
+    /**
+     * Setzt die Konzept Instanze
+     * @param concept
+     */
     public void setConcept(IConcept concept) {
         this.concept = concept;
     }
-
 }

@@ -26,8 +26,17 @@ import javafx.stage.Stage;
 import de.oszimt.ui.templates.AdvancedSearch;
 import de.oszimt.util.RestService;
 
+/**
+ * Kontroller für das GUI
+ *
+ * Ganz nach JavaFX Art gibt es auch hier einen
+ * Kontroller um Events etc. des GUIs zu steuern
+ */
 public class Controller {
 
+    /*
+        Definieren der Kontrollelemente
+     */
     @FXML
     public StackPane rootPane;
     @FXML
@@ -87,21 +96,45 @@ public class Controller {
 	private CheckMenuItem restServiceContextMenu;
 	@FXML
 	private CheckMenuItem restServiceMainMenu;
-	
+
+    /*
+        Schaltenvariablen um bestimmte Funktionalitäten
+        umzusetzten
+     */
 	private boolean isNewSelection = false;
 	private boolean isAdvancedSearch = false;
-	
+
+    /**
+     * Hält eine Instanze des Kontrollers für die
+     * Erweiterte Suche
+     */
 	private AdvancedSearch advancedSearcher;
 
+    /**
+     * Hält eine Instance des GUI Objects
+     */
     private Gui gui;
+
+    /**
+     * Hält eine Instance der Stage
+     */
     private Stage stage;
-	
+
+    /**
+     * Hält eine Instance des REST Services (wenn benutzt)
+     */
 	private RestService service;
+    /**
+     * Schaltervariablen um den REST Service zu steuern
+     */
 	private boolean serviceTown = false;
 	private boolean writeError = false;
 
     StackPane glass = null;
 
+    /**
+     * Initialisieren einzelner Kontrollelemente
+     */
 	@FXML
 	public void initialize(){
 		//setzt die Bindings der einzelnen Controls - unter anderem für eine Full-Responsive GUI zuständig
@@ -129,6 +162,9 @@ public class Controller {
         });
 	}
 
+    /**
+     * Füllt das Dropdown für die Abteilungen
+     */
     private void setDepartmentComboBox() {
         //setzen der Departments in die ComboBox
         List<Department> departmentList = getGui().getConcept().getAllDepartments();
@@ -139,10 +175,14 @@ public class Controller {
         departmentComboBox.getItems().addAll(departmentList);
     }
 
+    /**
+     * Setzt die Stage
+     *
+     * @param stage
+     */
 	public void setStage(Stage stage){
 		this.stage = stage;
 	}
-
 
     /**
      * Ausgangswerte initialisieren
@@ -157,12 +197,14 @@ public class Controller {
 		streetField.setText("");
 		streetNrField.setText("");
         departmentComboBox.setValue(null);
-		
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().clearSelection();
 		firstnameField.requestFocus();
 	}
-	
+
+    /**
+     * Toggle der Erweiterten Suche
+     */
 	@FXML
 	private void advancedSearch(){
 		if(!isAdvancedSearch){
@@ -180,40 +222,30 @@ public class Controller {
 			searchInTable();
 		}
 	}
-	
+
+    /**
+     * Löschen eines Benutzers (aus Tabelle und Datenhaltung)
+     *
+     * Wird als onAction in main.fxml benutzt
+     */
 	@FXML
 	private void deleteCustomer(){
 		User user = customerTable.getSelectionModel().getSelectedItem();
-        /*
-         * @todo ist es möglich den user hier mit der korrekten id zu bekommen??
-         *    ansonsten funktioniert das delete nicht da nicht eindeutig ermittelt
-         *    werden kann welcher User gelöscht werden soll!
-         */
-
-        System.out.println("User ID is " + user.getId());
-
         this.gui.getConcept().deleteUser(user);
 		searchInTable();
 	}
 
-	@FXML
-	private void deleteCustomerButton(){
-
-		ObservableList<User> testList = customerTable.getItems();
-		testList.forEach(e -> {
-			if(e.getFirstname() == null)
-				System.err.println(e + " ist fehlerhaft");
-			else
-				System.out.println(e + " weist keine Fehler auf");
-		});
-	}
-
+    /**
+     * Ändert einen Benutzer
+     *
+     * wird als onAction in main.fxml benutzt
+     */
 	@FXML
 	private void changeButtonAction(){
-		//get index of actual selection to make double change possible
+		//index der Tabellenauswahl
 		int index = customerTable.getSelectionModel().getSelectedIndex();
 		
-		//get content of fields to make new customer
+		//Tabellen Zeile zu Benutzer Objekt
 		String firstname = firstnameField.getText();
 		String lastname = lastnameField.getText();
 		String city = cityField.getText();
@@ -225,7 +257,7 @@ public class Controller {
 
         User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode,new Department(department.getId(), department.getName()));
 		
-		//to specify if is it a new user or only a change
+		//Neuer Benutzer oder Änderung?
 		boolean isNew = false;
 		
         if(!customerTable.getSelectionModel().isEmpty()){
@@ -236,7 +268,7 @@ public class Controller {
 
         this.gui.getConcept().upsertUser(newUser);
 		
-		//create a nice Message of Action
+		//Benachrichtigung setzen
 		this.setSuccedMessage(newUser + " erfolgreich" + (isNew ?  " bearbeitet" : " als User hinzugefügt"));
 		
 		this.searchInTable();
@@ -244,7 +276,12 @@ public class Controller {
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().select(index);
 	}
-	
+
+    /**
+     * Erstellt zufällige Benutzer
+     *
+     * Wrid als onAction in main.fxml benutzt
+     */
 	@FXML
 	private void createRandomCustomersAction(){
 
