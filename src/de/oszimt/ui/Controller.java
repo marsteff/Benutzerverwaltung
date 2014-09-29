@@ -2,6 +2,7 @@ package de.oszimt.ui;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
@@ -103,7 +104,6 @@ public class Controller {
 
 	@FXML
 	public void initialize(){
-				
 		//setzt die Bindings der einzelnen Controls - unter anderem für eine Full-Responsive GUI zuständig
 		bindingOfControls();
 		
@@ -461,9 +461,12 @@ public class Controller {
 				writeError = true;
 				((StringProperty) observable).setValue(oldValue);
 			}
+
+//            Pattern pattern = ;
+
 				
-			//Wenn RestService benutzt wird, soll der Ort beim löschen der 5 Stelle der PLZ auch der Ort gel�scht werden
-			if(restServiceMainMenu.isSelected() ||serviceTown && newValue.length() == 4 && oldValue.length() == 5){
+			//Wenn RestService benutzt wird, soll der Ort beim löschen der 5 Stelle der PLZ auch der Ort geloescht werden
+			if(restServiceMainMenu.isSelected() || serviceTown && newValue.length() == 4 && oldValue.length() == 5){
 				cityField.setText("");
 				serviceTown = false;
 			}
@@ -480,6 +483,11 @@ public class Controller {
 					serviceTown = true;
 				}
 			}
+
+            //Ausgabe der Fehlermeldung
+            if(writeError){
+                setErrorMessage("Eingabe darf nicht länger als 5 Zeichen lang sein");
+            }
 			
 			//Prüfen, ob der ÜbernehmenButton aktiviert werden darf
 			activateChangeButton(oldValue, newValue, "");
@@ -505,9 +513,10 @@ public class Controller {
 		streetField.textProperty().addListener(textListener);
 		streetNrField.textProperty().addListener(textListener);
 		zipCodeField.textProperty().addListener(plzListener);
-		birthdayField.valueProperty().addListener(dateListener);
+        birthdayField.valueProperty().addListener(dateListener);
         departmentComboBox.valueProperty().addListener(departmentListener);
-	}
+        birthdayField.getEditor().textProperty().addListener(textListener);
+    }
 	
 	/**
 	 * Prueft, ob alle TextFields + DatePicker gefuellt sind

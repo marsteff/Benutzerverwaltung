@@ -47,7 +47,7 @@
 								<TextField  promptText="Nachname" fx:id="lastnameField"	onAction="#changeButtonAction"/>
 							</HBox>
 							<HBox spacing="5">
-								<DatePicker fx:id="birthdayField" editable="false" promptText="Geburtstag"/>
+								<DatePicker fx:id="birthdayField" editable="true" promptText="Geburtstag"/>
                                 <ComboBox fx:id="departmentComboBox" promptText="Abteilung" />
 							</HBox>		
 							<HBox>
