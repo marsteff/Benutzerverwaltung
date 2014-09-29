@@ -19,7 +19,6 @@
                         <MenuItem text="Neuer Kunde" onAction="#abortButtonAction"/>
                         <MenuItem text="Lösche alle Kunden" onAction="#deleteAllCustomersAction" />
                         <MenuItem text="Erstelle Zufallskunden" onAction="#createRandomCustomersAction" />
-                        <MenuItem text="Overlay On" onAction="#overlayOn" />
                     </items>
                 </Menu>
                 <Menu text="Einstellungen">

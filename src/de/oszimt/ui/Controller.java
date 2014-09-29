@@ -177,14 +177,6 @@ public class Controller {
 	@FXML
 	private void deleteCustomer(){
 		User user = customerTable.getSelectionModel().getSelectedItem();
-        /*
-         * @todo ist es möglich den user hier mit der korrekten id zu bekommen??
-         *    ansonsten funktioniert das delete nicht da nicht eindeutig ermittelt
-         *    werden kann welcher User gelöscht werden soll!
-         */
-
-        System.out.println("User ID is " + user.getId());
-
         this.gui.getConcept().deleteUser(user);
 		searchInTable();
 	}

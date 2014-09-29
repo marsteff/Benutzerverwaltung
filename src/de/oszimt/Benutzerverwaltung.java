@@ -11,15 +11,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.UnknownHostException;
 
-
 public class Benutzerverwaltung {
     public static void main(String[] args) {
         new Gui(
                 ConceptFactory.buildConcept(
                         ConceptMethod.STANDARD_CONCEPT,
-                        PersistanceFactory.buildPersistance(
-                                PersistanceMethod.MONGODB
-                        )
+                        PersistanceMethod.MONGODB
                 )
         );
     }
