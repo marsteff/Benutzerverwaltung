@@ -24,8 +24,17 @@ import javafx.stage.Stage;
 import de.oszimt.ui.templates.AdvancedSearch;
 import de.oszimt.util.RestService;
 
+/**
+ * Kontroller für das GUI
+ *
+ * Ganz nach JavaFX Art gibt es auch hier einen
+ * Kontroller um Events etc. des GUIs zu steuern
+ */
 public class Controller {
 
+    /*
+        Definieren der Kontrollelemente
+     */
     @FXML
     public StackPane rootPane;
     @FXML
@@ -85,21 +94,45 @@ public class Controller {
 	private CheckMenuItem restServiceContextMenu;
 	@FXML
 	private CheckMenuItem restServiceMainMenu;
-	
+
+    /*
+        Schaltenvariablen um bestimmte Funktionalitäten
+        umzusetzten
+     */
 	private boolean isNewSelection = false;
 	private boolean isAdvancedSearch = false;
-	
+
+    /**
+     * Hält eine Instanze des Kontrollers für die
+     * Erweiterte Suche
+     */
 	private AdvancedSearch advancedSearcher;
 
+    /**
+     * Hält eine Instance des GUI Objects
+     */
     private Gui gui;
+
+    /**
+     * Hält eine Instance der Stage
+     */
     private Stage stage;
-	
+
+    /**
+     * Hält eine Instance des REST Services (wenn benutzt)
+     */
 	private RestService service;
+    /**
+     * Schaltervariablen um den REST Service zu steuern
+     */
 	private boolean serviceTown = false;
 	private boolean writeError = false;
 
     StackPane glass = null;
 
+    /**
+     * Initialisieren einzelner Kontrollelemente
+     */
 	@FXML
 	public void initialize(){
 				
@@ -127,15 +160,22 @@ public class Controller {
         });
 	}
 
+    /**
+     * Füllt das Dropdown für die Abteilungen
+     */
     private void setDepartmentComboBox() {
         ObservableList<Department> departmentList = FXCollections.observableArrayList(gui.getConcept().getAllDepartments());
         departmentComboBox.setItems(departmentList);
     }
 
+    /**
+     * Setzt die Stage
+     *
+     * @param stage
+     */
 	public void setStage(Stage stage){
 		this.stage = stage;
 	}
-
 
     /**
      * Ausgangswerte initialisieren
@@ -150,12 +190,14 @@ public class Controller {
 		streetField.setText("");
 		streetNrField.setText("");
         departmentComboBox.setValue(null);
-		
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().clearSelection();
 		firstnameField.requestFocus();
 	}
-	
+
+    /**
+     * Toggle der Erweiterten Suche
+     */
 	@FXML
 	private void advancedSearch(){
 		if(!isAdvancedSearch){
@@ -173,7 +215,10 @@ public class Controller {
 			searchInTable();
 		}
 	}
-	
+
+    /**
+     * Löschen eines Benutzers (aus Tabelle und Datenhaltung)
+     */
 	@FXML
 	private void deleteCustomer(){
 		User user = customerTable.getSelectionModel().getSelectedItem();
