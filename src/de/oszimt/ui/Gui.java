@@ -47,6 +47,12 @@ public class Gui extends Application {
     }
 
     /**
+     * Default Konstructor
+     * Wird von FXApplication aufgerufen
+     */
+    public Gui(){}
+
+    /**
      * Paramentrisierter Konstrukor
      * wird zum setzten der Konzept Instanze benutzt
      *

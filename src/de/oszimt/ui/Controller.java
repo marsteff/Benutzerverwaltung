@@ -218,6 +218,8 @@ public class Controller {
 
     /**
      * Löschen eines Benutzers (aus Tabelle und Datenhaltung)
+     *
+     * Wird als onAction in main.fxml benutzt
      */
 	@FXML
 	private void deleteCustomer(){
