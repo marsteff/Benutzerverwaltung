@@ -11,6 +11,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.UnknownHostException;
 
+/**
+ * Startet die Anwendung
+ */
 public class Benutzerverwaltung {
     public static void main(String[] args) {
         new Gui(
