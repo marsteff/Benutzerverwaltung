@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
+import de.oszimt.util.Util;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -112,7 +113,8 @@ public class Controller {
 		//setzt die Listener der Controls
 		setListenerForControls();
 
-		service = new RestService();
+        //TODO das muss doch eigentlich bei dem aktivieren des RestServices passieren
+//		service = new RestService();
 
         //Hiermit ist es möglich, nach der Initialierung Code auszuführen. Notwendig, um in der initialize Methode auf das GUI Objekt zugreifen zu können
         Platform.runLater(new Runnable() {
@@ -128,8 +130,13 @@ public class Controller {
 	}
 
     private void setDepartmentComboBox() {
-        ObservableList<Department> departmentList = FXCollections.observableArrayList(gui.getConcept().getAllDepartments());
-        departmentComboBox.setItems(departmentList);
+        //setzen der Departments in die ComboBox
+        List<Department> departmentList = getGui().getConcept().getAllDepartments();
+        if(departmentList.size() == 0){
+            Util.createDepartments(getGui().getConcept());
+            departmentList = getGui().getConcept().getAllDepartments();
+        }
+        departmentComboBox.getItems().addAll(departmentList);
     }
 
 	public void setStage(Stage stage){
@@ -290,7 +297,16 @@ public class Controller {
     	stage.close();
     }
 
-	/**
+    public Gui getGui() {
+        return gui;
+    }
+
+    public void setGui(Gui gui) {
+        this.gui = gui;
+    }
+
+
+    /**
 	 * Fuellt die Textfelder beim klick auf einen Kunden in der TableView mit den entsprechenden Werten
 	 */
 	private void fillControls() {
@@ -362,14 +378,6 @@ public class Controller {
 		customerTable.setItems(filteredDate);
 	}
 
-    public Gui getGui() {
-        return gui;
-    }
-
-    public void setGui(Gui gui) {
-        this.gui = gui;
-    }
-	
 	/**
 	 * Bindet die Breite der Controls an die Breite des Fensters, zwecks Responsive-GUI
 	 */
@@ -513,7 +521,7 @@ public class Controller {
 				streetNrField.getText().equals("") ||
 				zipCodeField.getText().equals("") ||
 				birthdayField.getValue() == null ||
-               departmentComboBox.getValue() == null
+                departmentComboBox.getValue() == null
 			) 
 			return false;
 		
@@ -564,15 +572,30 @@ public class Controller {
     	informationLabel.setText("");
     }
 
+    /**
+     * Erzeugt über der Gesamten Arbeitsfläche ein Halbdurchsitiges Pane mit einem
+     * ProgressIndicator. Dient dazu die Arbeitsfläche zu sperren, wenn im Hintergrund
+     * Operationen wie das lesen oder schreiben in eine Datenbank vollzogen wird, was unter anderem
+     * länger dauern kann (z. B. Erzeuge Zufallskunden oder Lösche alle Kunden).
+     * Zum löschen dieses Pane´s muss rootPane.getChildren().add(returnObject); aufgerufen werden.
+     * 'returnObject' ist das Objekt, was von dieser Methode zurückgegeben wird
+     * @return Das erstelle Halbdurchsichtige Pane
+     */
     private StackPane callProgress(){
+        //Ersellen eines neuen Pane´s
         StackPane glass = new StackPane();
 
+        //setzt die Hintergrudfarbe des Pane auf ein helles Grau mit einem Durchlässigkeitswert von 60%
         glass.setStyle("-fx-background-color: rgba(200, 200, 200, 0.6);");
 
+        //Erstellt einen ProgressIndicator und setzt seine maximale Größe
         ProgressIndicator indicator = new ProgressIndicator();
         indicator.setMaxSize(100, 100);
 
+        //fügt dem durchlässigen Pane den ProgressIndicator hinzu
         glass.getChildren().add(indicator);
+
+        //fügt der Gesamtoberfläche das neue Pane hinzu
         rootPane.getChildren().add(glass);
 
         return glass;

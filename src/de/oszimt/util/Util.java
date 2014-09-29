@@ -13,8 +13,7 @@ import javafx.collections.ObservableList;
 public class Util {
 	
 	/**
-	 * Stupide Erzeugung von Zufallskunden mit richtiger PLZ und Stadt
-	 * @return neu erzeugten Kunden
+	 * Stupide Erzeugung von Zufallskunden mit richtiger PLZ und Stadt, wenn userest true ist
 	 */
 	public static void createCustomers(boolean userest, IConcept concept){
         RestService service = null;
@@ -22,20 +21,9 @@ public class Util {
         if(userest){
 		   service = new RestService();
         }
-        //Dem Zufall bereitstehende Abteilung
-        String[] department_names = new String[]{
-                "Geschäftsführung","Entwicklung","Marketing",
-                "Rechungsabteilung", "Kundenservice", "Verkauf",
-                "Logistik","Lager", "Fahrer","Projektmanagement"
-        };
 
-        //Abteilung in der Datenhaltung anlegen
-        for(String dep : department_names){
-            concept.createDepartment(dep);
-        }
-
-        //Holden der erstellen Abteilung aus der Datenhaltung
-        //notwendig da die generierten IDs benötigt werden
+        //Holden der erstellten Abteilungen aus der Datenhaltung.
+        //Notwendig da die generierten IDs benötigt werden
         List<Department> departments = concept.getAllDepartments();
 
         //Dem Zufall bereitstehende Vornamen
@@ -91,4 +79,23 @@ public class Util {
             );
         }
 	}
+
+    public static void createDepartments(IConcept concept){
+        //Prüfen, ob bereits Departments in der Datenbank enthalten sind, wenn nein, neu erzeugen
+        List<Department> checkList = concept.getAllDepartments();
+        if (checkList == null || checkList.size() == 0) {
+
+            //Dem Zufall bereitstehende Abteilung
+            String[] department_names = new String[]{
+                    "Geschäftsführung","Entwicklung","Marketing",
+                    "Rechnungsabteilung", "Kundenservice", "Verkauf",
+                    "Logistik","Lager", "Fahrer","Projektmanagement"
+            };
+
+            //Abteilung in der Datenhaltung anlegen
+            for(String dep : department_names){
+                concept.createDepartment(dep);
+            }
+        }
+    }
 }

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class Concept implements IConcept {
 
     /**
-     * Title der Anwendung
+     * Titel der Anwendung
      */
     private String title = "Oszimt Projekt Benutzerverwaltung";
 
