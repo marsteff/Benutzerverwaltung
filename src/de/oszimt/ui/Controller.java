@@ -228,24 +228,17 @@ public class Controller {
 		searchInTable();
 	}
 
-	@FXML
-	private void deleteCustomerButton(){
-
-		ObservableList<User> testList = customerTable.getItems();
-		testList.forEach(e -> {
-			if(e.getFirstname() == null)
-				System.err.println(e + " ist fehlerhaft");
-			else
-				System.out.println(e + " weist keine Fehler auf");
-		});
-	}
-
+    /**
+     * Ändert einen Benutzer
+     *
+     * wird als onAction in main.fxml benutzt
+     */
 	@FXML
 	private void changeButtonAction(){
-		//get index of actual selection to make double change possible
+		//index der Tabellenauswahl
 		int index = customerTable.getSelectionModel().getSelectedIndex();
 		
-		//get content of fields to make new customer
+		//Tabellen Zeile zu Benutzer Objekt
 		String firstname = firstnameField.getText();
 		String lastname = lastnameField.getText();
 		String city = cityField.getText();
@@ -257,7 +250,7 @@ public class Controller {
 
         User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode,new Department(department.getId(), department.getName()));
 		
-		//to specify if is it a new user or only a change
+		//Neuer Benutzer oder Änderung?
 		boolean isNew = false;
 		
         if(!customerTable.getSelectionModel().isEmpty()){
@@ -268,7 +261,7 @@ public class Controller {
 
         this.gui.getConcept().upsertUser(newUser);
 		
-		//create a nice Message of Action
+		//Benachrichtigung setzen
 		this.setSuccedMessage(newUser + " erfolgreich" + (isNew ?  " bearbeitet" : " als User hinzugefügt"));
 		
 		this.searchInTable();
@@ -276,7 +269,12 @@ public class Controller {
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().select(index);
 	}
-	
+
+    /**
+     * Erstellt zufällige Benutzer
+     *
+     * Wrid als onAction in main.fxml benutzt
+     */
 	@FXML
 	private void createRandomCustomersAction(){
 

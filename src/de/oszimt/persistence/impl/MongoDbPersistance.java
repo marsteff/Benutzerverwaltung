@@ -292,8 +292,10 @@ public class MongoDbPersistance implements IPersistance{
                 this.getKeyUserId(),
                 id
         ));
-        //Dokument aus der Collection entfernen
-        coll.remove(doc);
+        if(doc != null) {
+            //Dokument aus der Collection entfernen
+            coll.remove(doc);
+        }
     }
 
     /**

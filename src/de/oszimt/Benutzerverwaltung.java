@@ -16,7 +16,7 @@ public class Benutzerverwaltung {
         new Gui(
                 ConceptFactory.buildConcept(
                         ConceptMethod.STANDARD_CONCEPT,
-                        PersistanceMethod.MONGODB
+                        PersistanceMethod.SQLITE
                 )
         );
     }
