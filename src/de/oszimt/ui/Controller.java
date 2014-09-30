@@ -215,10 +215,12 @@ public class Controller {
 	@FXML
 	private void deleteCustomer(){
 		User user = customerTable.getSelectionModel().getSelectedItem();
-        this.gui.getConcept().deleteUser(user);
-		searchInTable();
-        if(isAdvancedSearch){
-            advancedSearcher.setOriginalList(FXCollections.observableArrayList(this.getGui().getConcept().getAllUser()));
+        if(user != null) {
+            this.gui.getConcept().deleteUser(user);
+            searchInTable();
+            if (isAdvancedSearch) {
+                advancedSearcher.setOriginalList(FXCollections.observableArrayList(this.getGui().getConcept().getAllUser()));
+            }
         }
 	}
 
