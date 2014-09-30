@@ -154,26 +154,13 @@ public class Controller {
             @Override
             public void run() {
                 //Initialisiert die ComboBox
-                setDepartmentComboBox();
+                departmentComboBox.getItems().addAll(getGui().getConcept().getAllDepartments());
 
                 //Tabelle mit Daten fuellen und Livesuche ermöglichen
                 searchInTable();
             }
         });
 	}
-
-    /**
-     * Füllt das Dropdown für die Abteilungen
-     */
-    private void setDepartmentComboBox() {
-        //setzen der Departments in die ComboBox
-        List<Department> departmentList = getGui().getConcept().getAllDepartments();
-        if(departmentList.size() == 0){
-            Util.createDepartments(getGui().getConcept());
-            departmentList = getGui().getConcept().getAllDepartments();
-        }
-        departmentComboBox.getItems().addAll(departmentList);
-    }
 
     /**
      * Setzt die Stage

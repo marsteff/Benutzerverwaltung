@@ -35,6 +35,12 @@ public class Concept implements IConcept {
      */
     public Concept(IPersistance db){
         this.database = db;
+
+        //Prüfen, ob Departments vorhanden sind, und wenn nicht, erzeugen
+        List<Department> departmentList = this.getAllDepartments();
+        if(departmentList.size() == 0){
+            Util.createDepartments(this);
+        }
     }
 
     /**
