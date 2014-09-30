@@ -24,7 +24,7 @@
                 </Menu>
                 <Menu text="Einstellungen">
                 	<items>
-                		<CheckMenuItem fx:id="restServiceMainMenu" text="Autocomplete Postleitzahl" />
+                		<CheckMenuItem fx:id="restServiceMainMenu" text="Autocomplete Postleitzahl" onAction="#useRestServiceAction" />
                 	</items>
                 </Menu>
             </menus>
@@ -70,7 +70,7 @@
 									<contextMenu>
 										<ContextMenu >
 											<items>
-												<CheckMenuItem fx:id="restServiceContextMenu" text="Autocomplete Postleitzahl"  />
+												<CheckMenuItem fx:id="restServiceContextMenu" text="Autocomplete Postleitzahl" onAction="#useRestServiceAction" />
 											</items>
 										</ContextMenu>
 									</contextMenu>

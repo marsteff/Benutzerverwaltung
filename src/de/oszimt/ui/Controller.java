@@ -146,9 +146,6 @@ public class Controller {
 		//setzt die Listener der Controls
 		setListenerForControls();
 
-        //TODO das muss doch eigentlich bei dem aktivieren des RestServices passieren
-//		service = new RestService();
-
         //Hiermit ist es möglich, nach der Initialierung Code auszuführen. Notwendig, um in der initialize Methode auf das GUI Objekt zugreifen zu können
         Platform.runLater(new Runnable() {
             @Override
@@ -220,6 +217,9 @@ public class Controller {
 		User user = customerTable.getSelectionModel().getSelectedItem();
         this.gui.getConcept().deleteUser(user);
 		searchInTable();
+        if(isAdvancedSearch){
+            advancedSearcher.setOriginalList(FXCollections.observableArrayList(this.getGui().getConcept().getAllUser()));
+        }
 	}
 
     /**
@@ -319,6 +319,13 @@ public class Controller {
     @FXML
     private void closeAction(ActionEvent event) {
     	stage.close();
+    }
+
+    @FXML
+    public void useRestServiceAction() {
+        if(restServiceContextMenu.isSelected() && service == null){
+            service = new RestService();
+        }
     }
 
     public Gui getGui() {
