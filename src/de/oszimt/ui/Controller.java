@@ -564,7 +564,7 @@ public class Controller {
 				streetField.getText().equals("") ||
 				streetNrField.getText().equals("") ||
 				zipCodeField.getText().equals("") ||
-				birthdayField.getValue() == null ||
+                birthdayField.getEditor().getText().length() != 10 ||
                 departmentComboBox.getValue() == null
 			) 
 			return false;
