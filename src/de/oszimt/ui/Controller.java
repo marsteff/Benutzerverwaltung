@@ -167,16 +167,7 @@ public class Controller {
                     //Erstellen des Menü-Eintrages
                     MenuItem removeItem = new MenuItem("Benutzer löschen");
                     //Wenn auf den Eintrag geklickt wird, wird der selektierte User gelöscht
-                    removeItem.onActionProperty().set(e -> {
-                        User user = customerTable.getSelectionModel().getSelectedItem();
-                        if(user != null) {
-                            getGui().getConcept().deleteUser(user);
-                            searchInTable();
-                            if (isAdvancedSearch) {
-                                advancedSearcher.setOriginalList(FXCollections.observableArrayList(getGui().getConcept().getAllUser()));
-                            }
-                        }
-                    });
+                    removeItem.onActionProperty().set(e -> deleteCustomer());
                     //hinzufügen des Menü zur Row
                     rowMenu.getItems().add(removeItem);
                     //Binding zwischen der Row und dem ContextMenu
@@ -239,23 +230,6 @@ public class Controller {
 			searchInTable();
 		}
 	}
-
-    /**
-     * Löschen eines Benutzers (aus Tabelle und Datenhaltung)
-     *
-     * Wird als onAction in main.fxml benutzt
-     */
-//	@FXML
-//	private void deleteCustomer(){
-//		User user = customerTable.getSelectionModel().getSelectedItem();
-//        if(user != null) {
-//            this.gui.getConcept().deleteUser(user);
-//            searchInTable();
-//            if (isAdvancedSearch) {
-//                advancedSearcher.setOriginalList(FXCollections.observableArrayList(this.getGui().getConcept().getAllUser()));
-//            }
-//        }
-//	}
 
     /**
      * Ändert einen Benutzer
@@ -371,6 +345,19 @@ public class Controller {
         this.gui = gui;
     }
 
+    /**
+     * Löschen eines selektierten Benutzers (aus Tabelle und Datenhaltung)
+     */
+    private void deleteCustomer(){
+        User user = customerTable.getSelectionModel().getSelectedItem();
+        if(user != null) {
+            this.gui.getConcept().deleteUser(user);
+            searchInTable();
+            if (isAdvancedSearch) {
+                advancedSearcher.setOriginalList(FXCollections.observableArrayList(this.getGui().getConcept().getAllUser()));
+            }
+        }
+    }
 
     /**
 	 * Fuellt die Textfelder beim klick auf einen Kunden in der TableView mit den entsprechenden Werten
