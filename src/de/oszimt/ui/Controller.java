@@ -244,7 +244,7 @@ public class Controller {
 		int zipcode = Integer.parseInt(zipCodeField.getText());
         Department department = departmentComboBox.getValue();
 
-        User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode,new Department(department.getId(), department.getName()));
+        User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode,department);
 		
 		//Neuer Benutzer oder Änderung?
 		boolean isNew = false;
@@ -263,7 +263,14 @@ public class Controller {
 		this.searchInTable();
 		
 		changeButton.setDisable(true);
+
+        ObservableList<User> x = customerTable.getItems();
+        customerTable.setItems(null);
+        customerTable.layout();
+        customerTable.setItems(x);
+
 		customerTable.getSelectionModel().select(index);
+
 	}
 
     /**
@@ -355,10 +362,13 @@ public class Controller {
 				streetField.setText(newValue.getStreet());
 				streetNrField.setText(newValue.getStreetnr());
 				birthdayField.setValue(newValue.getBirthday());
+
                 departmentComboBox.setValue(newValue.getDepartment());
 
 				isNewSelection = false;
 				serviceTown = false;
+
+
 			}
 		});
 	}
