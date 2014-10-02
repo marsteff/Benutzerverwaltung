@@ -1,5 +1,8 @@
 package de.oszimt.model;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+
 /**
  * Hier wird eine Abteilung abgebildet
  * Abteilungen bestehen in dieser Anwendung
@@ -9,11 +12,11 @@ public class Department {
     /**
      * id der Abteilung
      */
-    private int id;
+    private SimpleIntegerProperty id;
     /**
      * Name der Abteilung
      */
-    private String name;
+    private SimpleStringProperty name;
 
     /**
      * Parametrisierter Konstruktor zum erzeugen
@@ -21,7 +24,8 @@ public class Department {
      * @param name
      */
     public Department(String name) {
-        this.name = name;
+        this.name = new SimpleStringProperty(name);
+        this.id = new SimpleIntegerProperty();
     }
 
     /**
@@ -32,8 +36,8 @@ public class Department {
      * @param name
      */
     public Department(int id, String name) {
-        this.id = id;
-        this.name = name;
+        this.id = new SimpleIntegerProperty(id);
+        this.name = new SimpleStringProperty(name);
     }
 
     /**
@@ -41,7 +45,7 @@ public class Department {
      * @return
      */
     public int getId() {
-        return id;
+        return id.get();
     }
 
     /**
@@ -49,7 +53,7 @@ public class Department {
      * @param id
      */
     public void setId(int id) {
-        this.id = id;
+        this.id.set(id);
     }
 
     /**
@@ -57,7 +61,7 @@ public class Department {
      * @return
      */
     public String getName() {
-        return name;
+        return name.get();
     }
 
     /**
@@ -65,7 +69,7 @@ public class Department {
      * @param name
      */
     public void setName(String name) {
-        this.name = name;
+        this.name.set(name);
     }
 
     /**

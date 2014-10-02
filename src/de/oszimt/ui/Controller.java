@@ -251,24 +251,28 @@ public class Controller {
 		int zipcode = Integer.parseInt(zipCodeField.getText());
         Department department = departmentComboBox.getValue();
 
-        User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode,new Department(department.getId(), department.getName()));
+        User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode, department);
 		
 		//Neuer Benutzer oder Änderung?
-		boolean isNew = false;
+		boolean isNew = true;
 		
         if(!customerTable.getSelectionModel().isEmpty()){
             int id = customerTable.getSelectionModel().getSelectedItem().getId();
             newUser.setId(id);
-            isNew = true;
+            isNew = false;
         }
 
         this.gui.getConcept().upsertUser(newUser);
 		
 		//Benachrichtigung setzen
-		this.setSuccedMessage(newUser + " erfolgreich" + (isNew ?  " bearbeitet" : " als User hinzugefügt"));
+		this.setSuccedMessage(newUser + " erfolgreich" + (isNew ? " als User hinzugefügt" : " bearbeitet"));
 		
 		this.searchInTable();
-		
+
+        //hässliche Art, den Bug zu beheben, dass das Department sofort geändert wird
+		customerTable.getColumns().get(0).setVisible(false);
+        customerTable.getColumns().get(0).setVisible(true);
+        
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().select(index);
 	}
@@ -427,6 +431,7 @@ public class Controller {
 
 		SortedList<User> sortedDate = new SortedList<>(filteredDate);
 		sortedDate.comparatorProperty().bind(customerTable.comparatorProperty());
+
 
 		customerTable.setItems(filteredDate);
 	}

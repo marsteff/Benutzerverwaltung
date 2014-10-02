@@ -81,8 +81,8 @@
 								<TextField  promptText="Nummer" fx:id="streetNrField" />
 							</HBox>
 							<HBox spacing="5">
-								<Button text="Übernehmen" fx:id="changeButton"  disable="true"/>
-								<Button text="Abbrechen" fx:id="abortButton" />
+								<Button text="Übernehmen" fx:id="changeButton" onAction="#changeButtonAction" disable="true"/>
+								<Button text="Abbrechen" fx:id="abortButton" onAction="#abortButtonAction"/>
 							</HBox>
 						</VBox>
 					</AnchorPane>	
