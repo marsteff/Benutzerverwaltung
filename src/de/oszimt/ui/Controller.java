@@ -264,10 +264,15 @@ public class Controller {
 		
 		changeButton.setDisable(true);
 
+        /*
+            BUG Workaround: https://community.oracle.com/message/10240147#10240147
+            Sonst wird die Abteilung in der Tabelle nicht geupdated
+         */
         ObservableList<User> x = customerTable.getItems();
         customerTable.setItems(null);
         customerTable.layout();
         customerTable.setItems(x);
+
 
 		customerTable.getSelectionModel().select(index);
 
