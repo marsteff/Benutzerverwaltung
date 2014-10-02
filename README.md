@@ -47,5 +47,5 @@ Dies hat damit zu tun, dass diese Anwendung als 3-Schichten Applikation gebaut w
 
 @Yevgen
 Das bedeutet für dich folgendes:
-1. Da du bestimmt keine Lust hast, dir MongoDB zu installieren, benutze nur ```java PersistanceMethod.SQLITE```
-2. Teste einmal die Applikation mit ```java new Gui(...``` und einmal mit ```java new Tui(...```
+1. Da du bestimmt keine Lust hast, dir MongoDB zu installieren, benutze nur ```PersistanceMethod.SQLITE```
+2. Teste einmal die Applikation mit ```new Gui(...``` und einmal mit ```new Tui(...```
