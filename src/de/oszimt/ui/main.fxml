@@ -143,13 +143,7 @@
                             </cellValueFactory>
                         </TableColumn>
 					</columns>
-					<contextMenu>
-						<ContextMenu>
-							<items>
-								<MenuItem text="Kunde löschen" onAction="#deleteCustomer"/>
-							</items>
-						</ContextMenu>
-					</contextMenu>
+
         		</TableView>
 			</center>
 		</BorderPane>

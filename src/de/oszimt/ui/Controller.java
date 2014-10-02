@@ -8,6 +8,7 @@ import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import de.oszimt.util.Util;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -25,6 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import de.oszimt.ui.templates.AdvancedSearch;
 import de.oszimt.util.RestService;
+import javafx.util.Callback;
 
 /**
  * Kontroller für das GUI
@@ -97,9 +99,9 @@ public class Controller {
 	@FXML
 	private CheckMenuItem restServiceMainMenu;
 
-    /*
-        Schaltenvariablen um bestimmte Funktionalitäten
-        umzusetzten
+    /**
+     * Schaltenvariablen um bestimmte Funktionalitäten
+     * umzusetzten
      */
 	private boolean isNewSelection = false;
 	private boolean isAdvancedSearch = false;
@@ -155,8 +157,39 @@ public class Controller {
 
                 //Tabelle mit Daten fuellen und Livesuche ermöglichen
                 searchInTable();
+
+                //Callback Methode, um jeder Row ein ContextMenu zu geben, und nicht der gesamten Table
+                customerTable.setRowFactory(tableView -> {
+                    //final Deklaration einer Row
+                    final TableRow<User> row = new TableRow<>();
+                    //final Deklaration des ContextMenu für die eine Row
+                    final ContextMenu rowMenu = new ContextMenu();
+                    //Erstellen des Menü-Eintrages
+                    MenuItem removeItem = new MenuItem("Benutzer löschen");
+                    //Wenn auf den Eintrag geklickt wird, wird der selektierte User gelöscht
+                    removeItem.onActionProperty().set(e -> {
+                        User user = customerTable.getSelectionModel().getSelectedItem();
+                        if(user != null) {
+                            getGui().getConcept().deleteUser(user);
+                            searchInTable();
+                            if (isAdvancedSearch) {
+                                advancedSearcher.setOriginalList(FXCollections.observableArrayList(getGui().getConcept().getAllUser()));
+                            }
+                        }
+                    });
+                    //hinzufügen des Menü zur Row
+                    rowMenu.getItems().add(removeItem);
+                    //Binding zwischen der Row und dem ContextMenu
+                    row.contextMenuProperty().bind(
+                            Bindings.when(Bindings.isNotNull(row.itemProperty()))
+                                    .then(rowMenu)
+                                    .otherwise((ContextMenu) null));
+                    return row;
+                });
             }
         });
+
+
 	}
 
     /**
@@ -212,17 +245,17 @@ public class Controller {
      *
      * Wird als onAction in main.fxml benutzt
      */
-	@FXML
-	private void deleteCustomer(){
-		User user = customerTable.getSelectionModel().getSelectedItem();
-        if(user != null) {
-            this.gui.getConcept().deleteUser(user);
-            searchInTable();
-            if (isAdvancedSearch) {
-                advancedSearcher.setOriginalList(FXCollections.observableArrayList(this.getGui().getConcept().getAllUser()));
-            }
-        }
-	}
+//	@FXML
+//	private void deleteCustomer(){
+//		User user = customerTable.getSelectionModel().getSelectedItem();
+//        if(user != null) {
+//            this.gui.getConcept().deleteUser(user);
+//            searchInTable();
+//            if (isAdvancedSearch) {
+//                advancedSearcher.setOriginalList(FXCollections.observableArrayList(this.getGui().getConcept().getAllUser()));
+//            }
+//        }
+//	}
 
     /**
      * Ändert einen Benutzer
