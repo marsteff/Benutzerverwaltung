@@ -44,8 +44,8 @@
 						<!-- Kontakdaten -->
 						<VBox AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" spacing="5">
 							<HBox spacing="5">
-								<TextField  promptText="Vorname" fx:id="firstnameField" onAction="#changeButtonAction"/>
-								<TextField  promptText="Nachname" fx:id="lastnameField"	onAction="#changeButtonAction"/>
+								<TextField  promptText="Vorname" fx:id="firstnameField" />
+								<TextField  promptText="Nachname" fx:id="lastnameField"	/>
 							</HBox>
 							<HBox spacing="5">
 								<DatePicker fx:id="birthdayField" editable="true" promptText="Geburtstag"/>
@@ -62,8 +62,8 @@
 						<!-- Stadt und Strasse -->
 						<VBox spacing="5" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
 							<HBox spacing="5">
-								<TextField  promptText="Stadt" fx:id="cityField" onAction="#changeButtonAction"/>
-								<NumberTextField  promptText="PLZ" fx:id="zipCodeField" onAction="#changeButtonAction">
+								<TextField  promptText="Stadt" fx:id="cityField" />
+								<NumberTextField  promptText="PLZ" fx:id="zipCodeField" >
 									<tooltip>
 										<Tooltip text="Bei eingeben einer Validen Postleitzahl wird die Stadt automatisch ausgefüllt" />
 									</tooltip>
@@ -77,12 +77,12 @@
 								</NumberTextField>
 							</HBox>
 							<HBox spacing="5">
-								<TextField  promptText="Strasse" fx:id="streetField" onAction="#changeButtonAction"/>
-								<TextField  promptText="Nummer" fx:id="streetNrField" onAction="#changeButtonAction"/>
+								<TextField  promptText="Strasse" fx:id="streetField" />
+								<TextField  promptText="Nummer" fx:id="streetNrField" />
 							</HBox>
 							<HBox spacing="5">
-								<Button text="Übernehmen" fx:id="changeButton" onAction="#changeButtonAction" disable="true"/>
-								<Button text="Abbrechen" fx:id="abortButton" onAction="#abortButtonAction"/>						
+								<Button text="Übernehmen" fx:id="changeButton"  disable="true"/>
+								<Button text="Abbrechen" fx:id="abortButton" />
 							</HBox>
 						</VBox>
 					</AnchorPane>	

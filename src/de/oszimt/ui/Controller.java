@@ -370,7 +370,7 @@ public class Controller {
 				firstnameField.setText(newValue.getFirstname());
 				lastnameField.setText(newValue.getLastname());
 				cityField.setText(newValue.getCity());
-				zipCodeField.setText(new String("" + newValue.getZipcode()));
+				zipCodeField.setText("" + newValue.getZipcode());
 				
 				streetField.setText(newValue.getStreet());
 				streetNrField.setText(newValue.getStreetnr());
