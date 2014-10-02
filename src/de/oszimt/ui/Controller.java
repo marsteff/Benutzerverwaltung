@@ -179,8 +179,6 @@ public class Controller {
                 });
             }
         });
-
-
 	}
 
     /**
@@ -379,6 +377,7 @@ public class Controller {
 				streetField.setText(newValue.getStreet());
 				streetNrField.setText(newValue.getStreetnr());
 				birthdayField.setValue(newValue.getBirthday());
+
                 departmentComboBox.setValue(newValue.getDepartment());
 
 				isNewSelection = false;
@@ -431,7 +430,6 @@ public class Controller {
 
 		SortedList<User> sortedDate = new SortedList<>(filteredDate);
 		sortedDate.comparatorProperty().bind(customerTable.comparatorProperty());
-
 
 		customerTable.setItems(filteredDate);
 	}

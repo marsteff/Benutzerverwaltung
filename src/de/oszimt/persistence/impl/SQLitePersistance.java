@@ -261,7 +261,7 @@ public class SQLitePersistance implements IPersistance {
                 "street_nr  	= '" + user.get(this.getKeyUserStreetNr()) + "', " +
                 "zip_code 		= " + user.get(this.getKeyUserZipCode()) + ", " +
                 "birthday		= '" + user.get(this.getKeyUserBirthday()) + "'," +
-                " department_id = '" + ((Map)user.get(this.getKeyUserDepartment())).get(this.getKeyDepartmentId()) + "'" +
+                " department_id = '" + ((Map)user.get(this.getKeyUserDepartment())).get(this.getKeyDepartmentId()) + "' " +
                 "WHERE id = " + user.get(this.getKeyUserId()));
 	}
 
