@@ -61,10 +61,14 @@ public class Tui {
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
             printWhitespace(entrys, i, 2);
-            println("(" + (i + 1) + ")");
+            print("(");
+            print(BLUE,i+1+"");
+            println(")");
         }
         println("");
         print("Menuepunkt eingeben: ");
+
+
 
         //einlesen des Input´s
         int input = readInt();
@@ -668,7 +672,7 @@ public class Tui {
         println("*****************************************");
         print("*");
         for(int i = 0; i < length; i++)print(BLACK, " ");
-        print(concept.getTitle());
+        print(YELLOW, concept.getTitle());
         for(int i = 0; i < length; i++)print(BLACK, " ");
         println("*");
         println("*****************************************");
@@ -758,6 +762,7 @@ public class Tui {
      */
     private void print(String text){
         print(STANDARD_COLOR, text);
+        System.out.flush();
     }
 
     /**
@@ -781,7 +786,8 @@ public class Tui {
      * Löscht den Inhalt der Kommandozeile
      */
     private void clean(){
-        System.out.println(ansi().eraseScreen());
+        //System.out.println(ansi().eraseScreen());
+        System.out.print("\033[2J\033[;H");
     }
 
 }

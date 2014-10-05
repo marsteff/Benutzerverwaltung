@@ -449,7 +449,10 @@ public class MongoDbPersistance implements IPersistance{
      */
     @Override
     public void createDepartment(String name){
+        //Laden der Abteilungs Collection
         DBCollection coll = this.getCollection("Departments");
+
+        //ermitteln der größten Id
         DBCursor cursor = coll.find().sort(new BasicDBObject(
                 this.getKeyDepartmentId(), -1));
         int nextId = 1;
@@ -461,28 +464,48 @@ public class MongoDbPersistance implements IPersistance{
             nextId++;
         }
 
+        //neue Map für Abteilungs Daten initialisieren
         Map<String,Object> dep = new HashMap<String,Object>();
+        //hinzufügen der Abteilungs daten
         dep.put(this.getKeyDepartmentId(), nextId);
         dep.put(this.getKeyDepartmentName(), name);
 
+        //Map zu BasicDBObject konvertieren
         BasicDBObject doc = this.departmentToBasicDBObject(dep);
+
+        //Dokument der Collection hinzufügen
         coll.insert(doc);
     }
 
+    /**
+     * Ändern einer Abteilung
+     * @param dep
+     */
     @Override
     public void updateDepartment(Map<String, Object> dep){
+        //Laden der Abteilung Collection
         DBCollection coll = this.getCollection("Departments");
+        //Map zu BasicDBOject konvertieren
         BasicDBObject doc = this.departmentToBasicDBObject(dep);
+        //sucher query nach id erzeugen
         BasicDBObject serach = new BasicDBObject(
                 this.getKeyDepartmentId(),dep.get(this.getKeyDepartmentId()));
+        //Dokument in der Collection ändern
         coll.update(serach,doc);
     }
 
+    /**
+     * Löschen einer Abteilung
+     * @param id
+     */
     @Override
     public void removeDepartment(int id){
+        //Laden der Abteilungs Collection
         DBCollection coll = this.getCollection("Departments");
+        //Dokument anhand der Id finden
         DBObject doc = coll.findOne(new BasicDBObject(
                 this.getKeyDepartmentId(),id));
+        //Dokument aus der Collection entfernen
         coll.remove(doc);
     }
 
