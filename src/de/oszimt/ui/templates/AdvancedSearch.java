@@ -33,8 +33,12 @@ public class AdvancedSearch extends StackPane{
 	
 	TableView<User> customerTable;
     ObservableList<User> originalList;
-	
-	public AdvancedSearch(TableView<User> customerTable){
+
+    public void setOriginalList(ObservableList<User> userList) {
+        this.originalList = userList;
+    }
+
+    public AdvancedSearch(TableView<User> customerTable){
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("advancedSearch.fxml"));
 		loader.setRoot(this);
 		loader.setController(this);

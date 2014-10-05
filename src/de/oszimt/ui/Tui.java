@@ -467,7 +467,7 @@ public class Tui {
                                         checkNumber++;
                                     if (!bUser.getStreetnr().equals("") && e.getStreetnr().toLowerCase().contains(bUser.getStreetnr().toLowerCase()))
                                         checkNumber++;
-                                    if (e.getDepartmentId() != bUser.getDepartmentId())
+                                    if (e.getDepartment().getId() != bUser.getDepartment().getId())
                                         checkNumber++;
                                     return paramNumber == checkNumber;
                                 })
@@ -491,7 +491,7 @@ public class Tui {
             number++;
         if (!user.getStreetnr().equals(""))
             number++;
-        if (user.getDepartmentId() != 0)
+        if (user.getDepartment().getId() != 0)
             number++;
         return number;
     }

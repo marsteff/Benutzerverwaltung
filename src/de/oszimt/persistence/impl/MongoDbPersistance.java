@@ -176,18 +176,6 @@ public class MongoDbPersistance implements IPersistance{
      * wie z.B. Map verwendet. Da somit nicht immer direkt klar ist wie ein Key
      * benannt ist, kann er hier abgefragt werden.
      *
-     * Gibt den Key-Namen der Benutzer Abteilungs Id zurück
-     * @return String
-     */
-    public String getKeyUserDepartmentId(){
-        return "department_id";
-    }
-
-    /**
-     * Für die Rückgabe der Datenbank-Methoden werden allgemeine Datentypen
-     * wie z.B. Map verwendet. Da somit nicht immer direkt klar ist wie ein Key
-     * benannt ist, kann er hier abgefragt werden.
-     *
      * Gibt den Key-Namen der Benutzer Abteilung zurück
      * @return String
      */
@@ -303,8 +291,10 @@ public class MongoDbPersistance implements IPersistance{
                 this.getKeyUserId(),
                 id
         ));
-        //Dokument aus der Collection entfernen
-        coll.remove(doc);
+        if(doc != null) {
+            //Dokument aus der Collection entfernen
+            coll.remove(doc);
+        }
     }
 
     /**
@@ -331,7 +321,7 @@ public class MongoDbPersistance implements IPersistance{
         Instant instant = ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
         Date res = Date.from(instant);
         doc.append(this.getKeyUserBirthday(), res);
-        doc.append(this.getKeyUserDepartmentId(),user.get(this.getKeyUserDepartmentId()));
+        doc.append("department_id",((Map)user.get(this.getKeyUserDepartment())).get(this.getKeyDepartmentId()));
         return doc;
     }
 
@@ -383,7 +373,7 @@ public class MongoDbPersistance implements IPersistance{
         BasicDBObject query = new BasicDBObject(
                 this.getKeyDepartmentId(),
                 Integer.parseInt(
-                        tmp.get(this.getKeyUserDepartmentId()).toString()
+                        tmp.get("department_id").toString()
                 )
         );
 
@@ -456,7 +446,7 @@ public class MongoDbPersistance implements IPersistance{
         DBCursor cursor = coll.find().sort(new BasicDBObject(
                 this.getKeyDepartmentId(), -1));
         int nextId = 1;
-
+        //setzen der neuen id
         if(cursor.count() > 0){
             nextId = Integer.parseInt(cursor.next().toMap().get(
                     this.getKeyDepartmentId()
@@ -510,22 +500,34 @@ public class MongoDbPersistance implements IPersistance{
     }
 
 
+    /**
+     * Gibt eine Liste aller Abteilungen zurück
+     *
+     * @return
+     */
     @Override
     public List<Map<String,Object>> getAllDepartments(){
+        //leere Liste erzeugen
         List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
-
+        //laden der Abteiungs Collection
         DBCollection coll = db.getCollection("Departments");
+        //Zeiger auf Anfang der Collection setzten
         DBCursor cursor = coll.find();
         try {
+            //Collection durchlaufen
             while(cursor.hasNext()) {
+                //aktuelles Dokument in den Scope laden und Zeiger einen weiter bewegen
                 DBObject tmp = cursor.next();
+                //leere map für die Abteilung initialisieren
                 Map<String, Object> map = new HashMap<String, Object>();
+                //Abteilungs Map füllen
                 map.put(this.getKeyDepartmentId(),Integer.parseInt(tmp.toMap().get(
-                        this.getKeyDepartmentId()
-                ).toString()));
+                        this.getKeyDepartmentId()).toString())
+                );
                 map.put(this.getKeyDepartmentName(),tmp.toMap().get(
                         this.getKeyDepartmentName()
                 ).toString());
+                //Abteilungs map der Liste hinzufügen
                 list.add(map);
             }
         } finally {

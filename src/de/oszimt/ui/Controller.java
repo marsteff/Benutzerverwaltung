@@ -2,26 +2,47 @@ package de.oszimt.ui;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
+import de.oszimt.util.Util;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import de.oszimt.ui.templates.AdvancedSearch;
 import de.oszimt.util.RestService;
+import javafx.util.Callback;
 
+/**
+ * Kontroller für das GUI
+ *
+ * Ganz nach JavaFX Art gibt es auch hier einen
+ * Kontroller um Events etc. des GUIs zu steuern
+ */
 public class Controller {
+
+    /*
+        Definieren der Kontrollelemente
+     */
+    @FXML
+    public StackPane rootPane;
+    @FXML
+    public BorderPane mainPane;
 
     @FXML
 	private TableView<User> customerTable;
@@ -77,24 +98,47 @@ public class Controller {
 	private CheckMenuItem restServiceContextMenu;
 	@FXML
 	private CheckMenuItem restServiceMainMenu;
-	
+
+    /**
+     * Schaltenvariablen um bestimmte Funktionalitäten
+     * umzusetzten
+     */
 	private boolean isNewSelection = false;
 	private boolean isAdvancedSearch = false;
-	
+
+    /**
+     * Hält eine Instanze des Kontrollers für die
+     * Erweiterte Suche
+     */
 	private AdvancedSearch advancedSearcher;
 
+    /**
+     * Hält eine Instance des GUI Objects
+     */
     private Gui gui;
+
+    /**
+     * Hält eine Instance der Stage
+     */
     private Stage stage;
-	
+
+    /**
+     * Hält eine Instance des REST Services (wenn benutzt)
+     */
 	private RestService service;
+    /**
+     * Schaltervariablen um den REST Service zu steuern
+     */
 	private boolean serviceTown = false;
 	private boolean writeError = false;
 
+    StackPane glass = null;
 
-	
+    /**
+     * Initialisieren einzelner Kontrollelemente
+     */
 	@FXML
 	public void initialize(){
-				
 		//setzt die Bindings der einzelnen Controls - unter anderem für eine Full-Responsive GUI zuständig
 		bindingOfControls();
 		
@@ -104,30 +148,47 @@ public class Controller {
 		//setzt die Listener der Controls
 		setListenerForControls();
 
-		//service = new RestService();
-
         //Hiermit ist es möglich, nach der Initialierung Code auszuführen. Notwendig, um in der initialize Methode auf das GUI Objekt zugreifen zu können
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 //Initialisiert die ComboBox
-                setDepartmentComboBox();
+                departmentComboBox.getItems().addAll(getGui().getConcept().getAllDepartments());
 
                 //Tabelle mit Daten fuellen und Livesuche ermöglichen
                 searchInTable();
+
+                //Callback Methode, um jeder Row ein ContextMenu zu geben, und nicht der gesamten Table
+                customerTable.setRowFactory(tableView -> {
+                    //final Deklaration einer Row
+                    final TableRow<User> row = new TableRow<>();
+                    //final Deklaration des ContextMenu für die eine Row
+                    final ContextMenu rowMenu = new ContextMenu();
+                    //Erstellen des Menü-Eintrages
+                    MenuItem removeItem = new MenuItem("Benutzer löschen");
+                    //Wenn auf den Eintrag geklickt wird, wird der selektierte User gelöscht
+                    removeItem.onActionProperty().set(e -> deleteCustomer());
+                    //hinzufügen des Menü zur Row
+                    rowMenu.getItems().add(removeItem);
+                    //Binding zwischen der Row und dem ContextMenu
+                    row.contextMenuProperty().bind(
+                            Bindings.when(Bindings.isNotNull(row.itemProperty()))
+                                    .then(rowMenu)
+                                    .otherwise((ContextMenu) null));
+                    return row;
+                });
             }
         });
 	}
 
-    private void setDepartmentComboBox() {
-        ObservableList<Department> departmentList = FXCollections.observableArrayList(gui.getConcept().getAllDepartments());
-        departmentComboBox.setItems(departmentList);
-    }
-
+    /**
+     * Setzt die Stage
+     *
+     * @param stage
+     */
 	public void setStage(Stage stage){
 		this.stage = stage;
 	}
-
 
     /**
      * Ausgangswerte initialisieren
@@ -142,12 +203,14 @@ public class Controller {
 		streetField.setText("");
 		streetNrField.setText("");
         departmentComboBox.setValue(null);
-		
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().clearSelection();
 		firstnameField.requestFocus();
 	}
-	
+
+    /**
+     * Toggle der Erweiterten Suche
+     */
 	@FXML
 	private void advancedSearch(){
 		if(!isAdvancedSearch){
@@ -165,40 +228,18 @@ public class Controller {
 			searchInTable();
 		}
 	}
-	
-	@FXML
-	private void deleteCustomer(){
-		User user = customerTable.getSelectionModel().getSelectedItem();
-        /*
-         * @todo ist es möglich den user hier mit der korrekten id zu bekommen??
-         *    ansonsten funktioniert das delete nicht da nicht eindeutig ermittelt
-         *    werden kann welcher User gelöscht werden soll!
-         */
 
-        System.out.println("User ID is " + user.getId());
-
-        this.gui.getConcept().deleteUser(user);
-		searchInTable();
-	}
-
-	@FXML
-	private void deleteCustomerButton(){
-
-		ObservableList<User> testList = customerTable.getItems();
-		testList.forEach(e -> {
-			if(e.getFirstname() == null)
-				System.err.println(e + " ist fehlerhaft");
-			else
-				System.out.println(e + " weist keine Fehler auf");
-		});
-	}
-
+    /**
+     * Ändert einen Benutzer
+     *
+     * wird als onAction in main.fxml benutzt
+     */
 	@FXML
 	private void changeButtonAction(){
-		//get index of actual selection to make double change possible
+		//index der Tabellenauswahl
 		int index = customerTable.getSelectionModel().getSelectedIndex();
 		
-		//get content of fields to make new customer
+		//Tabellen Zeile zu Benutzer Objekt
 		String firstname = firstnameField.getText();
 		String lastname = lastnameField.getText();
 		String city = cityField.getText();
@@ -208,48 +249,78 @@ public class Controller {
 		int zipcode = Integer.parseInt(zipCodeField.getText());
         Department department = departmentComboBox.getValue();
 
-        User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode,new Department(department.getId(), department.getName()));
+        User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode, department);
 		
-		//to specify if is it a new user or only a change
-		boolean isNew = false;
+		//Neuer Benutzer oder Änderung?
+		boolean isNew = true;
 		
         if(!customerTable.getSelectionModel().isEmpty()){
             int id = customerTable.getSelectionModel().getSelectedItem().getId();
             newUser.setId(id);
-            isNew = true;
+            isNew = false;
         }
 
         this.gui.getConcept().upsertUser(newUser);
 		
-		//create a nice Message of Action
-		this.setSuccedMessage(newUser + " erfolgreich" + (isNew ?  " bearbeitet" : " als User hinzugefügt"));
+		//Benachrichtigung setzen
+		this.setSuccedMessage(newUser + " erfolgreich" + (isNew ? " als User hinzugefügt" : " bearbeitet"));
 		
 		this.searchInTable();
-		
+
+        //hässliche Art, den Bug zu beheben, dass das Department sofort geändert wird
+		customerTable.getColumns().get(0).setVisible(false);
+        customerTable.getColumns().get(0).setVisible(true);
+        
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().select(index);
 	}
-	
+
+    /**
+     * Erstellt zufällige Benutzer
+     *
+     * Wrid als onAction in main.fxml benutzt
+     */
 	@FXML
 	private void createRandomCustomersAction(){
 
-        this.gui.getConcept().createRandomUsers(
-                restServiceMainMenu.isSelected()
-        );
-
-    	searchInTable();
-    	setSuccedMessage("Zufallsnutzer erfolgreich erstellt!");
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                gui.getConcept().createRandomUsers(restServiceMainMenu.isSelected());
+                return null;
+            }
+        };
+        new Thread(task).start();
+        StackPane glass = callProgress();
+        task.setOnSucceeded(e -> {
+            rootPane.getChildren().remove(glass);
+            searchInTable();
+            setSuccedMessage("Zufallsnutzer erfolgreich erstellt!");
+        });
 	}
-	
+
     @FXML
     private void deleteAllCustomersAction(){
-    	ObservableList<User> list = FXCollections.observableList(
-                this.gui.getConcept().getAllUser()
-        );
-    	list.forEach(e -> this.gui.getConcept().deleteUser(e));
-    	this.searchInTable();
+
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                ObservableList<User> list = FXCollections.observableList(
+                        gui.getConcept().getAllUser()
+                );
+                list.forEach(e -> gui.getConcept().deleteUser(e));
+                return null;
+            }
+        };
+        new Thread(task).start();
+        StackPane glass = callProgress();
+        task.setOnSucceeded(e -> {
+            rootPane.getChildren().remove(glass);
+            searchInTable();
+            setSuccedMessage("Alle Nutzer erfolgreich gelöscht");
+        });
     }
-    
+
     @FXML
     private void newCustomerAction() {
         this.abortButtonAction();
@@ -261,7 +332,36 @@ public class Controller {
     	stage.close();
     }
 
-	/**
+    @FXML
+    public void useRestServiceAction() {
+        if(restServiceContextMenu.isSelected() && service == null){
+            service = new RestService();
+        }
+    }
+
+    public Gui getGui() {
+        return gui;
+    }
+
+    public void setGui(Gui gui) {
+        this.gui = gui;
+    }
+
+    /**
+     * Löschen eines selektierten Benutzers (aus Tabelle und Datenhaltung)
+     */
+    private void deleteCustomer(){
+        User user = customerTable.getSelectionModel().getSelectedItem();
+        if(user != null) {
+            this.gui.getConcept().deleteUser(user);
+            searchInTable();
+            if (isAdvancedSearch) {
+                advancedSearcher.setOriginalList(FXCollections.observableArrayList(this.getGui().getConcept().getAllUser()));
+            }
+        }
+    }
+
+    /**
 	 * Fuellt die Textfelder beim klick auf einen Kunden in der TableView mit den entsprechenden Werten
 	 */
 	private void fillControls() {
@@ -272,11 +372,12 @@ public class Controller {
 				firstnameField.setText(newValue.getFirstname());
 				lastnameField.setText(newValue.getLastname());
 				cityField.setText(newValue.getCity());
-				zipCodeField.setText(new String("" + newValue.getZipcode()));
+				zipCodeField.setText("" + newValue.getZipcode());
 				
 				streetField.setText(newValue.getStreet());
 				streetNrField.setText(newValue.getStreetnr());
 				birthdayField.setValue(newValue.getBirthday());
+
                 departmentComboBox.setValue(newValue.getDepartment());
 
 				isNewSelection = false;
@@ -333,14 +434,6 @@ public class Controller {
 		customerTable.setItems(filteredDate);
 	}
 
-    public Gui getGui() {
-        return gui;
-    }
-
-    public void setGui(Gui gui) {
-        this.gui = gui;
-    }
-	
 	/**
 	 * Bindet die Breite der Controls an die Breite des Fensters, zwecks Responsive-GUI
 	 */
@@ -424,9 +517,14 @@ public class Controller {
 				writeError = true;
 				((StringProperty) observable).setValue(oldValue);
 			}
+
+//            if(!newValue.matches("\\d+") && !oldValue.equals(newValue)){
+//                zipCodeField.setText(oldValue);
+//            }
+
 				
-			//Wenn RestService benutzt wird, soll der Ort beim löschen der 5 Stelle der PLZ auch der Ort gel�scht werden
-			if(restServiceMainMenu.isSelected() ||serviceTown && newValue.length() == 4 && oldValue.length() == 5){
+			//Wenn RestService benutzt wird, soll der Ort beim löschen der 5 Stelle der PLZ auch der Ort geloescht werden
+			if(restServiceMainMenu.isSelected() || serviceTown && newValue.length() == 4 && oldValue.length() == 5){
 				cityField.setText("");
 				serviceTown = false;
 			}
@@ -443,6 +541,11 @@ public class Controller {
 					serviceTown = true;
 				}
 			}
+
+            //Ausgabe der Fehlermeldung
+            if(writeError){
+                setErrorMessage("Eingabe darf nicht länger als 5 Zeichen lang sein");
+            }
 			
 			//Prüfen, ob der ÜbernehmenButton aktiviert werden darf
 			activateChangeButton(oldValue, newValue, "");
@@ -468,9 +571,10 @@ public class Controller {
 		streetField.textProperty().addListener(textListener);
 		streetNrField.textProperty().addListener(textListener);
 		zipCodeField.textProperty().addListener(plzListener);
-		birthdayField.valueProperty().addListener(dateListener);
+        birthdayField.valueProperty().addListener(dateListener);
         departmentComboBox.valueProperty().addListener(departmentListener);
-	}
+        birthdayField.getEditor().textProperty().addListener(textListener);
+    }
 	
 	/**
 	 * Prueft, ob alle TextFields + DatePicker gefuellt sind
@@ -483,8 +587,8 @@ public class Controller {
 				streetField.getText().equals("") ||
 				streetNrField.getText().equals("") ||
 				zipCodeField.getText().equals("") ||
-				birthdayField.getValue() == null ||
-               departmentComboBox.getValue() == null
+                birthdayField.getEditor().getText().length() != 10 ||
+                departmentComboBox.getValue() == null
 			) 
 			return false;
 		
@@ -534,5 +638,33 @@ public class Controller {
     private void cleanInformationLabel(){
     	informationLabel.setText("");
     }
-    
+
+    /**
+     * Erzeugt über der Gesamten Arbeitsfläche ein Halbdurchsitiges Pane mit einem
+     * ProgressIndicator. Dient dazu die Arbeitsfläche zu sperren, wenn im Hintergrund
+     * Operationen wie das lesen oder schreiben in eine Datenbank vollzogen wird, was unter anderem
+     * länger dauern kann (z. B. Erzeuge Zufallskunden oder Lösche alle Kunden).
+     * Zum löschen dieses Pane´s muss rootPane.getChildren().add(returnObject); aufgerufen werden.
+     * 'returnObject' ist das Objekt, was von dieser Methode zurückgegeben wird
+     * @return Das erstelle Halbdurchsichtige Pane
+     */
+    private StackPane callProgress(){
+        //Ersellen eines neuen Pane´s
+        StackPane glass = new StackPane();
+
+        //setzt die Hintergrudfarbe des Pane auf ein helles Grau mit einem Durchlässigkeitswert von 60%
+        glass.setStyle("-fx-background-color: rgba(200, 200, 200, 0.6);");
+
+        //Erstellt einen ProgressIndicator und setzt seine maximale Größe
+        ProgressIndicator indicator = new ProgressIndicator();
+        indicator.setMaxSize(100, 100);
+
+        //fügt dem durchlässigen Pane den ProgressIndicator hinzu
+        glass.getChildren().add(indicator);
+
+        //fügt der Gesamtoberfläche das neue Pane hinzu
+        rootPane.getChildren().add(glass);
+
+        return glass;
+    }
 }

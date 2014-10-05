@@ -1,22 +1,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.control.CheckMenuItem?>
 
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
-<BorderPane fx:controller="de.oszimt.ui.Controller" xmlns:fx="http://javafx.com/fxml">
+<?import de.oszimt.NumberTextField?>
+<StackPane fx:id="rootPane" fx:controller="de.oszimt.ui.Controller" xmlns:fx="http://javafx.com/fxml">
+<BorderPane fx:id="mainPane">
     <!-- !!!!!!!!!!!!!!!!!!! Menubar !!!!!!!!!!-->
     <top>
         <MenuBar >
@@ -35,7 +24,7 @@
                 </Menu>
                 <Menu text="Einstellungen">
                 	<items>
-                		<CheckMenuItem fx:id="restServiceMainMenu" text="Autocomplete Postleitzahl" />
+                		<CheckMenuItem fx:id="restServiceMainMenu" text="Autocomplete Postleitzahl" onAction="#useRestServiceAction" />
                 	</items>
                 </Menu>
             </menus>
@@ -55,11 +44,11 @@
 						<!-- Kontakdaten -->
 						<VBox AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" spacing="5">
 							<HBox spacing="5">
-								<TextField  promptText="Vorname" fx:id="firstnameField" onAction="#changeButtonAction"/>
-								<TextField  promptText="Nachname" fx:id="lastnameField"	onAction="#changeButtonAction"/>
+								<TextField  promptText="Vorname" fx:id="firstnameField" />
+								<TextField  promptText="Nachname" fx:id="lastnameField"	/>
 							</HBox>
 							<HBox spacing="5">
-								<DatePicker fx:id="birthdayField" editable="false" promptText="Geburtstag"/>
+								<DatePicker fx:id="birthdayField" editable="true" promptText="Geburtstag"/>
                                 <ComboBox fx:id="departmentComboBox" promptText="Abteilung" />
 							</HBox>		
 							<HBox>
@@ -73,27 +62,27 @@
 						<!-- Stadt und Strasse -->
 						<VBox spacing="5" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
 							<HBox spacing="5">
-								<TextField  promptText="Stadt" fx:id="cityField" onAction="#changeButtonAction"/>
-								<TextField  promptText="PLZ" fx:id="zipCodeField" onAction="#changeButtonAction">
+								<TextField  promptText="Stadt" fx:id="cityField" />
+								<NumberTextField  promptText="PLZ" fx:id="zipCodeField" >
 									<tooltip>
 										<Tooltip text="Bei eingeben einer Validen Postleitzahl wird die Stadt automatisch ausgefüllt" />
 									</tooltip>
 									<contextMenu>
 										<ContextMenu >
 											<items>
-												<CheckMenuItem fx:id="restServiceContextMenu" text="Autocomplete Postleitzahl"  />
+												<CheckMenuItem fx:id="restServiceContextMenu" text="Autocomplete Postleitzahl" onAction="#useRestServiceAction" />
 											</items>
 										</ContextMenu>
 									</contextMenu>
-								</TextField>
+								</NumberTextField>
 							</HBox>
 							<HBox spacing="5">
-								<TextField  promptText="Strasse" fx:id="streetField" onAction="#changeButtonAction"/>
-								<TextField  promptText="Nummer" fx:id="streetNrField" onAction="#changeButtonAction"/>
+								<TextField  promptText="Strasse" fx:id="streetField" />
+								<TextField  promptText="Nummer" fx:id="streetNrField" />
 							</HBox>
 							<HBox spacing="5">
 								<Button text="Übernehmen" fx:id="changeButton" onAction="#changeButtonAction" disable="true"/>
-								<Button text="Abbrechen" fx:id="abortButton" onAction="#abortButtonAction"/>						
+								<Button text="Abbrechen" fx:id="abortButton" onAction="#abortButtonAction"/>
 							</HBox>
 						</VBox>
 					</AnchorPane>	
@@ -154,15 +143,10 @@
                             </cellValueFactory>
                         </TableColumn>
 					</columns>
-					<contextMenu>
-						<ContextMenu>
-							<items>
-								<MenuItem text="Kunde löschen" onAction="#deleteCustomer"/>
-							</items>
-						</ContextMenu>
-					</contextMenu>
+
         		</TableView>
 			</center>
 		</BorderPane>
 	</center>
 </BorderPane>
+</StackPane>
