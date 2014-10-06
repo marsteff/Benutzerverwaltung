@@ -640,7 +640,7 @@ public class Tui implements UserInterface{
     }
 
     private String toAscii(String text) {
-        return text.replaceAll("ü", "ue"). replaceAll("ö", "oe").replaceAll("ä", "ae").replaceAll("ß", "ss");
+        return text; //on linux not needed @todo remove comment -> .replaceAll("ü", "ue"). replaceAll("ö", "oe").replaceAll("ä", "ae").replaceAll("ß", "ss");
     }
 
     /**
