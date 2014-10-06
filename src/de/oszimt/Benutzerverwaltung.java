@@ -6,21 +6,34 @@ import de.oszimt.factory.PersistanceFactory;
 import de.oszimt.persistence.enumeration.PersistanceMethod;
 import de.oszimt.ui.Gui;
 import de.oszimt.ui.Tui;
+import de.oszimt.ui.iface.UserInterface;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 /**
  * Startet die Anwendung
  */
 public class Benutzerverwaltung {
     public static void main(String[] args) {
-        new Gui(
-                ConceptFactory.buildConcept(
-                        ConceptMethod.STANDARD_CONCEPT,
-                        PersistanceMethod.MONGODB
-                )
-        );
+
+        /**
+         * Die Argumente können in der Runconfig eingetragen werden.
+         * Bzw. kann man sich für die verschiedenen Kombinationen Runconfigs anglegen.
+         *
+         * Run > Edit Configuration > Programm Arguments
+         *
+         */
+        PersistanceMethod PersMeth = Arrays.asList(args).contains("--sqlite") ?
+                PersistanceMethod.SQLITE : PersistanceMethod.MONGODB;
+
+        if(Arrays.asList(args).contains("--tui")){
+            new Tui(ConceptFactory.buildConcept(ConceptMethod.STANDARD_CONCEPT,PersMeth));
+        }else{
+            new Gui(ConceptFactory.buildConcept(ConceptMethod.STANDARD_CONCEPT,PersMeth));
+        }
+
     }
 }

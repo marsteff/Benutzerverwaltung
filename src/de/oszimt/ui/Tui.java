@@ -4,6 +4,7 @@ import de.oszimt.concept.iface.IConcept;
 
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
+import de.oszimt.ui.iface.UserInterface;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.lang.reflect.InvocationTargetException;
@@ -22,7 +23,7 @@ import static org.fusesource.jansi.Ansi.Color.*;
 /**
  * Created by user on 17.09.2014.
  */
-public class Tui {
+public class Tui implements UserInterface{
 
     private final Color STANDARD_COLOR = WHITE;
     private IConcept concept;
@@ -790,4 +791,13 @@ public class Tui {
         System.out.print("\033[2J\033[;H");
     }
 
+    @Override
+    public IConcept getConcept() {
+        return this.concept;
+    }
+
+    @Override
+    public void setConcept(IConcept concept) {
+        this.concept = concept;
+    }
 }

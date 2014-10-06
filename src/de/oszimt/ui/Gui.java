@@ -1,13 +1,14 @@
 package de.oszimt.ui;
 
 import de.oszimt.concept.iface.IConcept;
+import de.oszimt.ui.iface.UserInterface;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Gui extends Application {
+public class Gui extends Application implements UserInterface{
 
     /**
      * Instanze Variable zur Haltung des Konzepts
