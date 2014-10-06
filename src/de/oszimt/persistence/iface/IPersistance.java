@@ -1,4 +1,5 @@
 package de.oszimt.persistence.iface;
+
 import java.util.List;
 import java.util.Map;
 

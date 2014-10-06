@@ -2,16 +2,9 @@ package de.oszimt.persistence.impl;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.Date;
-import java.util.regex.Matcher;
-
-import de.oszimt.model.Department;
-import de.oszimt.model.User;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import de.oszimt.persistence.iface.IPersistance;
 
 public class SQLitePersistance implements IPersistance {

@@ -1,28 +1,15 @@
 package de.oszimt.persistence.impl;
 
-import de.oszimt.model.Department;
-import de.oszimt.model.User;
 import de.oszimt.persistence.iface.IPersistance;
-import javafx.beans.binding.MapBinding;
-import javafx.collections.ObservableList;
 import com.mongodb.BasicDBObject;
-import com.mongodb.BulkWriteOperation;
-import com.mongodb.BulkWriteResult;
-import com.mongodb.Cursor;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.ParallelScanOptions;
-import javafx.collections.ObservableMap;
-import org.omg.CORBA.BAD_CONTEXT;
-import org.joda.time.DateTime;
-
 import java.net.UnknownHostException;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 

@@ -1,17 +1,14 @@
 package de.oszimt.ui;
 
 import de.oszimt.concept.iface.IConcept;
-
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import de.oszimt.ui.iface.UserInterface;
 import org.fusesource.jansi.AnsiConsole;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;

@@ -29,10 +29,12 @@ public class Benutzerverwaltung {
         PersistanceMethod PersMeth = Arrays.asList(args).contains("--sqlite") ?
                 PersistanceMethod.SQLITE : PersistanceMethod.MONGODB;
 
+        ConceptMethod ConcMeth = ConceptMethod.STANDARD_CONCEPT;
+
         if(Arrays.asList(args).contains("--tui")){
-            new Tui(ConceptFactory.buildConcept(ConceptMethod.STANDARD_CONCEPT,PersMeth));
+            new Tui(ConceptFactory.buildConcept(ConcMeth,PersMeth));
         }else{
-            new Gui(ConceptFactory.buildConcept(ConceptMethod.STANDARD_CONCEPT,PersMeth));
+            new Gui(ConceptFactory.buildConcept(ConcMeth,PersMeth));
         }
 
     }
