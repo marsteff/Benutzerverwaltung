@@ -12,7 +12,7 @@
             <menus>
                 <Menu text="Datei">
                     <items>
-                        <MenuItem text="Schliessen" onAction="#closeAction" />
+                        <MenuItem text="Beenden" onAction="#closeAction" />
                     </items>
                 </Menu>
                 <Menu text="Bearbeiten">
@@ -24,7 +24,7 @@
                 </Menu>
                 <Menu text="Einstellungen">
                 	<items>
-                		<CheckMenuItem fx:id="restServiceMainMenu" text="Autocomplete Postleitzahl" onAction="#useRestServiceAction" />
+                		<CheckMenuItem fx:id="restServiceMainMenu" text="Autocomplete Städte (REST Service)" onAction="#useRestServiceAction" />
                 	</items>
                 </Menu>
             </menus>

@@ -2,11 +2,8 @@ package de.oszimt.ui;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.regex.Pattern;
-
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
-import de.oszimt.util.Util;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
@@ -26,7 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import de.oszimt.ui.templates.AdvancedSearch;
 import de.oszimt.util.RestService;
-import javafx.util.Callback;
 
 /**
  * Kontroller für das GUI

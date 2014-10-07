@@ -5,9 +5,6 @@ import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import de.oszimt.persistence.iface.IPersistance;
 import de.oszimt.util.Util;
-
-import javafx.collections.ObservableList;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

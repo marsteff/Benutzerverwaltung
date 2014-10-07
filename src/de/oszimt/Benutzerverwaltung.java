@@ -16,11 +16,24 @@ import java.net.UnknownHostException;
  */
 public class Benutzerverwaltung {
     public static void main(String[] args) {
-        new Tui(
-                ConceptFactory.buildConcept(
-                        ConceptMethod.STANDARD_CONCEPT,
-                        PersistanceMethod.SQLITE
-                )
-        );
+
+        /**
+         * Die Argumente können in der Runconfig eingetragen werden.
+         * Bzw. kann man sich für die verschiedenen Kombinationen Runconfigs anglegen.
+         *
+         * Run > Edit Configuration > Programm Arguments
+         *
+         */
+        PersistanceMethod PersMeth = Arrays.asList(args).contains("--sqlite") ?
+                PersistanceMethod.SQLITE : PersistanceMethod.MONGODB;
+
+        ConceptMethod ConcMeth = ConceptMethod.STANDARD_CONCEPT;
+
+        if(Arrays.asList(args).contains("--tui")){
+            new Tui(ConceptFactory.buildConcept(ConcMeth,PersMeth));
+        }else{
+            new Gui(ConceptFactory.buildConcept(ConcMeth,PersMeth));
+        }
+
     }
 }

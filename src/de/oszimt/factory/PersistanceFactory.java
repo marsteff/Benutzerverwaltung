@@ -4,7 +4,6 @@ import de.oszimt.persistence.enumeration.PersistanceMethod;
 import de.oszimt.persistence.iface.IPersistance;
 import de.oszimt.persistence.impl.MongoDbPersistance;
 import de.oszimt.persistence.impl.SQLitePersistance;
-
 import java.net.UnknownHostException;
 
 /**

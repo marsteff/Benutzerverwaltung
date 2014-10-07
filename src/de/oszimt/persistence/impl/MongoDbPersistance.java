@@ -1,28 +1,15 @@
 package de.oszimt.persistence.impl;
 
-import de.oszimt.model.Department;
-import de.oszimt.model.User;
 import de.oszimt.persistence.iface.IPersistance;
-import javafx.beans.binding.MapBinding;
-import javafx.collections.ObservableList;
 import com.mongodb.BasicDBObject;
-import com.mongodb.BulkWriteOperation;
-import com.mongodb.BulkWriteResult;
-import com.mongodb.Cursor;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.ParallelScanOptions;
-import javafx.collections.ObservableMap;
-import org.omg.CORBA.BAD_CONTEXT;
-import org.joda.time.DateTime;
-
 import java.net.UnknownHostException;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -65,7 +52,6 @@ public class MongoDbPersistance implements IPersistance{
      * Um die Klasse auch als Singleton nutzen zu können haben wir
      * die statische Methode getInstance(). Sie erzeugt oder gibt eine
      * bestehende Refference der Klasse zurück
-     *
      * @return MongoDbPersistance
      * @throws UnknownHostException
      */
@@ -229,7 +215,7 @@ public class MongoDbPersistance implements IPersistance{
      */
     @Override
     public void upsertUser(Map<String,Object> user) {
-        // versuchen den Benutzer zu laden um zu prüfen ob er existiert
+        //versuchen den Benutzer zu laden um zu prüfen ob er existiert
         Map<String,Object> usr = this.getUserById((int)user.get(this.getKeyUserId()));
         //prüfen ob existiert
         if(usr != null){
@@ -436,12 +422,14 @@ public class MongoDbPersistance implements IPersistance{
     /**
      * Neue Abteilung erzeugen
      * @param name String
+     *
      */
     @Override
     public void createDepartment(String name){
-        //laden der Abteilungs Collection
+        //Laden der Abteilungs Collection
         DBCollection coll = this.getCollection("Departments");
-        //Ermitteln der größten id
+
+        //ermitteln der größten Id
         DBCursor cursor = coll.find().sort(new BasicDBObject(
                 this.getKeyDepartmentId(), -1));
         int nextId = 1;
@@ -452,47 +440,49 @@ public class MongoDbPersistance implements IPersistance{
             ).toString());
             nextId++;
         }
-        //erstellen einer Abteilungs map anhand der Id und dem Namen
+
+        //neue Map für Abteilungs Daten initialisieren
         Map<String,Object> dep = new HashMap<String,Object>();
+        //hinzufügen der Abteilungs daten
         dep.put(this.getKeyDepartmentId(), nextId);
         dep.put(this.getKeyDepartmentName(), name);
-        //Abteilungs Map zu BasicDBObject umwandeln
+
+        //Map zu BasicDBObject konvertieren
         BasicDBObject doc = this.departmentToBasicDBObject(dep);
-        //Abteilung der Collection hinzufügen
+
+        //Dokument der Collection hinzufügen
         coll.insert(doc);
     }
 
     /**
-     * Aktualisieren einer Abteiung
-     *
+     * Ändern einer Abteilung
      * @param dep
      */
     @Override
     public void updateDepartment(Map<String, Object> dep){
-        //laden der Abteilungs Collection
+        //Laden der Abteilung Collection
         DBCollection coll = this.getCollection("Departments");
-        //Abteilungs Map umwandeln
+        //Map zu BasicDBOject konvertieren
         BasicDBObject doc = this.departmentToBasicDBObject(dep);
-        //such Query inialisieren
+        //sucher query nach id erzeugen
         BasicDBObject serach = new BasicDBObject(
                 this.getKeyDepartmentId(),dep.get(this.getKeyDepartmentId()));
-        //Aktualisierung durchführen
+        //Dokument in der Collection ändern
         coll.update(serach,doc);
     }
 
     /**
-     * Entfernen einer Abteilung
-     *
+     * Löschen einer Abteilung
      * @param id
      */
     @Override
     public void removeDepartment(int id){
-        //laden der Abteilungs Collection
+        //Laden der Abteilungs Collection
         DBCollection coll = this.getCollection("Departments");
-        //Zulöschenes Dokument finden
+        //Dokument anhand der Id finden
         DBObject doc = coll.findOne(new BasicDBObject(
                 this.getKeyDepartmentId(),id));
-        //Dokument entfernen
+        //Dokument aus der Collection entfernen
         coll.remove(doc);
     }
 
@@ -530,6 +520,8 @@ public class MongoDbPersistance implements IPersistance{
         } finally {
             cursor.close();
         }
+
         return list;
     }
+
 }
