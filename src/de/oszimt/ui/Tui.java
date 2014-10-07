@@ -47,7 +47,8 @@ public class Tui implements UserInterface{
      */
     private void showMainMenu() {
         clean();
-        String[] entrys = { "Benutzer anzeigen",
+        String[] entrys = { "Benutzer anlegen",
+                            "Benutzer anzeigen",
                             "Benutzer bearbeiten",
                             "Benutzer loeschen",
                             "Benutzer suchen",
@@ -66,14 +67,13 @@ public class Tui implements UserInterface{
         println("");
         print("Menuepunkt eingeben: ");
 
-
-
         //einlesen des Input´s
         int input = readInt();
 
         //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
         if(input == -1 || input > entrys.length || input < 1) {
             printWrongEntryErrorMessage(6);
+            //System kurz einschlafen lassen, damit Fehlermeldung lesbar ist
             sleep(1500);
             showMainMenu();
             return;
@@ -81,19 +81,83 @@ public class Tui implements UserInterface{
 
         //Prüfung, welches Menue aufgerufen werden soll
         switch (input){
-            case 1: showUser();
-                    return;
-            case 2: editUser();
-                    return;
-            case 3: deleteUser();
-                    return;
-            case 4: searchUser(createDummyUser());
-                    return;
-            case 5: showAllUsers();
-                    return;
-            case 6: System.exit(0);
+            case 1: createUser();
+                    break;
+            case 2: showUser();
+                    break;
+            case 3: editUser();
+                    break;
+            case 4: deleteUser();
+                    break;
+            case 5: searchUser(createDummyUser());
+                    break;
+            case 6: showAllUsers();
+                    break;
+            case 7: System.exit(0);
 
         }
+    }
+
+    private void createUser() {
+        //TODO - at first i make it a lot ugly .. then i think to make it more comfortable
+        String firstname = toShortUgly(0);
+        String lastname = toShortUgly(1);
+        LocalDate date = null;
+        do {
+            println("Geburtstag eingeben ");
+            int day = determineBirthday("Tag", 1, 31);
+            int month = determineBirthday("Monat", 1, 12);
+            int year = determineBirthday("Jahr", 1900, LocalDate.now().getYear());
+            try {
+                date = LocalDate.of(year, month, day);
+            } catch (DateTimeException e) {
+            }
+            if (date != null && date.isBefore(LocalDate.now())) {
+                break;
+            }
+            println(RED, "Das Datum ist nicht gültig");
+        } while (true);
+        String city = toShortUgly(3);
+        String zipCode = toShortUgly(4);
+        String street = toShortUgly(5);
+        String streetNr = toShortUgly(6);
+        //DEPARTMENT PART
+        print(entrys[7]);
+        printWhitespace(entrys, 7, 2);
+        println(": ");
+        List<Department> departmentList = concept.getAllDepartments();
+        String[] departmentArray = new String[departmentList.size()];
+
+        for (int i = 0; i < departmentArray.length; i++) {
+            departmentArray[i] = toAscii(departmentList.get(i).getName());
+        }
+        for (int i = 0; i < departmentArray.length; i++) {
+            print(departmentArray[i]);
+            printWhitespace(departmentArray, i, 2);
+            println("(" + (i + 1) + ")");
+        }
+        int departmentValue = 0;
+        do {
+            print("Zahl für Department eingeben: ");
+            departmentValue = readInt();
+            if (departmentValue > 0 && departmentValue <= departmentArray.length) {
+                break;
+            }
+            println(RED, "Eingabe nicht gueltig. Wert muss zwischen 1 und " + departmentArray.length + " liegen");
+        } while (true);
+        Department dep = new Department(departmentValue, departmentArray[departmentValue - 1]);
+        User newUser = new User(firstname, lastname, date, city, street, streetNr, Integer.parseInt(zipCode), dep);
+        concept.upsertUser(newUser);
+
+    }
+
+    private String toShortUgly(int i) {
+        print(entrys[i]);
+        printWhitespace(entrys, i, 2);
+        print(": ");
+        String value = readString();
+//        println("");
+        return value;
     }
 
     private User createDummyUser(){
@@ -391,8 +455,6 @@ public class Tui implements UserInterface{
     }
 
     private void buildTable(List<User> userList) {
-//        userList.stream().max(Comparator.comparing(e -> e.getFirstname().length())).get();
-
         //TODO Erster Versuch mit starren breiten
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
@@ -654,7 +716,7 @@ public class Tui implements UserInterface{
         params[1] = toAscii(user.getLastname());
         params[2] = toAscii(user.getBirthday() != null ? user.getBirthday().toString() : "");
         params[3] = toAscii(user.getCity());
-        params[4] = toAscii(user.getZipcode() != 0 ? new String(user.getZipcode() + "") : "");
+        params[4] = toAscii(user.getZipcode() != 0 ? (user.getZipcode() + "") : "");
         params[5] = toAscii(user.getStreet());
         params[6] = toAscii(user.getStreetnr());
         params[7] = toAscii(user.getDepartment() != null ? user.getDepartment().getName() : "");

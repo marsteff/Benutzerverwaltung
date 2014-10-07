@@ -114,7 +114,7 @@ public class User {
     
     @Override
 	public boolean equals(Object obj){
-    	return obj instanceof User && obj != null ? this.hashCode() == obj.hashCode() : false;
+    	return obj != null && obj instanceof User && this.hashCode() == obj.hashCode();
     }
     
     @Override

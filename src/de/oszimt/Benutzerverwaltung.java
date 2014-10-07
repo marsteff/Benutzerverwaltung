@@ -10,6 +10,7 @@ import de.oszimt.ui.Tui;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 /**
  * Startet die Anwendung
