@@ -267,7 +267,10 @@ public class Controller {
 		
 		this.searchInTable();
 
-        //hässliche Art, den Bug zu beheben, dass das Department sofort geändert wird
+        /*
+            BUG Workaround: https://community.oracle.com/message/10240147#10240147
+            Sonst wird die Abteilung in der Tabelle nicht geupdated
+        */
 		customerTable.getColumns().get(0).setVisible(false);
         customerTable.getColumns().get(0).setVisible(true);
         

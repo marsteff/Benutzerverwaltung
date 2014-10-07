@@ -166,15 +166,15 @@ public class Tui {
                 LocalDate date = null;
                 do {
                     println("Neuen Geburtstag eingeben ");
-                    int day = determineBirthday("Tag", 0, 31);
-                    int month = determineBirthday("Monat", 0, 12);
+                    int day = determineBirthday("Tag", 1, 31);
+                    int month = determineBirthday("Monat", 1, 12);
                     int year = determineBirthday("Jahr", 1900, LocalDate.now().getYear());
                     String birthdayString = year + "-" + month + "-" + day;
                     try {
                         date = LocalDate.of(year, month, day);
                     } catch (DateTimeException e) {
                     }
-                    if (date != null) {
+                    if (date != null && date.isBefore(LocalDate.now())) {
                         break;
                     }
                     println(RED, "Das Datum ist nicht gültig");
@@ -436,7 +436,7 @@ public class Tui {
     }
 
     /**
-     * Durchsucht alle Benutzer nach den Attributen von dem übergebenen User Objekt und gibt das Ergebnis als Liste zurück
+     * Durchsucht alle Benutzer nach den Attributen von dem übergebenen User Objekt und gibt das Ergebnis als Liste zurueck
      * @param user das User Objekt mit den zu durchsuchenden Attributen
      * @return Ergebnisliste
      */
@@ -515,7 +515,7 @@ public class Tui {
             if (departmentValue > 0 && departmentValue <= departmentArray.length) {
                 break;
             }
-            println(RED, "Eingabe nicht gültig. Wert muss zwischen 1 und " + departmentArray.length + " liegen");
+            println(RED, "Eingabe nicht gueltig. Wert muss zwischen 1 und " + departmentArray.length + " liegen");
         } while (true);
         return departmentValue;
     }
@@ -525,7 +525,7 @@ public class Tui {
             print(text + ": ");
             int value = readInt();
             println("");
-            if (value > 0 && value <= max) {
+            if (value >= min && value <= max) {
                 return value;
             }
             println(RED, "Der Wert muss zwischen " + min + " und " + max + " liegen");

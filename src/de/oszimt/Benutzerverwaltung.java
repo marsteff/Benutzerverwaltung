@@ -16,7 +16,7 @@ import java.net.UnknownHostException;
  */
 public class Benutzerverwaltung {
     public static void main(String[] args) {
-        new Gui(
+        new Tui(
                 ConceptFactory.buildConcept(
                         ConceptMethod.STANDARD_CONCEPT,
                         PersistanceMethod.SQLITE
