@@ -45,7 +45,7 @@
                             <!-- Kontakdaten -->
                             <VBox AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" spacing="5">
                                 <HBox spacing="5">
-                                    <TextField promptText="Vorname" fx:id="firstnameField"/>
+                                    <TextField promptText="Vorname" fx:id="firstnameField" id="error"/>
                                     <TextField promptText="Nachname" fx:id="lastnameField"/>
                                 </HBox>
                                 <HBox spacing="5">

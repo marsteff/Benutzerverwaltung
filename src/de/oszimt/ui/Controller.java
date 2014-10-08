@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
+import de.oszimt.util.Validation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
@@ -16,9 +17,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import de.oszimt.ui.templates.AdvancedSearch;
@@ -129,6 +128,7 @@ public class Controller {
 	private boolean writeError = false;
 
     StackPane glass = null;
+    String cssFile = Controller.class.getResource("errorTextField.css").toExternalForm();
 
     /**
      * Initialisieren einzelner Kontrollelemente
@@ -229,6 +229,14 @@ public class Controller {
 		}
 	}
 
+    private boolean validateInput(String text){
+        if(!Validation.checkIfOnlyLetters(text)){
+            firstnameField.getStylesheets().add(cssFile);
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Ändert einen Benutzer
      *
@@ -238,22 +246,26 @@ public class Controller {
 	private void changeButtonAction(){
 		//index der Tabellenauswahl
 		int index = customerTable.getSelectionModel().getSelectedIndex();
-		
+
+        if(validateInput(firstnameField.getText())) {
+            setErrorMessage("Falsche Eingaben, bitte berichtigen");
+            return;
+        }
 		//Tabellen Zeile zu Benutzer Objekt
 		String firstname = firstnameField.getText();
 		String lastname = lastnameField.getText();
 		String city = cityField.getText();
 		LocalDate bday = birthdayField.getValue();
-		String street = streetField.getText();
-		String streetNr = streetNrField.getText();
-		int zipcode = Integer.parseInt(zipCodeField.getText());
+        String street = streetField.getText();
+        String streetNr = streetNrField.getText();
+        int zipcode = Integer.parseInt(zipCodeField.getText());
         Department department = departmentComboBox.getValue();
 
         User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode, department);
-		
-		//Neuer Benutzer oder Änderung?
-		boolean isNew = true;
-		
+
+        //Neuer Benutzer oder Änderung?
+        boolean isNew = true;
+
         if(!customerTable.getSelectionModel().isEmpty()){
             int id = customerTable.getSelectionModel().getSelectedItem().getId();
             newUser.setId(id);
