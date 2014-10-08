@@ -175,6 +175,10 @@ public class Controller {
                 });
             }
         });
+        customerTable.getColumns().forEach(e -> {
+            e.setMinWidth(50);
+            e.setMaxWidth(400);
+        });
 	}
 
     /**
