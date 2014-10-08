@@ -154,13 +154,6 @@
                     </TableView>
                 </center>
             </BorderPane>
-
-            <BorderPane>
-                <center>
-                    <Label text="BAGINA !"/>
-                </center>
-            </BorderPane>
-               
         </center>
     </BorderPane>
 </StackPane>
