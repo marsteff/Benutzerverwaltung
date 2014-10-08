@@ -4,14 +4,13 @@ import de.oszimt.concept.iface.IConcept;
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import de.oszimt.ui.iface.UserInterface;
+import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.fusesource.jansi.Ansi.*;
@@ -24,6 +23,11 @@ public class Tui implements UserInterface{
 
     private final Color STANDARD_COLOR = WHITE;
     private IConcept concept;
+
+    private final char BORDER = '#';
+    private final int HEADER_MARGIN = 3;
+
+    private boolean useRestService = false;
 
     private String[] entrys = { "Vorname",
                                 "Nachname",
@@ -46,6 +50,15 @@ public class Tui implements UserInterface{
      * Schreibt das Hauptmenue in die Konsole
      */
     private void showMainMenu() {
+        showMainMenu(STANDARD_COLOR,"");
+    }
+
+    /**
+     * Schreibt das Hauptmenue in die Konsole
+     * @param color
+     * @param message
+     */
+    private void showMainMenu(Color color, String message) {
         clean();
         String[] entrys = { "Benutzer anlegen",
                             "Benutzer anzeigen",
@@ -53,19 +66,14 @@ public class Tui implements UserInterface{
                             "Benutzer loeschen",
                             "Benutzer suchen",
                             "Alle Benutzer Anzeigen",
+                            "Einstellugen",
                             "Abbrechen"};
-        writeHeader(3);
-
-        //Aufbauen des Menue´s
-        for (int i = 0; i < entrys.length; i++) {
-            print(entrys[i]);
-            printWhitespace(entrys, i, 2);
-            print("(");
-            print(BLUE,i+1+"");
-            println(")");
+        if(message.length() > 0) {
+            println(color, message);
         }
-        println("");
-        print("Menuepunkt eingeben: ");
+        writeHeader(getConcept().getTitle());
+        buildMenue(entrys);
+
 
         //einlesen des Input´s
         int input = readInt();
@@ -93,9 +101,69 @@ public class Tui implements UserInterface{
                     break;
             case 6: showAllUsers();
                     break;
-            case 7: System.exit(0);
+            case 7: settigns();
+                    break;
+            case 8: System.exit(0);
 
         }
+    }
+
+    private void buildMenue(String[] options){
+        //Aufbauen des Menue´s
+        for (int i = 0; i < options.length; i++) {
+            print(options[i]);
+            printWhitespace(options, i, 2);
+            print("(");
+            print(BLUE,i+1+"");
+            println(")");
+        }
+        println("");
+        print("Menuepunkt eingeben: ");
+    }
+
+    private void settigns(){
+        settigns(STANDARD_COLOR,"");
+    }
+    private void settigns(Color color, String message){
+        clean();
+        if(message.length() > 0){
+            println(color,message);
+        }
+        writeHeader("Einstellungen");
+        String[] StettingLabels = {
+            "Alle Kunden löschen",
+            "Zufalls Kunden erstellen",
+            "REST Service (PLZ -> Stadt) ["+
+                    (useRestService ?
+                            colorString(GREEN,"aktiv") :
+                            colorString(RED,"inaktiv")
+                    )+"]",
+            "Zurück"
+        };
+        buildMenue(StettingLabels);
+
+        //einlesen des Input´s
+        int input = readInt();
+        switch (input){
+            case 1:
+                getConcept().getAllUser().forEach(u -> getConcept().deleteUser(u));
+                showMainMenu(GREEN,"Information: Alle Kunden wurden gelöscht");
+                break;
+            case 2:
+                getConcept().createRandomUsers(useRestService);
+                showMainMenu(GREEN,"Information: Zufalls Kunden wurden erstellt");
+                break;
+            case 3:
+
+            default:
+                settigns(RED,"Fehler: Falsche Eingabe, versuchen Sie es erneut");
+
+        }
+
+    }
+
+    private void printlnSuccessMessage(String message){
+        println(GREEN, message);
     }
 
     private void createUser() {
@@ -635,7 +703,7 @@ public class Tui implements UserInterface{
         }
 
         clean();
-        writeHeader(2);
+        writeHeader(getConcept().getTitle());
         print("Benutzer ID eingeben: ");
         int id = readInt();
         println("");
@@ -695,10 +763,8 @@ public class Tui implements UserInterface{
      * @param iteratorIndex Iterator der eigentlichen Aufzählung
      */
     private void printWhitespace(String[] array, int iteratorIndex, int spacing){
-        int maxLength = getMaxEntry(array);
-        for (int j = 0; j < maxLength - array[iteratorIndex].length() + spacing; j++) {
-            print(" ");
-        }
+        int maxLenght = getMaxEntry(array);
+            print(repeat(' ', maxLenght - array[iteratorIndex].length() + spacing));
     }
 
     private String toAscii(String text) {
@@ -726,16 +792,31 @@ public class Tui implements UserInterface{
 
     /**
      * Schreibt den Header in die Konsole
-     * @param length länge der einzuhaltenen Leerzeichen
+     * @param title länge der einzuhaltenen Leerzeichen
      */
-    private void writeHeader(int length){
-        println("*****************************************");
-        print("*");
-        for(int i = 0; i < length; i++)print(BLACK, " ");
-        print(YELLOW, concept.getTitle());
-        for(int i = 0; i < length; i++)print(BLACK, " ");
-        println("*");
-        println("*****************************************");
+    private void writeHeader(String title){
+        int titleLength = title.length();
+        if(titleLength < 10){
+            titleLength = 20;
+        }
+
+        //Abstand hinzufügen, Border links und rechts hinzufügen
+        titleLength += 2 * HEADER_MARGIN + 2;
+        println(repeat(BORDER,titleLength));
+        print(BORDER);
+        print(repeat(' ',HEADER_MARGIN));
+        print(title);
+        print(repeat(' ',HEADER_MARGIN));
+        println(BORDER);
+        println(repeat(BORDER,titleLength));
+    }
+
+    private String repeat(char ch,int n){
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < n; i++){
+            sb.append(ch);
+        }
+        return sb.toString();
     }
 
     /**
@@ -798,13 +879,7 @@ public class Tui implements UserInterface{
      * @return die länge des längsten Strings oder 0, wenn kein String im Array ist
      */
     private int getMaxEntry(String[] array){
-        int max = 0;
-        for (int i = 0; i < array.length; i++) {
-            if(array[i].length() > max){
-                max = array[i].length();
-            }
-        }
-        return max;
+        return Collections.max(Arrays.asList(array), (o1, o2) -> o1.length() - o2.length()).length();
     }
 
     /**
@@ -813,7 +888,20 @@ public class Tui implements UserInterface{
      * @param text der anzuzeigende Text
      */
     private void print(Color color, String text){
-        System.out.print(ansi().fg(color).a(text).fg(STANDARD_COLOR));
+        System.out.print(colorString(color,text));
+    }
+
+    private Ansi colorString(Color color, String str){
+        return ansi().fg(color).a(str).fg(STANDARD_COLOR);
+    }
+
+
+    /**
+     * Schreibt auf die Kommandozeile ein Zeichen
+     * @param ch anzuzeigendes Zeichen
+     */
+    private void print(char ch){
+        print(ch+"");
     }
 
     /**
@@ -831,7 +919,7 @@ public class Tui implements UserInterface{
      * @param text der anzuzeigende Text
      */
     private void println(Color color, String text){
-        System.out.println(ansi().fg(color).a(text).fg(STANDARD_COLOR));
+        System.out.println(colorString(color,text));
     }
 
     /**
@@ -840,6 +928,13 @@ public class Tui implements UserInterface{
      */
     private void println(String text){
         println(STANDARD_COLOR, text);
+    }
+    /**
+     * Schreibt auf die Kommandozeile ein Zeichen
+     * @param ch Zeichen
+     */
+    private void println(char ch){
+        println(ch + "");
     }
 
     /**
