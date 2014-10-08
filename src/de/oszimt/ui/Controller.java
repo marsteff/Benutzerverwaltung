@@ -318,6 +318,7 @@ public class Controller {
             searchInTable();
             setSuccedMessage("Alle Nutzer erfolgreich gelöscht");
         });
+        abortButtonAction();
     }
 
     @FXML
