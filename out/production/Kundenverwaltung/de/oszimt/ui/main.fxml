@@ -172,7 +172,7 @@
                                     <Insets left="10" right="10" top="10" bottom="10" />
                                 </padding>
                                 <TextField promptText="Abteilung"/>
-                                <TextField promptText="Suchanfrage eingeben"/>
+                                <TextField fx:id="searchFieldDepartment" promptText="Suchanfrage eingeben"/>
                                 <HBox spacing="5">
                                     <Button fx:id="departmentChangeButton" text="Übernehmen" />
                                     <Button fx:id="departmentAbortButton" text="Abbrechen" />
@@ -180,7 +180,7 @@
                             </VBox>
                         </top>
                         <center>
-                            <TableView>
+                            <TableView fx:id="departmentTableView">
                                 <columns>
                                     <TableColumn text="Abteilung" fx:id="departmentNameColumn">
                                         <cellValueFactory>

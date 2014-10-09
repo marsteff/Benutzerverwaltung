@@ -103,11 +103,13 @@ public class Controller {
     @FXML
     public Button departmentAbortButton;
     @FXML
-    public TableColumn departmentNameColumn;
+    public TableColumn<Department, String> departmentNameColumn;
     @FXML
-    public TableColumn amountColumn;
+    public TableColumn<Department, Integer> amountColumn;
     @FXML
     public TextField searchFieldDepartment;
+    @FXML
+    public TableView<Department> departmentTableView;
 
 
     /**
@@ -174,6 +176,7 @@ public class Controller {
 
                 //Tabelle mit Daten fuellen und Livesuche ermöglichen
                 searchInTable();
+                searchInDepartmentTable();
 
                 //Callback Methode, um jeder Row ein ContextMenu zu geben, und nicht der gesamten Table
                 customerTable.setRowFactory(tableView -> {
@@ -454,9 +457,17 @@ public class Controller {
         FilteredList<Department> filteredData = new FilteredList<>(masterData, p -> true);
         searchFieldDepartment.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(department -> {
+                if(newValue == null || newValue.isEmpty())
+                    return true;
+                if(department.getName().toLowerCase().contains(newValue.toLowerCase()))
+                    return true;
 
+                return false;
             });
         });
+        SortedList<Department> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(departmentTableView.comparatorProperty());
+        departmentTableView.setItems(filteredData);
     }
 
     /**

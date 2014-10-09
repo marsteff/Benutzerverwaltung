@@ -180,7 +180,7 @@
                             </VBox>
                         </top>
                         <center>
-                            <TableView>
+                            <TableView fx:id="departmentTableView">
                                 <columns>
                                     <TableColumn text="Abteilung" fx:id="departmentNameColumn">
                                         <cellValueFactory>
