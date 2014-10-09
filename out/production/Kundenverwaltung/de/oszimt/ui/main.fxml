@@ -34,126 +34,172 @@
 
         <!-- !!!!!!!!!!!!!!!!!! Kontaktdaten !!!!!!!!!! -->
         <center>
-            <BorderPane>
-                <top>
-                    <VBox>
-                        <padding>
-                            <Insets left="10" bottom="10" right="10" top="10"/>
-                        </padding>
+            <SplitPane fx:id="split" >
+                <items>
+                    <BorderPane>
+                        <top>
+                            <VBox>
+                                <padding>
+                                    <Insets left="10" bottom="10" right="10" top="10"/>
+                                </padding>
 
-                        <AnchorPane>
-                            <!-- Kontakdaten -->
-                            <VBox AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" spacing="5">
-                                <HBox spacing="5">
-                                    <TextField promptText="Vorname" fx:id="firstnameField" id="error"/>
-                                    <TextField promptText="Nachname" fx:id="lastnameField"/>
-                                </HBox>
-                                <HBox spacing="5">
-                                    <DatePicker fx:id="birthdayField" editable="true" promptText="Geburtstag"/>
-                                    <ComboBox fx:id="departmentComboBox" promptText="Abteilung"/>
-                                </HBox>
-                                <HBox>
+                                <AnchorPane>
+                                    <!-- Kontakdaten -->
+                                    <VBox AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" spacing="5">
+                                        <HBox spacing="5">
+                                            <TextField promptText="Vorname" fx:id="firstnameField" id="error"/>
+                                            <TextField promptText="Nachname" fx:id="lastnameField"/>
+                                        </HBox>
+                                        <HBox spacing="5">
+                                            <DatePicker fx:id="birthdayField" editable="true" promptText="Geburtstag"/>
+                                            <ComboBox fx:id="departmentComboBox" promptText="Abteilung"/>
+                                        </HBox>
+                                        <HBox>
+                                            <padding>
+                                                <Insets top="10"/>
+                                            </padding>
+                                            <Label fx:id="informationLabel"/>
+                                        </HBox>
+                                    </VBox>
+
+                                    <!-- Stadt und Strasse -->
+                                    <VBox spacing="5" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"
+                                          AnchorPane.bottomAnchor="0">
+                                        <HBox spacing="5">
+                                            <TextField promptText="Stadt" fx:id="cityField"/>
+                                            <NumberTextField promptText="PLZ" fx:id="zipCodeField">
+                                                <tooltip>
+                                                    <Tooltip
+                                                            text="Bei eingeben einer Validen Postleitzahl wird die Stadt automatisch ausgefüllt"/>
+                                                </tooltip>
+                                                <contextMenu>
+                                                    <ContextMenu>
+                                                        <items>
+                                                            <CheckMenuItem fx:id="restServiceContextMenu"
+                                                                           text="Autocomplete Postleitzahl"
+                                                                           onAction="#useRestServiceAction"/>
+                                                        </items>
+                                                    </ContextMenu>
+                                                </contextMenu>
+                                            </NumberTextField>
+                                        </HBox>
+                                        <HBox spacing="5">
+                                            <TextField promptText="Strasse" fx:id="streetField"/>
+                                            <TextField promptText="Nummer" fx:id="streetNrField"/>
+                                        </HBox>
+                                        <HBox spacing="5">
+                                            <Button text="Übernehmen" fx:id="changeButton" onAction="#changeButtonAction"
+                                                    disable="true"/>
+                                            <Button text="Abbrechen" fx:id="abortButton" onAction="#abortButtonAction"/>
+                                        </HBox>
+                                    </VBox>
+                                </AnchorPane>
+
+                                <!-- Live-Search-Field -->
+                                <VBox spacing="5" fx:id="searchVBox">
                                     <padding>
-                                        <Insets top="10"/>
+                                        <Insets top="15"/>
                                     </padding>
-                                    <Label fx:id="informationLabel"/>
+                                    <TextField promptText="Suchanfrage eingeben" fx:id="searchField"/>
+                                    <BorderPane>
+                                        <left>
+                                            <Hyperlink text="Erweiterte Suche" onAction="#advancedSearch"
+                                                       styleClass="advancedSearchLink"/>
+                                        </left>
+                                        <right>
+                                            <ToggleButton fx:id="slide" text=">" />
+                                        </right>
+                                    </BorderPane>
+                                </VBox>
+                            </VBox>
+                        </top>
+                        <center>
+
+                            <!-- !!!!!!!!!!!!!!!!!! Nutzertabelle !!!!!!!!!! -->
+                            <TableView fx:id="customerTable">
+                                <columns>
+                                    <TableColumn text="Vorname" fx:id="firstnmaeColumn">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="firstname"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+                                    <TableColumn text="Nachname" fx:id="lastnameColumn">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="lastname"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+                                    <TableColumn text="Geburtstag" fx:id="birthdayColumn">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="birthday"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+                                    <TableColumn text="Stadt" fx:id="cityColumn">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="city"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+                                    <TableColumn text="Postleitzahl" fx:id="zipcodeColumn">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="zipcode"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+                                    <TableColumn text="Strasse" fx:id="streetColumn">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="street"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+                                    <TableColumn text="Nummer" fx:id="streetNrColumn">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="streetnr"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+                                    <TableColumn text="Abteilung" fx:id="departmentColumn">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="department"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+                                </columns>
+
+                            </TableView>
+                        </center>
+                    </BorderPane>
+
+                    <!-- Department - Part in Slide Bar -->
+                    <BorderPane fx:id="departmentPart">
+                        <top>
+                            <VBox spacing="5">
+                                <padding>
+                                    <Insets left="10" right="10" top="10" bottom="10" />
+                                </padding>
+                                <TextField promptText="Abteilung"/>
+                                <TextField promptText="Suchanfrage eingeben"/>
+                                <HBox spacing="5">
+                                    <Button fx:id="departmentChangeButton" text="Übernehmen" />
+                                    <Button fx:id="departmentAbortButton" text="Abbrechen" />
                                 </HBox>
                             </VBox>
+                        </top>
+                        <center>
+                            <TableView>
+                                <columns>
+                                    <TableColumn text="Vorname" fx:id="departmentNameColumn">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="name"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+                                    <TableColumn text="Nachname" fx:id="amountColumn">
+                                        <cellValueFactory>
+                                            <PropertyValueFactory property="amount"/>
+                                        </cellValueFactory>
+                                    </TableColumn>
+                                </columns>
+                            </TableView>
+                        </center>
+                    </BorderPane>
+                </items>
+            </SplitPane>
 
-                            <!-- Stadt und Strasse -->
-                            <VBox spacing="5" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"
-                                  AnchorPane.bottomAnchor="0">
-                                <HBox spacing="5">
-                                    <TextField promptText="Stadt" fx:id="cityField"/>
-                                    <NumberTextField promptText="PLZ" fx:id="zipCodeField">
-                                        <tooltip>
-                                            <Tooltip
-                                                    text="Bei eingeben einer Validen Postleitzahl wird die Stadt automatisch ausgefüllt"/>
-                                        </tooltip>
-                                        <contextMenu>
-                                            <ContextMenu>
-                                                <items>
-                                                    <CheckMenuItem fx:id="restServiceContextMenu"
-                                                                   text="Autocomplete Postleitzahl"
-                                                                   onAction="#useRestServiceAction"/>
-                                                </items>
-                                            </ContextMenu>
-                                        </contextMenu>
-                                    </NumberTextField>
-                                </HBox>
-                                <HBox spacing="5">
-                                    <TextField promptText="Strasse" fx:id="streetField"/>
-                                    <TextField promptText="Nummer" fx:id="streetNrField"/>
-                                </HBox>
-                                <HBox spacing="5">
-                                    <Button text="Übernehmen" fx:id="changeButton" onAction="#changeButtonAction"
-                                            disable="true"/>
-                                    <Button text="Abbrechen" fx:id="abortButton" onAction="#abortButtonAction"/>
-                                </HBox>
-                            </VBox>
-                        </AnchorPane>
-
-                        <!-- Live-Search-Field -->
-                        <VBox spacing="5" fx:id="searchVBox">
-                            <padding>
-                                <Insets top="15"/>
-                            </padding>
-                            <TextField promptText="Suchanfrage eingeben" fx:id="searchField"/>
-                            <Hyperlink text="Erweiterte Suche" onAction="#advancedSearch"
-                                       styleClass="advancedSearchLink"/>
-                        </VBox>
-                    </VBox>
-                </top>
-                <center>
-
-                    <!-- !!!!!!!!!!!!!!!!!! Nutzertabelle !!!!!!!!!! -->
-                    <TableView fx:id="customerTable">
-                        <columns>
-                            <TableColumn text="Vorname" fx:id="firstnmaeColumn">
-                                <cellValueFactory>
-                                    <PropertyValueFactory property="firstname"/>
-                                </cellValueFactory>
-                            </TableColumn>
-                            <TableColumn text="Nachname" fx:id="lastnameColumn">
-                                <cellValueFactory>
-                                    <PropertyValueFactory property="lastname"/>
-                                </cellValueFactory>
-                            </TableColumn>
-                            <TableColumn text="Geburtstag" fx:id="birthdayColumn">
-                                <cellValueFactory>
-                                    <PropertyValueFactory property="birthday"/>
-                                </cellValueFactory>
-                            </TableColumn>
-                            <TableColumn text="Stadt" fx:id="cityColumn">
-                                <cellValueFactory>
-                                    <PropertyValueFactory property="city"/>
-                                </cellValueFactory>
-                            </TableColumn>
-                            <TableColumn text="Postleitzahl" fx:id="zipcodeColumn">
-                                <cellValueFactory>
-                                    <PropertyValueFactory property="zipcode"/>
-                                </cellValueFactory>
-                            </TableColumn>
-                            <TableColumn text="Strasse" fx:id="streetColumn">
-                                <cellValueFactory>
-                                    <PropertyValueFactory property="street"/>
-                                </cellValueFactory>
-                            </TableColumn>
-                            <TableColumn text="Nummer" fx:id="streetNrColumn">
-                                <cellValueFactory>
-                                    <PropertyValueFactory property="streetnr"/>
-                                </cellValueFactory>
-                            </TableColumn>
-                            <TableColumn text="Abteilung" fx:id="departmentColumn">
-                                <cellValueFactory>
-                                    <PropertyValueFactory property="department"/>
-                                </cellValueFactory>
-                            </TableColumn>
-                        </columns>
-
-                    </TableView>
-                </center>
-            </BorderPane>
         </center>
     </BorderPane>
+
 </StackPane>

@@ -4,11 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
+import de.oszimt.util.SplitPaneDividerSlider;
 import de.oszimt.util.Validation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -41,10 +43,10 @@ public class Controller {
 
     @FXML
 	private TableView<User> customerTable;
-	
-	@FXML 
+
+	@FXML
 	private TableColumn<User, String> firstnmaeColumn;
-	@FXML 
+    @FXML
 	private TableColumn<User, String> lastnameColumn;
 	@FXML 
 	private TableColumn<User, String> cityColumn;
@@ -94,6 +96,18 @@ public class Controller {
 	@FXML
 	private CheckMenuItem restServiceMainMenu;
 
+    @FXML
+    public BorderPane departmentPart;
+    @FXML
+    public Button departmentChangeButton;
+    @FXML
+    public Button departmentAbortButton;
+    @FXML
+    public TableColumn departmentNameColumn;
+    @FXML
+    public TableColumn amountColumn;
+
+
     /**
      * Schaltenvariablen um bestimmte Funktionalitäten
      * umzusetzten
@@ -129,6 +143,11 @@ public class Controller {
 
     StackPane glass = null;
     String cssFile = Controller.class.getResource("errorTextField.css").toExternalForm();
+
+    @FXML
+    public SplitPane split;
+    @FXML
+    public ToggleButton slide;
 
     /**
      * Initialisieren einzelner Kontrollelemente
@@ -179,6 +198,26 @@ public class Controller {
             e.setMinWidth(50);
             e.setMaxWidth(400);
         });
+
+        /**
+         * ONLY TRY THE SPLITSLIDE SHIT
+         */
+        split.setDividerPositions(0.7);
+        split.getStylesheets().addAll(cssFile);
+        SplitPaneDividerSlider slider = new SplitPaneDividerSlider(split, 0, SplitPaneDividerSlider.Direction.RIGHT);
+        slider.setAimContentVisible(false);
+        slide.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
+            slider.setAimContentVisible(t1);
+        });
+        slide.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
+            if(t1){
+                slide.setText(">");
+            }
+            else{
+                slide.setText("<");
+            }
+        });
+
 	}
 
     /**
@@ -485,6 +524,12 @@ public class Controller {
 				
 				//Binding der CheckMenuItems für den RestService
 				restServiceContextMenu.selectedProperty().bindBidirectional(restServiceMainMenu.selectedProperty());
+
+                //Binding des Department Parts
+                departmentChangeButton.prefWidthProperty().bind(departmentPart.widthProperty().multiply(0.5));
+                departmentAbortButton.prefWidthProperty().bind(departmentPart.widthProperty().multiply(0.5));
+                departmentNameColumn.prefWidthProperty().bind(departmentPart.widthProperty().multiply(0.5));
+                amountColumn.prefWidthProperty().bind(departmentPart.widthProperty().multiply(0.5));
 	}
 	
 	
