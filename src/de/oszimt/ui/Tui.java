@@ -4,14 +4,20 @@ import de.oszimt.concept.iface.IConcept;
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import de.oszimt.ui.iface.UserInterface;
+import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
+
+import javax.ws.rs.core.StreamingOutput;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.fusesource.jansi.Ansi.*;
@@ -20,21 +26,48 @@ import static org.fusesource.jansi.Ansi.Color.*;
 /**
  * Created by user on 17.09.2014.
  */
-public class Tui implements UserInterface{
+public class Tui implements UserInterface {
 
     private final Color STANDARD_COLOR = WHITE;
     private IConcept concept;
 
-    private String[] entrys = { "Vorname",
-                                "Nachname",
-                                "Geburtstag",
-                                "Stadt",
-                                "Postleitzahl",
-                                "Strasse",
-                                "Strassennr.",
-                                "Abteilung"};
+    private final char BORDER = '#';
+    private final int HEADER_MARGIN = 3;
+    private final int TABLE_COLUMN_MARGIN = 2;
+    private final char BORDER_CROSS_THIN = (char) 9532;//9532 ┼
+    private final char BORDER_CROSS_ONLY_BOTTOM_THIN = (char) 9543;//╇ 9543
+    private final char BORDER_HALF_CROSS_RIGHT_THIN = (char) 9500;//9500 ├
+    private final char BORDER_HALF_CROSS_TOP_THIN = (char) 9524;//9524 ┴
+    private final char BORDER_HALF_CROSS_BOTTOM_THIN = (char) 9516;//9516 ┬
+    private final char BORDER_HALF_CROSS_LEFT_THIN = (char) 9508;//9508 ┤
+    private final char BORDER_HALF_CROSS_BOTTOM_BOLD = (char) 9523;//┳ 9523
+    private final char BORDER_HALF_CROSS_RIGHT_ONLY_BOTTOM_THIN = (char) 9505;//┡ 9505
+    private final char BORDER_HALF_CROSS_LEFT_ONLY_BOTTOM_THIN = (char) 9513;//┩ 9513
+    private final char BORDER_HALF_CROSS_BOTTOM_ONLY_BOTTOM_THIN = (char) 9519;//┯ 9519
+    private final char BORDER_LEFT_BOTTOM_ROUNDED = (char) 9584;//9584 ╰
+    private final char BORDER_LEFT_TOP_ROUNDED = (char) 9581;//9581 ╭
+    private final char BORDER_RIGHT_BOTTOM_ROUNDED = (char) 9583;//9583 ╯
+    private final char BORDER_RIGHT_TOP_ROUNDED = (char) 9582;//9582 ╮
+    private final char BORDER_MINUS_THIN = (char) 9472;//9472 ─
+    private final char BORDER_MINUS_BOLD = (char) 9473;//━ 9473
+    private final char BORDER_LEFT_TOP_BOLD = (char) 9487;//┏ 9487
+    private final char BORDER_RIGHT_TOP_BOLD = (char) 9491;//┓ 9491
+    private final char BORDER_PIPE_BOLD = (char) 9475;//┃ 9475
+    private final char BORDER_PIPE_THIN = (char) 9474;//┃ 9475
 
-    public Tui(IConcept concept){
+
+    private boolean useRestService = false;
+
+    private String[] entrys = {"Vorname",
+            "Nachname",
+            "Geburtstag",
+            "Stadt",
+            "Postleitzahl",
+            "Strasse",
+            "Strassennr.",
+            "Abteilung"};
+
+    public Tui(IConcept concept) {
         this.concept = concept;
 
         AnsiConsole.systemInstall();
@@ -46,32 +79,37 @@ public class Tui implements UserInterface{
      * Schreibt das Hauptmenue in die Konsole
      */
     private void showMainMenu() {
-        clean();
-        String[] entrys = { "Benutzer anlegen",
-                            "Benutzer anzeigen",
-                            "Benutzer bearbeiten",
-                            "Benutzer loeschen",
-                            "Benutzer suchen",
-                            "Alle Benutzer Anzeigen",
-                            "Abbrechen"};
-        writeHeader(3);
+        showMainMenu(STANDARD_COLOR, "");
+    }
 
-        //Aufbauen des Menue´s
-        for (int i = 0; i < entrys.length; i++) {
-            print(entrys[i]);
-            printWhitespace(entrys, i, 2);
-            print("(");
-            print(BLUE,i+1+"");
-            println(")");
+    /**
+     * Schreibt das Hauptmenue in die Konsole
+     *
+     * @param color
+     * @param message
+     */
+    private void showMainMenu(Color color, String message) {
+        clean();
+        String[] entrys = {"Benutzer anlegen",
+                "Benutzer anzeigen",
+                "Benutzer bearbeiten",
+                "Benutzer loeschen",
+                "Benutzer suchen",
+                "Alle Benutzer Anzeigen",
+                "Einstellugen",
+                "Abbrechen"};
+        if (message.length() > 0) {
+            println(color, message);
         }
-        println("");
-        print("Menuepunkt eingeben: ");
+        writeHeader(getConcept().getTitle());
+        buildMenue(entrys);
+
 
         //einlesen des Input´s
         int input = readInt();
 
         //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
-        if(input == -1 || input > entrys.length || input < 1) {
+        if (input == -1 || input > entrys.length || input < 1) {
             printWrongEntryErrorMessage(6);
             //System kurz einschlafen lassen, damit Fehlermeldung lesbar ist
             sleep(1500);
@@ -80,22 +118,101 @@ public class Tui implements UserInterface{
         }
 
         //Prüfung, welches Menue aufgerufen werden soll
-        switch (input){
-            case 1: createUser();
-                    break;
-            case 2: showUser();
-                    break;
-            case 3: editUser();
-                    break;
-            case 4: deleteUser();
-                    break;
-            case 5: searchUser(createDummyUser());
-                    break;
-            case 6: showAllUsers();
-                    break;
-            case 7: System.exit(0);
+        switch (input) {
+            case 1:
+                createUser();
+                break;
+            case 2:
+                showUser();
+                break;
+            case 3:
+                editUser();
+                break;
+            case 4:
+                deleteUser();
+                break;
+            case 5:
+                searchUser(createDummyUser());
+                break;
+            case 6:
+                showAllUsers();
+                break;
+            case 7:
+                settigns();
+                break;
+            case 8:
+                System.exit(0);
 
         }
+    }
+
+    private void buildMenue(String[] options) {
+        buildMenue(options, STANDARD_COLOR, "");
+    }
+
+    private void buildMenue(String[] options, Color color, String message) {
+        //Aufbauen des Menue´s
+        for (int i = 0; i < options.length; i++) {
+            print(options[i]);
+            printWhitespace(options, i, 2);
+            print("(");
+            print(BLUE, i + 1 + "");
+            println(")");
+        }
+        println(color, message);
+        print("Menuepunkt eingeben: ");
+    }
+
+    private void settigns() {
+        settigns(STANDARD_COLOR, "");
+    }
+
+    private void settigns(Color color, String message) {
+        clean();
+
+        writeHeader("Einstellungen");
+        String[] StettingLabels = {
+                "Alle Kunden löschen",
+                "Zufalls Kunden erstellen",
+                "REST Service (PLZ -> Stadt) [" +
+                        (useRestService ?
+                                colorString(GREEN, "aktiv") :
+                                colorString(RED, "inaktiv")
+                        ) + "]",
+                "Zurück"
+        };
+
+
+        buildMenue(StettingLabels, color, message);
+
+
+        //einlesen des Input´s
+        int input = readInt();
+        switch (input) {
+            case 1:
+                getConcept().getAllUser().forEach(u -> getConcept().deleteUser(u));
+                settigns(GREEN, "Information: Alle Kunden wurden gelöscht");
+                break;
+            case 2:
+                getConcept().createRandomUsers(useRestService);
+                settigns(GREEN, "Information: Zufalls Kunden wurden erstellt");
+                break;
+            case 3:
+                useRestService = useRestService == false;
+                settigns();
+                break;
+            case 4:
+                showMainMenu();
+                break;
+            default:
+                settigns(RED, "Fehler: Falsche Eingabe, versuchen Sie es erneut");
+
+        }
+
+    }
+
+    private void printlnSuccessMessage(String message) {
+        println(GREEN, message);
     }
 
     private void createUser() {
@@ -160,7 +277,7 @@ public class Tui implements UserInterface{
         return value;
     }
 
-    private User createDummyUser(){
+    private User createDummyUser() {
         return new User("", "", null, "", "", "", 0, null);
     }
 
@@ -171,7 +288,7 @@ public class Tui implements UserInterface{
         searchAndPrintUserStats(stack[1].getMethodName(), false);
 
         //Soll nach einem weiteren Benutzer gesucht werden ?
-        if(checkInputForYesOrNo("Nach weiterem Benutzer suchen ? (j/n)")) {
+        if (checkInputForYesOrNo("Nach weiterem Benutzer suchen ? (j/n)")) {
             showUser();
             return;
         }
@@ -315,12 +432,12 @@ public class Tui implements UserInterface{
         User user = searchAndPrintUserStats(stack[1].getMethodName(), false);
 
         //Soll der Benutzer wirklich gelöscht werden ?
-        if(checkInputForYesOrNo("Benutzer wirklich löschen ? (j/n)")) {
+        if (checkInputForYesOrNo("Benutzer wirklich löschen ? (j/n)")) {
             concept.deleteUser(user);
         }
 
         //Soll ein weiterer Benutzer gelöscht werden ?
-        if(checkInputForYesOrNo("Weiteren Benutzer loeschen ? (j/n)")) {
+        if (checkInputForYesOrNo("Weiteren Benutzer loeschen ? (j/n)")) {
             this.deleteUser();
             return;
         }
@@ -454,8 +571,86 @@ public class Tui implements UserInterface{
         buildTable(userList);
     }
 
+    //todo remove
+    private void charmap() {
+        for (int i = 8000; i < 10000; i++) {
+            print(" " + ((char) i) + " " + i + " ");
+            if (i % 50 == 0) System.out.println();
+        }
+    }
+
+    private void printTable(List<User> userList) {
+
+        int[] maxColumnLengths = new int[entrys.length];
+        String[][] table = new String[userList.size() + 1][entrys.length];
+
+        for (int column = 0; column < entrys.length; column++) {
+            maxColumnLengths[column] = entrys[column].length();
+            table[0][column] = entrys[column];
+        }
+
+        for (int row = 0; row < userList.size(); row++) {
+            String[] values = userParameterToArray(userList.get(row));
+            for (int column = 0; column < values.length; column++) {
+                if (values[column].length() > maxColumnLengths[column]) {
+                    maxColumnLengths[column] = values[column].length();
+                }
+                table[row + 1][column] = values[column];
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        StringBuilder sbLastLine = new StringBuilder();
+        StringBuilder sbFirstLine = new StringBuilder();
+        StringBuilder sbSecoundLine = new StringBuilder();
+        println("");
+        for (int i = 0; i < maxColumnLengths.length; i++) {
+            sb.append(i == 0 ? BORDER_HALF_CROSS_RIGHT_THIN : BORDER_CROSS_THIN);
+            sbLastLine.append(i == 0 ? BORDER_LEFT_BOTTOM_ROUNDED : BORDER_HALF_CROSS_TOP_THIN);
+            sbFirstLine.append(i == 0 ? BORDER_LEFT_TOP_BOLD : BORDER_HALF_CROSS_BOTTOM_BOLD);
+            sbSecoundLine.append(i == 0 ? BORDER_HALF_CROSS_RIGHT_ONLY_BOTTOM_THIN : BORDER_CROSS_ONLY_BOTTOM_THIN);
+            for (int j = 0; j < maxColumnLengths[i] + 2 * TABLE_COLUMN_MARGIN; j++) {
+                sb.append(BORDER_MINUS_THIN);
+                sbLastLine.append(BORDER_MINUS_THIN);
+                sbFirstLine.append(BORDER_MINUS_BOLD);
+                sbSecoundLine.append(BORDER_MINUS_BOLD);
+            }
+        }
+        sb.append(BORDER_HALF_CROSS_LEFT_THIN);
+        sbLastLine.append(BORDER_RIGHT_BOTTOM_ROUNDED);
+        sbFirstLine.append(BORDER_RIGHT_TOP_BOLD);
+        sbSecoundLine.append(BORDER_HALF_CROSS_LEFT_ONLY_BOTTOM_THIN);
+        String rowSeperator = sb.toString();
+        String lastLine = sbLastLine.toString();
+        String firstLine = sbFirstLine.toString();
+        String secoundLine = sbSecoundLine.toString();
+        println(firstLine);
+
+        for (int i = 0; i < table.length; i++) {
+            for (int j = 0; j < table[i].length; j++) {
+                print(((i == 0 ? BORDER_PIPE_BOLD : BORDER_PIPE_THIN)) + (i == 0 ?
+                                ansi().bold().bg(WHITE).fg(BLACK).a("  " + table[i][j]).fg(WHITE).bg(DEFAULT) :
+                                ansi().boldOff().a("  " + table[i][j])).toString()
+                );
+                int l = maxColumnLengths[j] - table[i][j].length();
+                print(repeat("" + (i == 0 ?
+                        ansi().bg(WHITE).fg(BLACK).a(" ").fg(WHITE).bg(DEFAULT) :
+                        ansi().a(" ")), l + TABLE_COLUMN_MARGIN));
+
+            }
+            println((char) (i == 0 ? BORDER_PIPE_BOLD : BORDER_PIPE_THIN));
+            if (i == table.length - 1) {
+                println(lastLine);
+            } else if (i == 0) {
+                println(secoundLine);
+            } else {
+                println(rowSeperator);
+            }
+        }
+    }
+
     private void buildTable(List<User> userList) {
-        //TODO Erster Versuch mit starren breiten
+        printTable(userList);
+        /*TODO Erster Versuch mit starren breiten
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
             printWhitespace(entrys, i, 1);
@@ -471,14 +666,14 @@ public class Tui implements UserInterface{
         println("");
         for (int i = 0; i < userList.size(); i++) {
             printUserInTable(userList.get(i));
-        }
+        }*/
     }
 
     private void printUserInTable(User user) {
         String[] userParams = userParameterToArray(user);
         int maxLength = getMaxEntry(entrys);
         for (int i = 0; i < entrys.length; i++) {
-            if(userParams[i].length() >= maxLength) {
+            if (userParams[i].length() >= maxLength) {
                 userParams[i] = cutStringForList(userParams[i], maxLength);
             }
             print(userParams[i]);
@@ -501,6 +696,7 @@ public class Tui implements UserInterface{
 
     /**
      * Durchsucht alle Benutzer nach den Attributen von dem übergebenen User Objekt und gibt das Ergebnis als Liste zurueck
+     *
      * @param user das User Objekt mit den zu durchsuchenden Attributen
      * @return Ergebnisliste
      */
@@ -509,29 +705,29 @@ public class Tui implements UserInterface{
         List<User> filteredUsers;
         //Filtert nach allen Scuhkriterien und gibt diesen als Liste zurück
         filteredUsers = userList.stream()
-                                .filter(e -> {
-                                    final User bUser = user;
-                                    int paramNumber = getSettedParamsNumber(user);
-                                    int checkNumber = 0;
-                                    if (!bUser.getFirstname().equals("") && e.getFirstname().toLowerCase().contains(bUser.getFirstname().toLowerCase()))
-                                        checkNumber++;
-                                    if (!bUser.getLastname().equals("") && e.getLastname().toLowerCase().contains(bUser.getLastname().toLowerCase()))
-                                        checkNumber++;
-                                    if (bUser.getBirthday() != null && e.getBirthday().equals(bUser.getBirthday()))
-                                        checkNumber++;
-                                    if (e.getZipcode() == bUser.getZipcode())
-                                        checkNumber++;
-                                    if (!bUser.getCity().equals("") && e.getCity().toLowerCase().contains(bUser.getCity().toLowerCase()))
-                                        checkNumber++;
-                                    if (!bUser.getStreet().equals("") && e.getStreet().toLowerCase().contains(bUser.getStreet().toLowerCase()))
-                                        checkNumber++;
-                                    if (!bUser.getStreetnr().equals("") && e.getStreetnr().toLowerCase().contains(bUser.getStreetnr().toLowerCase()))
-                                        checkNumber++;
-                                    if (e.getDepartment().getId() != bUser.getDepartment().getId())
-                                        checkNumber++;
-                                    return paramNumber == checkNumber;
-                                })
-                                .collect(Collectors.toList());
+                .filter(e -> {
+                    final User bUser = user;
+                    int paramNumber = getSettedParamsNumber(user);
+                    int checkNumber = 0;
+                    if (!bUser.getFirstname().equals("") && e.getFirstname().toLowerCase().contains(bUser.getFirstname().toLowerCase()))
+                        checkNumber++;
+                    if (!bUser.getLastname().equals("") && e.getLastname().toLowerCase().contains(bUser.getLastname().toLowerCase()))
+                        checkNumber++;
+                    if (bUser.getBirthday() != null && e.getBirthday().equals(bUser.getBirthday()))
+                        checkNumber++;
+                    if (e.getZipcode() == bUser.getZipcode())
+                        checkNumber++;
+                    if (!bUser.getCity().equals("") && e.getCity().toLowerCase().contains(bUser.getCity().toLowerCase()))
+                        checkNumber++;
+                    if (!bUser.getStreet().equals("") && e.getStreet().toLowerCase().contains(bUser.getStreet().toLowerCase()))
+                        checkNumber++;
+                    if (!bUser.getStreetnr().equals("") && e.getStreetnr().toLowerCase().contains(bUser.getStreetnr().toLowerCase()))
+                        checkNumber++;
+                    if (e.getDepartment().getId() != bUser.getDepartment().getId())
+                        checkNumber++;
+                    return paramNumber == checkNumber;
+                })
+                .collect(Collectors.toList());
         return filteredUsers;
     }
 
@@ -574,7 +770,7 @@ public class Tui implements UserInterface{
         }
         int departmentValue = 0;
         do {
-            print("Neuen Wert fuer " + entrys[input-1] + " eingeben: ");
+            print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
             departmentValue = readInt();
             if (departmentValue > 0 && departmentValue <= departmentArray.length) {
                 break;
@@ -598,12 +794,13 @@ public class Tui implements UserInterface{
 
     /**
      * Schreibt eine Nachricht in die Konsole und prüft, ob mit 'j' oder 'n' eingegeben wurde
+     *
      * @param message die anzuzeigende Nachricht
      * @return true, wenn 'j' eingegeben wurde. Andernfalls falls
      */
-    private boolean checkInputForYesOrNo(String message){
+    private boolean checkInputForYesOrNo(String message) {
         String input = null;
-        while(true) {
+        while (true) {
             println("");
             print(message + " ");
             input = readString();
@@ -613,7 +810,7 @@ public class Tui implements UserInterface{
             println("");
             printErrorMessage("Bitte 'j' oder 'n' eingeben");
         }
-        if(input.toLowerCase().equals("j")) {
+        if (input.toLowerCase().equals("j")) {
             return true;
         }
         return false;
@@ -622,10 +819,11 @@ public class Tui implements UserInterface{
     /**
      * Schreibt die Benutzer Informationen in die Konsole. Da Dies in mehreren Methoden benutzt wird und dieses
      * sich selbst wieder aufrufen, wird mit Hilfe von Reflection gearbeit, um dieses dynamisch gestalten zu können
+     *
      * @param methodName Methodenname der aufgerufen wird
      * @return den User zu der eingegebenen ID
      */
-    private User searchAndPrintUserStats(String methodName, boolean editMenu){
+    private User searchAndPrintUserStats(String methodName, boolean editMenu) {
         //hole Methode um über Reflection diese aufrufen zu können
         Method method = null;
         try {
@@ -635,7 +833,7 @@ public class Tui implements UserInterface{
         }
 
         clean();
-        writeHeader(2);
+        writeHeader(getConcept().getTitle());
         print("Benutzer ID eingeben: ");
         int id = readInt();
         println("");
@@ -646,7 +844,7 @@ public class Tui implements UserInterface{
             if (user == null) {
                 throw new Exception();
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             printErrorMessage("User wurde nicht gefunden");
             methodCall(method, this);
             return null;
@@ -657,31 +855,34 @@ public class Tui implements UserInterface{
 
     /**
      * Ruft die jeweilige Methode auf.
+     *
      * @param method Methode, die aufgerufen werden soll
      */
-    private void methodCall(Method method, Object obj) {
+    private Object methodCall(Method method, Object obj) {
         try {
-            method.invoke(obj);
+            return method.invoke(obj);
         } catch (IllegalAccessException e1) {
             e1.printStackTrace();
         } catch (InvocationTargetException e1) {
             e1.printStackTrace();
         }
+        return null;
     }
 
     /**
      * Schreibt die Benutzerdaten in die Konsole.
      * Wenn editMenu true ist, wird hinter Attributen eine Nummerierung gelistet
-     * @param user Benutzer, dessen Attribute angezeigt werden sollen
+     *
+     * @param user     Benutzer, dessen Attribute angezeigt werden sollen
      * @param editMenu Wenn true, wird hinter den Attributen eine Nummerierung gelistet
      */
-    private void writeUserStats(User user, boolean editMenu){
+    private void writeUserStats(User user, boolean editMenu) {
         String[] params = userParameterToArray(user);
         for (int i = 0; i < entrys.length; i++) {
             print(entrys[i]);
             printWhitespace(entrys, i, 2);
             print(": " + params[i]);
-            if(editMenu) {
+            if (editMenu) {
                 printWhitespace(params, i, 2);
                 print("(" + (i + 1) + ")");
             }
@@ -691,14 +892,17 @@ public class Tui implements UserInterface{
 
     /**
      * Sorgt für den gleichen Abstand in der Konsole von z.B. Doppelpunkten bei einer Liste
-     * @param array Das Array mit den Werten, an denen die Abstände angepasst werden sollen
+     *
+     * @param array         Das Array mit den Werten, an denen die Abstände angepasst werden sollen
      * @param iteratorIndex Iterator der eigentlichen Aufzählung
      */
-    private void printWhitespace(String[] array, int iteratorIndex, int spacing){
-        int maxLength = getMaxEntry(array);
-        for (int j = 0; j < maxLength - array[iteratorIndex].length() + spacing; j++) {
-            print(" ");
-        }
+    private void printWhitespace(String[] array, int iteratorIndex, int spacing) {
+        int maxLenght = getMaxEntry(array);
+        print(repeat(' ', maxLenght - stripAnsiColor(array[iteratorIndex]).length() + spacing));
+    }
+
+    private String stripAnsiColor(String str) {
+        return str.replaceAll("\u001B\\[[;\\d]*m", "");
     }
 
     private String toAscii(String text) {
@@ -707,10 +911,11 @@ public class Tui implements UserInterface{
 
     /**
      * Wandelt die Attribute von User in ein String Array um
+     *
      * @param user der entsprechende User
      * @return Array mit den Attributen von User
      */
-    private String[] userParameterToArray(User user){
+    private String[] userParameterToArray(User user) {
         String[] params = new String[8];
         params[0] = toAscii(user.getFirstname());
         params[1] = toAscii(user.getLastname());
@@ -726,20 +931,46 @@ public class Tui implements UserInterface{
 
     /**
      * Schreibt den Header in die Konsole
-     * @param length länge der einzuhaltenen Leerzeichen
+     *
+     * @param title länge der einzuhaltenen Leerzeichen
      */
-    private void writeHeader(int length){
-        println("*****************************************");
-        print("*");
-        for(int i = 0; i < length; i++)print(BLACK, " ");
-        print(YELLOW, concept.getTitle());
-        for(int i = 0; i < length; i++)print(BLACK, " ");
-        println("*");
-        println("*****************************************");
+    private void writeHeader(String title) {
+        int titleLength = title.length();
+        if (titleLength < 10) {
+            titleLength = 20;
+        }
+
+        //Abstand hinzufügen, Border links und rechts hinzufügen
+        titleLength += 2 * HEADER_MARGIN + 2;
+        println(repeat(BORDER, titleLength));
+        print(BORDER);
+        print(repeat(' ', HEADER_MARGIN));
+        print(title);
+        print(repeat(' ', HEADER_MARGIN));
+        println(BORDER);
+        println(repeat(BORDER, titleLength));
+    }
+
+    private String repeat(String ch, int n) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            sb.append(ch);
+        }
+        return sb.toString();
+    }
+
+
+    private String repeat(char ch, int n) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            sb.append(ch);
+        }
+        return sb.toString();
     }
 
     /**
-     *  Liest eine Benutzereingabe ein, und gibt im Fehlerfall gleich eine Fehlermeldung aus (z. B. wenn die Auswahl ausserhalb des Bereiches liegt
+     * Liest eine Benutzereingabe ein, und gibt im Fehlerfall gleich eine Fehlermeldung aus (z. B. wenn die Auswahl ausserhalb des Bereiches liegt
+     *
      * @return -1 im Fehlerfall, ansonsten die eingegebene Zahl
      */
     private int readInt() {
@@ -747,7 +978,7 @@ public class Tui implements UserInterface{
         int choice = 0;
         try {
             choice = scan.nextInt();
-        } catch(InputMismatchException e){
+        } catch (InputMismatchException e) {
             return -1;
         }
         return choice;
@@ -755,6 +986,7 @@ public class Tui implements UserInterface{
 
     /**
      * Liest eine Benutzereingabe ein
+     *
      * @return eingelesenen String
      */
     private String readString() {
@@ -764,9 +996,10 @@ public class Tui implements UserInterface{
 
     /**
      * lässt das Programm für die angegebene Zeit schlafen
+     *
      * @param time gibt an, wie lange das Programm schlafen soll
      */
-    private void sleep(int time){
+    private void sleep(int time) {
         try {
             Thread.sleep(time);
         } catch (InterruptedException e1) {
@@ -776,15 +1009,17 @@ public class Tui implements UserInterface{
 
     /**
      * Schreibt eine Fehlermeldung bezüglich einer falschen Eingabe in die Konsole und gibt den gültigen Zahlenbereich an
+     *
      * @param length länge des gültigen Zahlenbereich
      */
-    private void printWrongEntryErrorMessage(int length){
+    private void printWrongEntryErrorMessage(int length) {
         println("");
         println(RED, "Falsche Eingabe, bitte eine Zahl zwischen 1 und " + length + " eingeben");
     }
 
     /**
      * Schreibt eine Fehlermeldung in die Konsole
+     *
      * @param text der Fehlermeldungstext
      */
     private void printErrorMessage(String text) {
@@ -794,58 +1029,80 @@ public class Tui implements UserInterface{
 
     /**
      * Gibt die länge des längsten String im Array zurück
+     *
      * @param array der zu untersuchende Array
      * @return die länge des längsten Strings oder 0, wenn kein String im Array ist
      */
-    private int getMaxEntry(String[] array){
-        int max = 0;
-        for (int i = 0; i < array.length; i++) {
-            if(array[i].length() > max){
-                max = array[i].length();
-            }
-        }
-        return max;
+    private int getMaxEntry(String[] array) {
+        return Collections.max(Arrays.asList(array), (o1, o2) -> stripAnsiColor(o1).length() - stripAnsiColor(o2).length()).length();
     }
 
     /**
      * Schreibt auf die Kommandozeile Text mit entsprechender Farbe ohne Zeilenumbruch
+     *
      * @param color Farbe des Textes
-     * @param text der anzuzeigende Text
+     * @param text  der anzuzeigende Text
      */
-    private void print(Color color, String text){
-        System.out.print(ansi().fg(color).a(text).fg(STANDARD_COLOR));
+    private void print(Color color, String text) {
+        System.out.print(colorString(color, text));
+    }
+
+    private Ansi colorString(Color color, String str) {
+        return ansi().fg(color).a(str).fg(STANDARD_COLOR);
+    }
+
+
+    /**
+     * Schreibt auf die Kommandozeile ein Zeichen
+     *
+     * @param ch anzuzeigendes Zeichen
+     */
+    private void print(char ch) {
+        print(ch + "");
     }
 
     /**
      * Schreibt auf die Kommandozeile Text mit der gesetzten Standard Farbe ohne Zeilenumbruch
+     *
      * @param text der anzuzeigende Text
      */
-    private void print(String text){
+    private void print(String text) {
         print(STANDARD_COLOR, text);
         System.out.flush();
     }
 
     /**
      * Schreibt auf die Kommandozeile Text mit entsprechender Farbe mit Zeilenumbruch
+     *
      * @param color Farbe des Textes
-     * @param text der anzuzeigende Text
+     * @param text  der anzuzeigende Text
      */
-    private void println(Color color, String text){
-        System.out.println(ansi().fg(color).a(text).fg(STANDARD_COLOR));
+    private void println(Color color, String text) {
+        System.out.println(colorString(color, text));
     }
 
     /**
      * Schreibt auf die Kommandozeile Text mit der gesetzten Standard Farbe mit Zeilenumbruch
+     *
      * @param text der anzuzeigende Text
      */
-    private void println(String text){
+    private void println(String text) {
         println(STANDARD_COLOR, text);
+    }
+
+    /**
+     * Schreibt auf die Kommandozeile ein Zeichen
+     *
+     * @param ch Zeichen
+     */
+    private void println(char ch) {
+        println(ch + "");
     }
 
     /**
      * Löscht den Inhalt der Kommandozeile
      */
-    private void clean(){
+    private void clean() {
         //System.out.println(ansi().eraseScreen());
         System.out.print("\033[2J\033[;H");
     }
