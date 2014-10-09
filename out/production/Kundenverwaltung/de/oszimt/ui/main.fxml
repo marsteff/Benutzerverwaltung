@@ -182,12 +182,12 @@
                         <center>
                             <TableView>
                                 <columns>
-                                    <TableColumn text="Vorname" fx:id="departmentNameColumn">
+                                    <TableColumn text="Abteilung" fx:id="departmentNameColumn">
                                         <cellValueFactory>
                                             <PropertyValueFactory property="name"/>
                                         </cellValueFactory>
                                     </TableColumn>
-                                    <TableColumn text="Nachname" fx:id="amountColumn">
+                                    <TableColumn text="Anzahl" fx:id="amountColumn">
                                         <cellValueFactory>
                                             <PropertyValueFactory property="amount"/>
                                         </cellValueFactory>

@@ -106,6 +106,8 @@ public class Controller {
     public TableColumn departmentNameColumn;
     @FXML
     public TableColumn amountColumn;
+    @FXML
+    public TextField searchFieldDepartment;
 
 
     /**
@@ -440,8 +442,24 @@ public class Controller {
 			}
 		});
 	}
-	
-	/**
+
+    private void searchInDepartmentTable() {
+        List<Department> departmentList = this.gui.getConcept().getAllDepartments();
+
+        if (departmentList == null) {
+            return;
+        }
+
+        ObservableList<Department> masterData = FXCollections.observableArrayList(departmentList);
+        FilteredList<Department> filteredData = new FilteredList<>(masterData, p -> true);
+        searchFieldDepartment.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(department -> {
+
+            });
+        });
+    }
+
+    /**
 	 * Ermoeglicht das Suchen in der TableView.
 	 * Dieses erfolgt Live.
 	 */
