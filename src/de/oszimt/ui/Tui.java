@@ -568,7 +568,7 @@ public class Tui implements UserInterface {
 
         List<User> userList = searchUsers(user);
         println("");
-        buildTable(userList);
+        buildTable(userList,1000,0);//todo pagination
     }
 
     //todo remove
@@ -579,25 +579,20 @@ public class Tui implements UserInterface {
         }
     }
 
-    private void printTable(List<User> userList) {
+    private void printTable(String[][] table) {
 
-        int[] maxColumnLengths = new int[entrys.length];
-        String[][] table = new String[userList.size() + 1][entrys.length];
+        int[] maxColumnLengths = new int[table[0].length];
 
-        for (int column = 0; column < entrys.length; column++) {
-            maxColumnLengths[column] = entrys[column].length();
-            table[0][column] = entrys[column];
-        }
-
-        for (int row = 0; row < userList.size(); row++) {
-            String[] values = userParameterToArray(userList.get(row));
-            for (int column = 0; column < values.length; column++) {
-                if (values[column].length() > maxColumnLengths[column]) {
-                    maxColumnLengths[column] = values[column].length();
+        for (int row = 0; row < table.length; row++) {
+            for (int column = 0; column < table[row].length; column++) {
+                if(row == 0){
+                    maxColumnLengths[column] = table[row][column].length();
+                }else if (table[row][column].length() > maxColumnLengths[column]) {
+                    maxColumnLengths[column] = table[row][column].length();
                 }
-                table[row + 1][column] = values[column];
             }
         }
+
         StringBuilder sb = new StringBuilder();
         StringBuilder sbLastLine = new StringBuilder();
         StringBuilder sbFirstLine = new StringBuilder();
@@ -627,46 +622,72 @@ public class Tui implements UserInterface {
 
         for (int i = 0; i < table.length; i++) {
             for (int j = 0; j < table[i].length; j++) {
+
                 print(((i == 0 ? BORDER_PIPE_BOLD : BORDER_PIPE_THIN)) + (i == 0 ?
                                 ansi().bold().bg(WHITE).fg(BLACK).a("  " + table[i][j]).fg(WHITE).bg(DEFAULT) :
                                 ansi().boldOff().a("  " + table[i][j])).toString()
                 );
-                int l = maxColumnLengths[j] - table[i][j].length();
                 print(repeat("" + (i == 0 ?
                         ansi().bg(WHITE).fg(BLACK).a(" ").fg(WHITE).bg(DEFAULT) :
-                        ansi().a(" ")), l + TABLE_COLUMN_MARGIN));
+                        ansi().a(" ")),  maxColumnLengths[j] - table[i][j].length() + TABLE_COLUMN_MARGIN)
+                );
 
             }
-            println((char) (i == 0 ? BORDER_PIPE_BOLD : BORDER_PIPE_THIN));
-            if (i == table.length - 1) {
-                println(lastLine);
-            } else if (i == 0) {
-                println(secoundLine);
-            } else {
-                println(rowSeperator);
-            }
+            println(i == 0 ? BORDER_PIPE_BOLD : BORDER_PIPE_THIN);
+            println(i == table.length - 1 ? lastLine : (i == 0 ? secoundLine : rowSeperator ));
         }
+        println(table.length == 1 ? ansi().fg(YELLOW).a("Keine Kunden vorhanden") + "" : "");
     }
 
-    private void buildTable(List<User> userList) {
-        printTable(userList);
-        /*TODO Erster Versuch mit starren breiten
-        for (int i = 0; i < entrys.length; i++) {
-            print(entrys[i]);
-            printWhitespace(entrys, i, 1);
-            if(i != entrys.length - 1) {
-                print("|");
+    private void showAllUsers(int entriesPerPage, int page, List<User> userList) {
+        clean();
+        buildTable(userList,entriesPerPage,page);
+        print("Seite " + (page + 1) + "/" + ( userList.size() / entriesPerPage) + " (0: Zurück):");
+        String pageStr = readString();
+        try {
+            page = new Integer(pageStr) - 1;
+        } catch (NumberFormatException e) {}
+
+        if(page * entriesPerPage >= userList.size()){
+            page = 0;
+        }
+
+        if(page < 0){
+            showMainMenu();
+            return;
+        }
+
+        showAllUsers(entriesPerPage,page,userList);
+
+    }
+
+    private void showAllUsers() {
+        clean();
+        print("Anzahl der Kunden pro Seite (5):");
+        String entriesPerPageStr = readString();
+        int entiresPerPage = 5;
+        try {
+            entiresPerPage = new Integer(entriesPerPageStr);
+        } catch (NumberFormatException e) {}
+
+        List<User> userList = concept.getAllUser();
+        showAllUsers(entiresPerPage,0,userList);
+    }
+
+    private void buildTable(List<User> userList, int entriesPerPage, int page) {
+        String[][] table = new String[entriesPerPage + 1][entrys.length];
+
+        for (int column = 0; column < entrys.length; column++) {
+            table[0][column] = entrys[column];
+        }
+
+        for (int row = entriesPerPage * page; row < (entriesPerPage * page + entriesPerPage); row++) {
+            String[] values = userParameterToArray(userList.get(row));
+            for (int column = 0; column < values.length; column++) {
+                table[row - entriesPerPage * page + 1][column] = values[column];
             }
         }
-        println("");
-        int max = getMaxEntry(entrys);
-        for (int i = 0; i < (max * entrys.length) + (entrys.length * 2); i++) {
-            print("-");
-        }
-        println("");
-        for (int i = 0; i < userList.size(); i++) {
-            printUserInTable(userList.get(i));
-        }*/
+        printTable(table);
     }
 
     private void printUserInTable(User user) {
@@ -752,13 +773,7 @@ public class Tui implements UserInterface {
         return number;
     }
 
-    private void showAllUsers() {
-        buildTable(concept.getAllUser());
-        println("");
-        print("Zum Abbrechen Taste drücken");
-        readString();
-        showMainMenu();
-    }
+
 
     private int buildDepartmentView(String[] departmentArray, int input) {
 
