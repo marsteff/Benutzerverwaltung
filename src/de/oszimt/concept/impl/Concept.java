@@ -253,6 +253,16 @@ public class Concept implements IConcept {
         this.database.createDepartment(name);
     }
 
+    @Override
+    public void upsertDepartment(Department department) {
+        //TODO implement
+    }
+
+    @Override
+    public void deleteDepartment(Department department) {
+        //TODO implement
+    }
+
     /**
      * Gibt eine Liste aller Abteilungen zurück
      *

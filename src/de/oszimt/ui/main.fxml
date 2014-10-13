@@ -165,17 +165,17 @@
                     </BorderPane>
 
                     <!-- Department - Part in Slide Bar -->
-                    <BorderPane fx:id="departmentPart">
+                    <BorderPane fx:id="departmentPart" SplitPane.resizableWithParent="false">
                         <top>
                             <VBox spacing="5">
                                 <padding>
                                     <Insets left="10" right="10" top="10" bottom="10" />
                                 </padding>
-                                <TextField promptText="Abteilung"/>
+                                <TextField fx:id="departmentTextField" promptText="Abteilung"/>
                                 <TextField fx:id="searchFieldDepartment" promptText="Suchanfrage eingeben"/>
                                 <HBox spacing="5">
-                                    <Button fx:id="departmentChangeButton" text="Übernehmen" />
-                                    <Button fx:id="departmentAbortButton" text="Abbrechen" />
+                                    <Button fx:id="departmentChangeButton" text="Übernehmen" onAction="#departmentChangeAction"/>
+                                    <Button fx:id="departmentAbortButton" text="Abbrechen" onAction="#departmentAbortAction"/>
                                 </HBox>
                             </VBox>
                         </top>

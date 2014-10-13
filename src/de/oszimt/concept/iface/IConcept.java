@@ -63,6 +63,18 @@ public interface IConcept {
     void createDepartment(String name);
 
     /**
+     * //TODO Text erstellen
+     * @param department
+     */
+    void upsertDepartment(Department department);
+
+    /**
+     * //TODO Text erstellen
+     * @param department
+     */
+    void deleteDepartment(Department department);
+
+    /**
      * Gibt eine Liste aller Abteilungen zurück
      *
      * @return

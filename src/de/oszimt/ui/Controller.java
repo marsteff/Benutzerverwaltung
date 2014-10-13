@@ -96,6 +96,7 @@ public class Controller {
 	@FXML
 	private CheckMenuItem restServiceMainMenu;
 
+    //Department Slide Part
     @FXML
     public BorderPane departmentPart;
     @FXML
@@ -110,6 +111,9 @@ public class Controller {
     public TextField searchFieldDepartment;
     @FXML
     public TableView<Department> departmentTableView;
+    @FXML
+    public TextField departmentTextField;
+
 
 
     /**
@@ -444,6 +448,12 @@ public class Controller {
 				serviceTown = false;
 			}
 		});
+
+        departmentTableView.getSelectionModel().selectedItemProperty().addListener((obsValue, oldValue, newValue) -> {
+            if (newValue != null) {
+                departmentTextField.setText(newValue.getName());
+            }
+        });
 	}
 
     private void searchInDepartmentTable() {
@@ -756,5 +766,21 @@ public class Controller {
         rootPane.getChildren().add(glass);
 
         return glass;
+    }
+
+    @FXML
+    private void departmentAbortAction() {
+        departmentTextField.setText("");
+        searchFieldDepartment.setText("");
+        departmentTableView.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    private void departmentChangeAction() {
+
+        Department dep = departmentTableView.getSelectionModel().getSelectedItem();
+        String newDepartmentName = departmentTextField.getText();
+        dep.setName(newDepartmentName);
+        this.gui.getConcept().upsertDepartment(dep);
     }
 }
