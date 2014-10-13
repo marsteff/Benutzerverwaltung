@@ -90,6 +90,7 @@ public class Tui implements UserInterface {
      */
     private void showMainMenu(Color color, String message) {
         clean();
+
         String[] entrys = {"Benutzer anlegen",
                 "Benutzer anzeigen",
                 "Benutzer bearbeiten",
@@ -661,6 +662,27 @@ public class Tui implements UserInterface {
 
     }
 
+    private void showBrand(){
+        String brand;
+        /*
+        brand =
+          ansi().fg(BLUE).a("                                                         \n") + "" +
+          ansi().fg(BLUE).a(" | __ )")+""+ansi().fg(STANDARD_COLOR).a("  ___ _ __  _   _| |_ _______ _ __                \n") + "" +
+          ansi().fg(BLUE).a(" |  _ \\")+""+ansi().fg(STANDARD_COLOR).a(" / _ \\ '_ \\| | | | __|_  / _ \\ '__|               \n") + "" +
+          ansi().fg(BLUE).a(" | |_) |")+""+ansi().fg(STANDARD_COLOR).a("  __/ | | | |_| | |_ / /  __/ |                  \n") + "" +
+          ansi().fg(BLUE).a(" |____/")+""+ansi().fg(STANDARD_COLOR).a(" \\___|_| |_|\\__,_|\\__/___\\___|_|                  \n") + "" +
+          ansi().fg(BLUE).a("                                                         \n") + "" +
+          ansi().fg(STANDARD_COLOR).a(" __     __")+""+ansi().fg(BLUE).a("                      _ _                      \n") + "" +
+          ansi().fg(STANDARD_COLOR).a(" \\ \\   / /")+""+ansi().fg(BLUE).a("__ _ ____      ____ _| | |_ _   _ _ __   __ _  \n") + "" +
+          ansi().fg(STANDARD_COLOR).a("  \\ \\ / /")+""+ansi().fg(BLUE).a(" _ \\ '__\\ \\ /\\ / / _` | | __| | | | '_ \\ / _` | \n") + "" +
+          ansi().fg(STANDARD_COLOR).a("   \\ V /")+""+ansi().fg(BLUE).a("  __/ |   \\ V  V / (_| | | |_| |_| | | | | (_| | \n") + "" +
+          ansi().fg(STANDARD_COLOR).a("    \\_/")+""+ansi().fg(BLUE).a(" \\___|_|    \\_/\\_/ \\__,_|_|\\__|\\__,_|_| |_|\\__, | \n") + "" +
+          ansi().fg(BLUE).a("                                                  |___/  ");
+          */
+
+
+    }
+
     private void showAllUsers() {
         clean();
         print("Anzahl der Kunden pro Seite (5):");
@@ -950,20 +972,20 @@ public class Tui implements UserInterface {
      * @param title länge der einzuhaltenen Leerzeichen
      */
     private void writeHeader(String title) {
-        int titleLength = title.length();
-        if (titleLength < 10) {
-            titleLength = 20;
-        }
+        StringBuilder sbHeader = new StringBuilder();
 
-        //Abstand hinzufügen, Border links und rechts hinzufügen
-        titleLength += 2 * HEADER_MARGIN + 2;
-        println(repeat(BORDER, titleLength));
-        print(BORDER);
-        print(repeat(' ', HEADER_MARGIN));
-        print(title);
-        print(repeat(' ', HEADER_MARGIN));
-        println(BORDER);
-        println(repeat(BORDER, titleLength));
+        sbHeader.append(BORDER_PIPE_THIN);
+        sbHeader.append(repeat(' ',HEADER_MARGIN));
+        sbHeader.append(ansi().bold().a(title).boldOff());
+        sbHeader.append(repeat(' ',HEADER_MARGIN));
+        sbHeader.append(BORDER_PIPE_THIN);
+        int length = stripAnsiColor(sbHeader.toString()).length();
+        sbHeader.insert(0,'\n');
+        sbHeader.insert(0,BORDER_RIGHT_TOP_ROUNDED);
+        sbHeader.insert(0,repeat(BORDER_MINUS_THIN,length- 2 + (HEADER_MARGIN*2)));
+        sbHeader.insert(0,BORDER_LEFT_TOP_ROUNDED);
+        println(sbHeader.toString());
+
     }
 
     private String repeat(String ch, int n) {
