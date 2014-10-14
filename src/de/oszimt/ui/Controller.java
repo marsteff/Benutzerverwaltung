@@ -777,10 +777,29 @@ public class Controller {
 
     @FXML
     private void departmentChangeAction() {
+//        Department dep = departmentTableView.getSelectionModel().getSelectedItem();
+//        String newDepartmentName = departmentTextField.getText();
+//        dep.setName(newDepartmentName);
+//        this.gui.getConcept().upsertDepartment(dep);
 
-        Department dep = departmentTableView.getSelectionModel().getSelectedItem();
-        String newDepartmentName = departmentTextField.getText();
-        dep.setName(newDepartmentName);
+        int index = departmentTableView.getSelectionModel().getSelectedIndex();
+
+        Department dep = new Department(departmentTextField.getText());
+        boolean isNew = true;
+        if(!departmentTableView.getSelectionModel().isEmpty()){
+            int id = departmentTableView.getSelectionModel().getSelectedItem().getId();
+            dep.setId(id);
+            isNew = false;
+        }
+
         this.gui.getConcept().upsertDepartment(dep);
+        //Benachrichtung setzen
+        this.setSuccedMessage(dep + " erfolgreich" + (isNew ? " als Abteilung hinzugefügt" : " bearbeitet"));
+        this.searchInDepartmentTable();
+        this.searchInTable();
+        customerTable.getColumns().get(0).setVisible(false);
+        customerTable.getColumns().get(0).setVisible(true);
+        List<Department> departmentList = this.gui.getConcept().getAllDepartments();
+        this.departmentComboBox.getItems().setAll(departmentList);
     }
 }

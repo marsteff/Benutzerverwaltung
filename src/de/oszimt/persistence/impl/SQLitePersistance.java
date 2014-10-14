@@ -314,7 +314,7 @@ public class SQLitePersistance implements IPersistance {
     public void updateDepartment(Map<String,Object> dep){
         this.dbUpdate("UPDATE Department SET name = '" +
                         dep.get(this.getKeyDepartmentName()) +
-                        "' WHERE id = id = '" + dep.get(this.getKeyDepartmentId()) +
+                        "' WHERE id = '" + dep.get(this.getKeyDepartmentId()) +
                         "'"
         );
     }

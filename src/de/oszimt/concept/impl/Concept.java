@@ -255,7 +255,7 @@ public class Concept implements IConcept {
 
     @Override
     public void upsertDepartment(Department department) {
-        //TODO implement
+        this.database.updateDepartment(this.departmentToDepMap(department));
     }
 
     @Override
