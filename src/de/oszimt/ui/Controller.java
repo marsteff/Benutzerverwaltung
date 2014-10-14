@@ -8,6 +8,7 @@ import de.oszimt.util.SplitPaneDividerSlider;
 import de.oszimt.util.Validation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -166,8 +167,9 @@ public class Controller {
 		bindingOfControls();
 		
 		//bei klicken auf einen Nutzer Felder mit Daten fuellen
-		fillControls();
-
+//		fillControls();
+        firstnameField.textProperty().bind(customerTable.getSelectionModel().getSelectedItem().firstnameProperty());
+  
 		//setzt die Listener der Controls
 		setListenerForControls();
 
@@ -783,6 +785,7 @@ public class Controller {
 //        this.gui.getConcept().upsertDepartment(dep);
 
         int index = departmentTableView.getSelectionModel().getSelectedIndex();
+        int departmentComboBoxIndex = departmentComboBox.getSelectionModel().getSelectedIndex();
 
         Department dep = new Department(departmentTextField.getText());
         boolean isNew = true;
@@ -801,5 +804,8 @@ public class Controller {
         customerTable.getColumns().get(0).setVisible(true);
         List<Department> departmentList = this.gui.getConcept().getAllDepartments();
         this.departmentComboBox.getItems().setAll(departmentList);
+        if(departmentComboBoxIndex == index){
+            departmentComboBox.getSelectionModel().select(index);
+        }
     }
 }

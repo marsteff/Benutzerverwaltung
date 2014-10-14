@@ -31,6 +31,7 @@ public class User {
         this.department = new SimpleObjectProperty<Department>(department);
 	}
 
+    public SimpleStringProperty firstnameProperty(){return firstname;}
 	public int getId() {
 		return id;
 	}
