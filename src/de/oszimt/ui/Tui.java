@@ -90,19 +90,19 @@ public class Tui implements UserInterface {
      */
     private void showMainMenu(Color color, String message) {
         clean();
-        String[] entrys = {"Benutzer anlegen",
+
+        String[] entrys = {
+                "Benutzer anlegen",
                 "Benutzer anzeigen",
                 "Benutzer bearbeiten",
                 "Benutzer loeschen",
                 "Benutzer suchen",
                 "Alle Benutzer Anzeigen",
                 "Einstellugen",
-                "Abbrechen"};
-        if (message.length() > 0) {
-            println(color, message);
-        }
+                "Beenden"};
+
         writeHeader(getConcept().getTitle());
-        buildMenue(entrys);
+        buildMenue(entrys,color,message);
 
 
         //einlesen des Input´s
@@ -110,10 +110,7 @@ public class Tui implements UserInterface {
 
         //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
         if (input == -1 || input > entrys.length || input < 1) {
-            printWrongEntryErrorMessage(6);
-            //System kurz einschlafen lassen, damit Fehlermeldung lesbar ist
-            sleep(1500);
-            showMainMenu();
+            showMainMenu(RED,"Falsche Eingabe, bitte eine Zahl zwischen 1 und " + entrys.length + " eingeben");
             return;
         }
 
@@ -153,14 +150,14 @@ public class Tui implements UserInterface {
     private void buildMenue(String[] options, Color color, String message) {
         //Aufbauen des Menue´s
         for (int i = 0; i < options.length; i++) {
-            print(options[i]);
+            print(" " + options[i]);
             printWhitespace(options, i, 2);
             print("(");
             print(BLUE, i + 1 + "");
             println(")");
         }
         println(color, message);
-        print("Menuepunkt eingeben: ");
+        print(" Menuepunkt eingeben: ");
     }
 
     private void settigns() {
@@ -198,7 +195,7 @@ public class Tui implements UserInterface {
                 settigns(GREEN, "Information: Zufalls Kunden wurden erstellt");
                 break;
             case 3:
-                useRestService = useRestService == false;
+                useRestService = !useRestService;
                 settigns();
                 break;
             case 4:
@@ -216,6 +213,7 @@ public class Tui implements UserInterface {
     }
 
     private void createUser() {
+        writeHeader("Neuen Benutzer anlegen");
         //TODO - at first i make it a lot ugly .. then i think to make it more comfortable
         String firstname = toShortUgly(0);
         String lastname = toShortUgly(1);
@@ -282,54 +280,145 @@ public class Tui implements UserInterface {
     }
 
     private void showUser() {
-        //hole den aktuellen StackTrace
-        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-        //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
-        searchAndPrintUserStats(stack[1].getMethodName(), false);
+        showUser(STANDARD_COLOR,"");
+    }
+    private void showUser(Color color, String message) {
+        clean();
 
-        //Soll nach einem weiteren Benutzer gesucht werden ?
-        if (checkInputForYesOrNo("Nach weiterem Benutzer suchen ? (j/n)")) {
-            showUser();
+        writeHeader("Kunden anzeigen");
+        if(message.length() > 0){
+            println(color, message);
+        }
+        int inp = printGetUserId();
+
+        if(inp == -1){
+            showUser(RED,"Ungültige Kunden ID");
             return;
         }
-        showMainMenu();
+        User user = getConcept().getUser(inp);
+        if(user == null){
+            showUser(RED,"Kein Benutzer mit der ID gefunden");
+            return;
+        }
+        printUser(user);
+        printGoOnYesNo("showUser","Weiteren benutzer anzeigen");
     }
 
-    private void editUser() {
-        //hole den aktuellen StackTrace
-        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-        //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
-        User user = searchAndPrintUserStats(stack[1].getMethodName(), true);
-
-        buildEditUser(user, true, false);
+    private void printGoOnYesNo(String method, String text){
+        print(text + " (j/n): ");
+        String jn = readString();
+        if(jn.compareTo("j") == 0){
+            this.methodCall(method,this);
+            return;
+        }else if(jn.compareTo("n") == 0){
+            showMainMenu();
+            return;
+        }else{
+            showMainMenu(RED, "'" + jn + "' ist keine gültige Eingabe und wird als Nein gewertet");
+        }
     }
 
-    private void buildEditUser(User user, boolean editMenu, boolean print) {
-        if (print) {
-            writeUserStats(user, editMenu);
+    private void printUser(User user){
+        String[][] table = new String[entrys.length+1][2];
+        table[0][0] = "Eigenschaft";
+        table[0][1] = "Wert";
+        String[] values = userParameterToArray(user);
+        for (int i = 0; i < entrys.length; i++) {
+            table[i+1][0] = entrys[i];
+            table[i+1][1] = values[i].toString().length() < 1 ? "-" : values[i];
+        }
+        printTable(table);
+    }
+
+    private void printUserOptions(User user){
+        String[][] table = new String[entrys.length+1][3];
+        table[0][0] = "Eigenschaft";
+        table[0][1] = "Wert";
+        table[0][2] = "Auswahl";
+        String[] values = userParameterToArray(user);
+        for (int i = 0; i < entrys.length; i++) {
+            table[i+1][0] = entrys[i];
+            table[i+1][1] = values[i].toString().length() < 1 ? "-" : values[i];
+            table[i+1][2] = "" + (i+1);
+        }
+        printTable(table);
+    }
+
+    private void editUser(){
+        editUser(STANDARD_COLOR,"",-1);
+    }
+    private void editUser(Color color, String message){
+        editUser(color,message,-1);
+    }
+
+    private int printGetUserId(){
+        int user_id;
+        print("Bitte geben Sie die Kunden ID ein (z=zurück): ");
+        String inpString = readString();
+
+        if (inpString.trim().compareTo("z") == 0) {
+            showMainMenu();
+            return -1;
         }
 
+        int inp;
+        try {
+            inp = Integer.parseInt(inpString);
+        } catch (NumberFormatException e) {
+            inp = -1;
+        }
+        user_id = inp;
+        return user_id;
+    }
+    private void editUser(Color color, String message, int kunden_id) {
+        clean();
+        boolean errorshown = false;
+        writeHeader("Kunden bearbeiten");
+        if(kunden_id < 0) {
+            if (message.length() > 0) {
+                println(color, message);
+                errorshown = true;
+            }
+            kunden_id = printGetUserId();
+        }
+
+        if (kunden_id == -1) {
+            editUser(RED, "Ungültige Kunden ID");
+            return;
+        }
+        User user = getConcept().getUser(kunden_id);
+        if (user == null) {
+            editUser(RED, "Kein Benutzer mit der ID gefunden");
+            return;
+        }
+
+        printUserOptions(user);
+        if (message.length() > 0 && !errorshown) {
+            println(color, message);
+        }
         int input = 0;
         do {
             println("");
-            print("Welches Attribut soll bearbeitet werden ? (1-" + entrys.length + "): ");
-            println("");
+            print("Wählen Sie die zuändernde Eigenschaft aus (0=zurück | 1-" + entrys.length + "): ");
 
             //einlesen des Input´s
             input = readInt();
 
             //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
-
-            if (input > 0 && input <= entrys.length) {
+            if (input > -1 && input <= entrys.length) {
                 break;
             }
             println(RED, "Falsche Eingabe");
         } while (true);
 
+        if(input == 0){
+            showMainMenu();
+            return;
+        }
+
         String value = null;
         //Prüfung, welches Menue aufgerufen werden soll
         switch (input) {
-
             //Vorname
             case 1:
                 print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
@@ -403,33 +492,40 @@ public class Tui implements UserInterface {
                     departmentArray[i] = toAscii(departmentList.get(i).getName());
                 }
 
-                int departmentValue = buildDepartmentView(departmentArray, input);
+                int departmentValue = buildDepartmentView(departmentArray, input,false);
+
                 user.setDepartment(departmentList.get(departmentValue - 1));
                 break;
 
         }
         concept.upsertUser(user);
+        editUser(GREEN,"Änderung erfolgreich übernommen",user.getId());
 
-        //weitere Attribute bearbeiten ?
-        if (checkInputForYesOrNo("Weitere Attribute bearbeiten ? (j/n)")) {
-            println("");
-            buildEditUser(user, editMenu, true);
-            return;
-        }
-
-        //Soll nach ein weiterer Benutzer bearbeitet werden ?
-        if (checkInputForYesOrNo("Weiteren Benutzer bearbeiten ? (j/n)")) {
-            editUser();
-            return;
-        }
-        showMainMenu();
     }
 
-    private void deleteUser() {
-        //hole den aktuellen StackTrace
-        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-        //hole aus dem StackTrace die aufrufende Methode und übergebe ihn der Methode
-        User user = searchAndPrintUserStats(stack[1].getMethodName(), false);
+    private void deleteUser(){
+        deleteUser(STANDARD_COLOR,"");
+    }
+
+    private void deleteUser(Color color, String message) {
+        clean();
+        writeHeader("Benutzer löschen");
+        if(message.length() > 0){
+            println(color,message);
+        }
+        int user_id = printGetUserId();
+
+        if (user_id == -1) {
+            deleteUser(RED, "Ungültige Kunden ID");
+            return;
+        }
+        User user = getConcept().getUser(user_id);
+        if (user == null) {
+            deleteUser(RED, "Kein Benutzer mit der ID gefunden");
+            return;
+        }
+
+        printUser(user);
 
         //Soll der Benutzer wirklich gelöscht werden ?
         if (checkInputForYesOrNo("Benutzer wirklich löschen ? (j/n)")) {
@@ -437,138 +533,201 @@ public class Tui implements UserInterface {
         }
 
         //Soll ein weiterer Benutzer gelöscht werden ?
-        if (checkInputForYesOrNo("Weiteren Benutzer loeschen ? (j/n)")) {
-            this.deleteUser();
-            return;
-        }
-        showMainMenu();
+        printGoOnYesNo("deleteUser", "Einen weiteren Benutzer löschen");
     }
 
     private void searchUser(User user) {
-        User searchUser = user;
+        searchUser(user,STANDARD_COLOR,"");
+    }
+    private void searchUser(User user, Color color, String message) {
+        clean();
+        writeHeader("Benutzer Suchen");
 
-        String[] params = userParameterToArray(user);
-        for (int i = 0; i < entrys.length; i++) {
-            print(entrys[i]);
-            printWhitespace(entrys, i, 2);
-            print(": " + params[i]);
-            printWhitespace(params, i, 2);
-            print("(" + (i + 1) + ")");
+        printUserOptions(user);
 
-            println("");
+        int input = 0;
+        String inputString;
+
+        if(message.length() > 0){
+            println(color,message);
         }
 
-        //TODO weiter kapseln
-        int input = 0;
-        do {
-            println("");
-            print("Welches Attribut zur Suche hinzufuegen ? (1-" + entrys.length + "): ");
-            println("");
+        print("Welches Attribut zur Suche hinzufuegen ? (1-" + entrys.length + ", s = suchen, 0 = zum Hauptmenü): ");
+        //einlesen des Input´s
+        inputString = readString();
+        if(inputString.trim().compareTo("0") == 0){
+            showMainMenu();
+            return;
+        }else if(inputString.trim().compareTo("s") == 0){
 
-            //einlesen des Input´s
-            input = readInt();
+        }else {
+            try {
+                input = Integer.parseInt(inputString);
 
+            } catch (NumberFormatException e) {
+                input = 0;
+            }
             //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
 
-            if (input > 0 && input <= entrys.length) {
-                break;
+            if (input < 1 || input > entrys.length) {
+                searchUser(user, RED, "Falsche Eingabe");
+                return;
             }
-            println(RED, "Falsche Eingabe");
-        } while (true);
 
-        String value;
-        //Prüfung, welches Menue aufgerufen werden soll
-        switch (input) {
+            String value;
+            //Prüfung, welches Menue aufgerufen werden soll
+            User tmp = createDummyUser();
+            switch (input) {
 
-            //Vorname
-            case 1:
-                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
-                value = readString();
-                user.setFirstname(value);
-                break;
+                //Vorname
+                case 1:
+                    print("Wert für " + entrys[input - 1] + " eingeben (\"-\" = leeren): ");
+                    value = readString();
+                    if(value.trim().compareTo("-") == 0){
 
-            //Nachname
-            case 2:
-                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
-                value = readString();
-                user.setLastname(value);
-                break;
-
-            //Geburtstag
-            case 3:
-                LocalDate date = null;
-                do {
-                    println("Geburtstag eingeben ");
-                    int day = determineBirthday("Tag", 0, 31);
-                    int month = determineBirthday("Monat", 0, 12);
-                    int year = determineBirthday("Jahr", 1900, LocalDate.now().getYear());
-                    String birthdayString = year + "-" + month + "-" + day;
-                    try {
-                        date = LocalDate.of(year, month, day);
-                    } catch (DateTimeException e) {
+                        user.setFirstname(tmp.getFirstname());
+                    }else{
+                        user.setFirstname(value);
                     }
-                    if (date != null) {
-                        break;
+                   break;
+
+                //Nachname
+                case 2:
+                    print("Wert für " + entrys[input - 1] + " eingeben  (\"-\" = leeren): ");
+                    value = readString();
+                    if(value.trim().compareTo("-") == 0){
+
+                        user.setLastname(tmp.getLastname());
+                    }else{
+                        user.setLastname(value);
                     }
-                    println(RED, "Das Datum ist nicht gueltig");
-                } while (true);
+                    break;
 
-                user.setBirthday(date);
-                break;
+                //Geburtstag
+                case 3:
+                    LocalDate date = null;
+                    do {
+                        println("Geburtstag eingeben (zum leeren alle Werte = 0 setzen) ");
+                        int day = determineBirthday("Tag", 0, 31);
+                        int month = determineBirthday("Monat", 0, 12);
+                        int year = determineBirthday("Jahr", 1900, LocalDate.now().getYear());
 
-            //Stadt
-            case 4:
-                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
-                value = readString();
-                user.setCity(value);
-                break;
 
-            //PLZ
-            case 5:
-                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
-                value = readString();
-                user.setPLZ(Integer.parseInt(value));
-                break;
+                        if(day + month + year == 0){
+                            user.setBirthday(tmp.getBirthday());
+                            break;
+                        }
 
-            //Strasse
-            case 6:
-                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
-                value = readString();
-                user.setStreet(value);
-                break;
 
-            //Stassen-Nummer
-            case 7:
-                print("Wert fuer " + entrys[input - 1] + " eingeben: ");
-                value = readString();
-                user.setStreetnr(value);
-                break;
+                        try {
+                            date = LocalDate.of(year, month, day);
+                        } catch (DateTimeException e) {
+                        }
+                        if (date != null) {
+                            break;
+                        }
+                        println(RED, "Das Datum ist nicht gueltig");
+                    } while (true);
 
-            //Abteilung
-            case 8:
-                List<Department> departmentList = concept.getAllDepartments();
-                String[] departmentArray = new String[departmentList.size()];
+                    user.setBirthday(date);
+                    break;
 
-                for (int i = 0; i < departmentArray.length; i++) {
-                    departmentArray[i] = toAscii(departmentList.get(i).getName());
-                }
+                //Stadt
+                case 4:
+                    print("Wert fuer " + entrys[input - 1] + " eingeben (\"-\" = leeren):  ");
+                    value = readString();
+                    if(value.trim().compareTo("-") == 0){
 
-                int departmentValue = buildDepartmentView(departmentArray, input);
-                user.setDepartment(departmentList.get(departmentValue - 1));
-                break;
+                        user.setCity(tmp.getCity());
+                    }else{
+                        user.setCity(value);
+                    }
+                    break;
 
-        }
+                //PLZ
+                case 5:
+                    print("Wert fuer " + entrys[input - 1] + " eingeben  eingeben (\"-\" = leeren): ");
+                    value = readString();
+                    if(value.trim().compareTo("-") == 0){
 
-        //weitere Attribute zur Suche hinzufügen ?
-        if (checkInputForYesOrNo("Weitere Attribute zur Suche hinzufuegen ? (j/n)")) {
-            println("");
-            searchUser(user);
+                        user.setPLZ(tmp.getZipcode());
+                    }else{
+                        user.setPLZ(Integer.parseInt(value));
+                    }
+                    break;
+
+                //Strasse
+                case 6:
+                    print("Wert fuer " + entrys[input - 1] + " eingeben (\"-\" = leeren):  ");
+                    value = readString();
+                    if(value.trim().compareTo("-") == 0){
+
+                        user.setStreet(tmp.getStreet());
+                    }else{
+                        user.setStreet(value);
+                    }
+                    break;
+
+                //Stassen-Nummer
+                case 7:
+                    print("Wert fuer " + entrys[input - 1] + " eingeben (\"-\" = leeren): ");
+                    value = readString();
+                    if(value.trim().compareTo("-") == 0){
+
+                        user.setStreetnr(tmp.getStreetnr());
+                    }else{
+                        user.setStreetnr(value);
+                    }
+                    break;
+
+                //Abteilung
+                case 8:
+                    List<Department> departmentList = concept.getAllDepartments();
+                    String[] departmentArray = new String[departmentList.size()];
+
+                    for (int i = 0; i < departmentArray.length; i++) {
+                        departmentArray[i] = toAscii(departmentList.get(i).getName());
+                    }
+
+                    int departmentValue = buildDepartmentView(departmentArray, input,true);
+                    if(departmentValue == 0){
+                        user.setDepartment(tmp.getDepartment());
+                    }else{
+                        user.setDepartment(departmentList.get(departmentValue - 1));
+                    }
+                    break;
+
+            }
+
+            searchUser(user,GREEN,"Suche erweitert");
             return;
         }
 
         List<User> userList = searchUsers(user);
-        println("");
-        buildTable(userList);
+        buildTable(userList,userList.size(),0);
+        println("Filter ändern (1), Neue Suche(2), zum Hauptmenü (3)");
+        int option = -1;
+        boolean first = true;
+        do {
+            if(first){
+                first = false;
+            }else{
+                println(RED, "Falsche Eingabe");
+            }
+             option = readInt();
+        }while (option < 1 || option > 3);
+        switch (option){
+            case 1:
+                searchUser(user);
+                return;
+            case 2:
+                searchUser(createDummyUser());
+                return;
+            default:
+                showMainMenu();
+                return;
+        }
+
     }
 
     //todo remove
@@ -579,25 +738,20 @@ public class Tui implements UserInterface {
         }
     }
 
-    private void printTable(List<User> userList) {
+    private void printTable(String[][] table) {
 
-        int[] maxColumnLengths = new int[entrys.length];
-        String[][] table = new String[userList.size() + 1][entrys.length];
+        int[] maxColumnLengths = new int[table[0].length];
 
-        for (int column = 0; column < entrys.length; column++) {
-            maxColumnLengths[column] = entrys[column].length();
-            table[0][column] = entrys[column];
-        }
-
-        for (int row = 0; row < userList.size(); row++) {
-            String[] values = userParameterToArray(userList.get(row));
-            for (int column = 0; column < values.length; column++) {
-                if (values[column].length() > maxColumnLengths[column]) {
-                    maxColumnLengths[column] = values[column].length();
+        for (int row = 0; row < table.length; row++) {
+            for (int column = 0; column < table[row].length; column++) {
+                if(row == 0){
+                    maxColumnLengths[column] = table[row][column].length();
+                }else if (table[row][column].length() > maxColumnLengths[column]) {
+                    maxColumnLengths[column] = table[row][column].length();
                 }
-                table[row + 1][column] = values[column];
             }
         }
+
         StringBuilder sb = new StringBuilder();
         StringBuilder sbLastLine = new StringBuilder();
         StringBuilder sbFirstLine = new StringBuilder();
@@ -627,46 +781,74 @@ public class Tui implements UserInterface {
 
         for (int i = 0; i < table.length; i++) {
             for (int j = 0; j < table[i].length; j++) {
+
                 print(((i == 0 ? BORDER_PIPE_BOLD : BORDER_PIPE_THIN)) + (i == 0 ?
                                 ansi().bold().bg(WHITE).fg(BLACK).a("  " + table[i][j]).fg(WHITE).bg(DEFAULT) :
                                 ansi().boldOff().a("  " + table[i][j])).toString()
                 );
-                int l = maxColumnLengths[j] - table[i][j].length();
                 print(repeat("" + (i == 0 ?
                         ansi().bg(WHITE).fg(BLACK).a(" ").fg(WHITE).bg(DEFAULT) :
-                        ansi().a(" ")), l + TABLE_COLUMN_MARGIN));
+                        ansi().a(" ")),  maxColumnLengths[j] - table[i][j].length() + TABLE_COLUMN_MARGIN)
+                );
 
             }
-            println((char) (i == 0 ? BORDER_PIPE_BOLD : BORDER_PIPE_THIN));
-            if (i == table.length - 1) {
-                println(lastLine);
-            } else if (i == 0) {
-                println(secoundLine);
-            } else {
-                println(rowSeperator);
-            }
+            println(i == 0 ? BORDER_PIPE_BOLD : BORDER_PIPE_THIN);
+            println(i == table.length - 1 ? lastLine : (i == 0 ? secoundLine : rowSeperator ));
         }
+        println(table.length == 1 ? ansi().fg(YELLOW).a("Keine Einträge vorhanden").boldOff() + "" : "");
     }
 
-    private void buildTable(List<User> userList) {
-        printTable(userList);
-        /*TODO Erster Versuch mit starren breiten
-        for (int i = 0; i < entrys.length; i++) {
-            print(entrys[i]);
-            printWhitespace(entrys, i, 1);
-            if(i != entrys.length - 1) {
-                print("|");
+    private void showAllUsers(int entriesPerPage, int page, List<User> userList) {
+        clean();
+        buildTable(userList,entriesPerPage,page);
+        print("Seite " + (page + 1) + "/" + ( userList.size() / entriesPerPage) + " (0: Zurück):");
+        String pageStr = readString();
+        try {
+            page = new Integer(pageStr) - 1;
+        } catch (NumberFormatException e) {}
+
+        if(page * entriesPerPage >= userList.size()){
+            page = 0;
+        }
+
+        if(page < 0){
+            showMainMenu();
+            return;
+        }
+
+        showAllUsers(entriesPerPage,page,userList);
+
+    }
+
+
+
+    private void showAllUsers() {
+        clean();
+        print("Anzahl der Benutzer pro Seite (5):");
+        String entriesPerPageStr = readString();
+        int entiresPerPage = 5;
+        try {
+            entiresPerPage = new Integer(entriesPerPageStr);
+        } catch (NumberFormatException e) {}
+
+        List<User> userList = concept.getAllUser();
+        showAllUsers(entiresPerPage,0,userList);
+    }
+
+    private void buildTable(List<User> userList, int entriesPerPage, int page) {
+        String[][] table = new String[entriesPerPage + 1][entrys.length];
+
+        for (int column = 0; column < entrys.length; column++) {
+            table[0][column] = entrys[column];
+        }
+
+        for (int row = entriesPerPage * page; row < (entriesPerPage * page + entriesPerPage); row++) {
+            String[] values = userParameterToArray(userList.get(row));
+            for (int column = 0; column < values.length; column++) {
+                table[row - entriesPerPage * page + 1][column] = values[column];
             }
         }
-        println("");
-        int max = getMaxEntry(entrys);
-        for (int i = 0; i < (max * entrys.length) + (entrys.length * 2); i++) {
-            print("-");
-        }
-        println("");
-        for (int i = 0; i < userList.size(); i++) {
-            printUserInTable(userList.get(i));
-        }*/
+        printTable(table);
     }
 
     private void printUserInTable(User user) {
@@ -709,22 +891,25 @@ public class Tui implements UserInterface {
                     final User bUser = user;
                     int paramNumber = getSettedParamsNumber(user);
                     int checkNumber = 0;
-                    if (!bUser.getFirstname().equals("") && e.getFirstname().toLowerCase().contains(bUser.getFirstname().toLowerCase()))
+                    if (!bUser.getFirstname().equals("") && e.getFirstname().trim().toLowerCase().contains(bUser.getFirstname().trim().toLowerCase()))
                         checkNumber++;
-                    if (!bUser.getLastname().equals("") && e.getLastname().toLowerCase().contains(bUser.getLastname().toLowerCase()))
+                    if (!bUser.getLastname().equals("") && e.getLastname().trim().toLowerCase().contains(bUser.getLastname().trim().toLowerCase()))
                         checkNumber++;
                     if (bUser.getBirthday() != null && e.getBirthday().equals(bUser.getBirthday()))
                         checkNumber++;
                     if (e.getZipcode() == bUser.getZipcode())
                         checkNumber++;
-                    if (!bUser.getCity().equals("") && e.getCity().toLowerCase().contains(bUser.getCity().toLowerCase()))
+                    if (!bUser.getCity().equals("") && e.getCity().toLowerCase().trim().contains(bUser.getCity().trim().toLowerCase()))
                         checkNumber++;
-                    if (!bUser.getStreet().equals("") && e.getStreet().toLowerCase().contains(bUser.getStreet().toLowerCase()))
+                    if (!bUser.getStreet().equals("") && e.getStreet().trim().toLowerCase().contains(bUser.getStreet().trim().toLowerCase()))
                         checkNumber++;
-                    if (!bUser.getStreetnr().equals("") && e.getStreetnr().toLowerCase().contains(bUser.getStreetnr().toLowerCase()))
+                    if (!bUser.getStreetnr().equals("") && e.getStreetnr().trim().toLowerCase().contains(bUser.getStreetnr().trim().toLowerCase()))
                         checkNumber++;
-                    if (e.getDepartment().getId() != bUser.getDepartment().getId())
-                        checkNumber++;
+
+                    if (bUser.getDepartment() != null) {
+                        if (e.getDepartment().getId() == bUser.getDepartment().getId())
+                            checkNumber++;
+                    }
                     return paramNumber == checkNumber;
                 })
                 .collect(Collectors.toList());
@@ -747,20 +932,14 @@ public class Tui implements UserInterface {
             number++;
         if (!user.getStreetnr().equals(""))
             number++;
-        if (user.getDepartment().getId() != 0)
+        if (user.getDepartment() != null)
             number++;
         return number;
     }
 
-    private void showAllUsers() {
-        buildTable(concept.getAllUser());
-        println("");
-        print("Zum Abbrechen Taste drücken");
-        readString();
-        showMainMenu();
-    }
 
-    private int buildDepartmentView(String[] departmentArray, int input) {
+
+    private int buildDepartmentView(String[] departmentArray, int input, boolean deleteable) {
 
         //Aufbauen der Struktur
         for (int i = 0; i < departmentArray.length; i++) {
@@ -770,9 +949,9 @@ public class Tui implements UserInterface {
         }
         int departmentValue = 0;
         do {
-            print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
+            print("Neuen Wert fuer " + entrys[input - 1] + " eingeben" + (deleteable ? "(0 = leeren)" : "") + ":");
             departmentValue = readInt();
-            if (departmentValue > 0 && departmentValue <= departmentArray.length) {
+            if (departmentValue > (deleteable ? -1 : 0) && departmentValue <= departmentArray.length) {
                 break;
             }
             println(RED, "Eingabe nicht gueltig. Wert muss zwischen 1 und " + departmentArray.length + " liegen");
@@ -785,7 +964,7 @@ public class Tui implements UserInterface {
             print(text + ": ");
             int value = readInt();
             println("");
-            if (value >= min && value <= max) {
+            if ((value >= min && value <= max) || value == 0) {
                 return value;
             }
             println(RED, "Der Wert muss zwischen " + min + " und " + max + " liegen");
@@ -825,19 +1004,12 @@ public class Tui implements UserInterface {
      */
     private User searchAndPrintUserStats(String methodName, boolean editMenu) {
         //hole Methode um über Reflection diese aufrufen zu können
-        Method method = null;
-        try {
-            method = this.getClass().getDeclaredMethod(methodName);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
 
         clean();
         writeHeader(getConcept().getTitle());
         print("Benutzer ID eingeben: ");
         int id = readInt();
         println("");
-
         User user = null;
         try {
             user = concept.getUser(id);
@@ -846,7 +1018,7 @@ public class Tui implements UserInterface {
             }
         } catch (Exception e) {
             printErrorMessage("User wurde nicht gefunden");
-            methodCall(method, this);
+            methodCall(methodName, this);
             return null;
         }
         writeUserStats(user, editMenu);
@@ -856,9 +1028,16 @@ public class Tui implements UserInterface {
     /**
      * Ruft die jeweilige Methode auf.
      *
-     * @param method Methode, die aufgerufen werden soll
+     * @param methodName Methode, die aufgerufen werden soll
      */
-    private Object methodCall(Method method, Object obj) {
+    private Object methodCall(String methodName, Object obj) {
+
+        Method method = null;
+        try {
+            method = this.getClass().getDeclaredMethod(methodName);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
         try {
             return method.invoke(obj);
         } catch (IllegalAccessException e1) {
@@ -935,20 +1114,24 @@ public class Tui implements UserInterface {
      * @param title länge der einzuhaltenen Leerzeichen
      */
     private void writeHeader(String title) {
-        int titleLength = title.length();
-        if (titleLength < 10) {
-            titleLength = 20;
-        }
+        StringBuilder sbHeader = new StringBuilder();
 
-        //Abstand hinzufügen, Border links und rechts hinzufügen
-        titleLength += 2 * HEADER_MARGIN + 2;
-        println(repeat(BORDER, titleLength));
-        print(BORDER);
-        print(repeat(' ', HEADER_MARGIN));
-        print(title);
-        print(repeat(' ', HEADER_MARGIN));
-        println(BORDER);
-        println(repeat(BORDER, titleLength));
+        sbHeader.append(BORDER_PIPE_THIN);
+        sbHeader.append(repeat(' ',HEADER_MARGIN));
+        sbHeader.append(ansi().bold().fg(BLUE).a(title).boldOff().fg(STANDARD_COLOR));
+        sbHeader.append(repeat(' ',HEADER_MARGIN));
+        sbHeader.append(BORDER_PIPE_THIN);
+        int length = stripAnsiColor(sbHeader.toString()).length();
+        sbHeader.insert(0,'\n');
+        sbHeader.insert(0,BORDER_RIGHT_TOP_ROUNDED);
+        sbHeader.insert(0,repeat(BORDER_MINUS_THIN,length - 2 ));
+        sbHeader.insert(0,BORDER_LEFT_TOP_ROUNDED);
+        sbHeader.append('\n');
+        sbHeader.append(BORDER_LEFT_BOTTOM_ROUNDED);
+        sbHeader.append(repeat(BORDER_MINUS_THIN, length - 2));
+        sbHeader.append(BORDER_RIGHT_BOTTOM_ROUNDED);
+        println(sbHeader.toString());
+
     }
 
     private String repeat(String ch, int n) {
@@ -994,28 +1177,7 @@ public class Tui implements UserInterface {
         return scan.next();
     }
 
-    /**
-     * lässt das Programm für die angegebene Zeit schlafen
-     *
-     * @param time gibt an, wie lange das Programm schlafen soll
-     */
-    private void sleep(int time) {
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-        }
-    }
 
-    /**
-     * Schreibt eine Fehlermeldung bezüglich einer falschen Eingabe in die Konsole und gibt den gültigen Zahlenbereich an
-     *
-     * @param length länge des gültigen Zahlenbereich
-     */
-    private void printWrongEntryErrorMessage(int length) {
-        println("");
-        println(RED, "Falsche Eingabe, bitte eine Zahl zwischen 1 und " + length + " eingeben");
-    }
 
     /**
      * Schreibt eine Fehlermeldung in die Konsole
