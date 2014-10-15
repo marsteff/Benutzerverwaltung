@@ -9,6 +9,7 @@ import de.oszimt.util.Validation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,6 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import de.oszimt.ui.templates.AdvancedSearch;
 import de.oszimt.util.RestService;
+import javafx.util.converter.IntegerStringConverter;
 
 /**
  * Kontroller für das GUI
@@ -167,8 +169,8 @@ public class Controller {
 		bindingOfControls();
 		
 		//bei klicken auf einen Nutzer Felder mit Daten fuellen
-//		fillControls();
-        firstnameField.textProperty().bind(customerTable.getSelectionModel().getSelectedItem().firstnameProperty());
+		fillControls();
+
   
 		//setzt die Listener der Controls
 		setListenerForControls();
@@ -203,6 +205,7 @@ public class Controller {
                                     .otherwise((ContextMenu) null));
                     return row;
                 });
+
             }
         });
         customerTable.getColumns().forEach(e -> {
