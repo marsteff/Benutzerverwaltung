@@ -71,6 +71,12 @@ public class Concept implements IConcept {
      * @return
      */
     private User userMapToUser(Map<String,Object> userMap){
+
+        //Auf gpültigkeit prüfen
+        if(userMap == null){
+            return null;
+        }
+
         //Datenhaltungsreffernce in keys speicher (erspart schreibarbeit)
         IPersistance keys = this.database;
         //initialisieren der PLZ
