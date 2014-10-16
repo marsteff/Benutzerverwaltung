@@ -40,8 +40,8 @@ public class Gui extends Application implements UserInterface{
 
         //Initialisieren des Fensters
         primaryStage.setTitle(this.getConcept().getTitle());
-        primaryStage.setScene(new Scene(root, 800, 600));
-        primaryStage.setMinWidth(650);
+        primaryStage.setScene(new Scene(root, 1000, 600));
+        primaryStage.setMinWidth(850);
         primaryStage.setMinHeight(300);
         primaryStage.show();
 

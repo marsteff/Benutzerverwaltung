@@ -1,6 +1,7 @@
 package de.oszimt.ui;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
@@ -96,6 +97,7 @@ public class Controller {
 	@FXML
 	private CheckMenuItem restServiceMainMenu;
 
+    //Department Slide Part
     @FXML
     public BorderPane departmentPart;
     @FXML
@@ -110,6 +112,9 @@ public class Controller {
     public TextField searchFieldDepartment;
     @FXML
     public TableView<Department> departmentTableView;
+    @FXML
+    public TextField departmentTextField;
+
 
 
     /**
@@ -146,7 +151,8 @@ public class Controller {
 	private boolean writeError = false;
 
     StackPane glass = null;
-    String cssFile = Controller.class.getResource("errorTextField.css").toExternalForm();
+    String splitPaneCSS = Controller.class.getResource("splitPane.css").toExternalForm();
+    String errorCSS = Controller.class.getResource("errorTextField.css").toExternalForm();
 
     @FXML
     public SplitPane split;
@@ -163,7 +169,7 @@ public class Controller {
 		
 		//bei klicken auf einen Nutzer Felder mit Daten fuellen
 		fillControls();
-
+  
 		//setzt die Listener der Controls
 		setListenerForControls();
 
@@ -208,7 +214,7 @@ public class Controller {
          * ONLY TRY THE SPLITSLIDE SHIT
          */
         split.setDividerPositions(0.7);
-        split.getStylesheets().addAll(cssFile);
+        split.getStylesheets().addAll(splitPaneCSS);
         SplitPaneDividerSlider slider = new SplitPaneDividerSlider(split, 0, SplitPaneDividerSlider.Direction.RIGHT);
         slider.setAimContentVisible(false);
         slide.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
@@ -273,14 +279,6 @@ public class Controller {
 		}
 	}
 
-    private boolean validateInput(String text){
-        if(!Validation.checkIfOnlyLetters(text)){
-            firstnameField.getStylesheets().add(cssFile);
-            return true;
-        }
-        return false;
-    }
-
     /**
      * Ändert einen Benutzer
      *
@@ -288,13 +286,11 @@ public class Controller {
      */
 	@FXML
 	private void changeButtonAction(){
+        eraseAllStylesheets();
+
 		//index der Tabellenauswahl
 		int index = customerTable.getSelectionModel().getSelectedIndex();
 
-        if(validateInput(firstnameField.getText())) {
-            setErrorMessage("Falsche Eingaben, bitte berichtigen");
-            return;
-        }
 		//Tabellen Zeile zu Benutzer Objekt
 		String firstname = firstnameField.getText();
 		String lastname = lastnameField.getText();
@@ -306,6 +302,11 @@ public class Controller {
         Department department = departmentComboBox.getValue();
 
         User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode, department);
+
+        if(validateThisShit(newUser)){
+            setErrorMessage("Falsche eingabe, bitte berichtigen");
+            return;
+        }
 
         //Neuer Benutzer oder Änderung?
         boolean isNew = true;
@@ -333,6 +334,51 @@ public class Controller {
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().select(index);
 	}
+
+    private void eraseAllStylesheets() {
+        firstnameField.getStylesheets().removeAll(errorCSS);
+        lastnameField.getStylesheets().removeAll(errorCSS);
+        streetNrField.getStylesheets().removeAll(errorCSS);
+        streetField.getStylesheets().removeAll(errorCSS);
+        cityField.getStylesheets().removeAll(errorCSS);
+        zipCodeField.getStylesheets().removeAll(errorCSS);
+        birthdayField.getStylesheets().removeAll(errorCSS);
+    }
+
+    private boolean validateThisShit(User newUser) {
+        boolean isFailed = false;
+        if(!Validation.checkIfLetters(newUser.getFirstname())){
+            firstnameField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfLetters(newUser.getLastname())){
+            lastnameField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfLetters(newUser.getCity())){
+            cityField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfStreet(newUser.getStreet())){
+            streetField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfStreetnr(newUser.getStreetnr())){
+            streetNrField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfZipCode(newUser.getZipcode() + "")){
+            zipCodeField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(     newUser.getBirthday().isBefore(LocalDate.now().minusYears(115)) ||
+                newUser.getBirthday().isAfter(LocalDate.now().minusYears(14))){
+            birthdayField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+
+        return isFailed;
+    }
 
     /**
      * Erstellt zufällige Benutzer
@@ -444,6 +490,12 @@ public class Controller {
 				serviceTown = false;
 			}
 		});
+
+        departmentTableView.getSelectionModel().selectedItemProperty().addListener((obsValue, oldValue, newValue) -> {
+            if (newValue != null) {
+                departmentTextField.setText(newValue.getName());
+            }
+        });
 	}
 
     private void searchInDepartmentTable() {
@@ -756,5 +808,40 @@ public class Controller {
         rootPane.getChildren().add(glass);
 
         return glass;
+    }
+
+    @FXML
+    private void departmentAbortAction() {
+        departmentTextField.setText("");
+        searchFieldDepartment.setText("");
+        departmentTableView.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    private void departmentChangeAction() {
+        int index = departmentTableView.getSelectionModel().getSelectedItem().getId();
+        int departmentComboBoxIndex = departmentComboBox.getSelectionModel().getSelectedItem().getId();
+
+        Department dep = new Department(departmentTextField.getText());
+        boolean isNew = true;
+        if(!departmentTableView.getSelectionModel().isEmpty()){
+            int id = departmentTableView.getSelectionModel().getSelectedItem().getId();
+            dep.setId(id);
+            isNew = false;
+        }
+
+        this.gui.getConcept().upsertDepartment(dep);
+        //Benachrichtung setzen
+        this.setSuccedMessage(dep + " erfolgreich" + (isNew ? " als Abteilung hinzugefügt" : " bearbeitet"));
+        this.searchInDepartmentTable();
+        this.searchInTable();
+        customerTable.getColumns().get(0).setVisible(false);
+        customerTable.getColumns().get(0).setVisible(true);
+        List<Department> departmentList = this.gui.getConcept().getAllDepartments();
+        this.departmentComboBox.getItems().setAll(departmentList);
+        if(departmentComboBoxIndex == index){
+            departmentComboBox.getSelectionModel().select(index - 1);
+        }
+        departmentTableView.getSelectionModel().select(index - 1);
     }
 }

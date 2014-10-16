@@ -31,6 +31,38 @@ public class User {
         this.department = new SimpleObjectProperty<Department>(department);
 	}
 
+    public SimpleStringProperty firstnameProperty(){
+        return firstname;
+    }
+
+    public SimpleStringProperty lastnameProperty(){
+        return lastname;
+    }
+    public SimpleStringProperty cityProperty(){
+        return city;
+    }
+
+    public SimpleStringProperty streetProperty(){
+        return street;
+    }
+
+    public SimpleStringProperty streetnrProperty(){
+        return streetnr;
+    }
+
+    public SimpleIntegerProperty zipcodeProperty(){
+        return zipcode;
+    }
+
+    public SimpleObjectProperty<LocalDate> birthdayProperty(){
+        return birthday;
+    }
+
+    public SimpleObjectProperty<Department> departmentProperty(){
+        return department;
+    }
+
+
 	public int getId() {
 		return id;
 	}
