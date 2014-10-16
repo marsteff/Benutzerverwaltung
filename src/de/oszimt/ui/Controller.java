@@ -824,8 +824,8 @@ public class Controller {
 //        dep.setName(newDepartmentName);
 //        this.gui.getConcept().upsertDepartment(dep);
 
-        int index = departmentTableView.getSelectionModel().getSelectedIndex();
-        int departmentComboBoxIndex = departmentComboBox.getSelectionModel().getSelectedIndex();
+        int index = departmentTableView.getSelectionModel().getSelectedItem().getId();
+        int departmentComboBoxIndex = departmentComboBox.getSelectionModel().getSelectedItem().getId();
 
         Department dep = new Department(departmentTextField.getText());
         boolean isNew = true;
@@ -845,7 +845,8 @@ public class Controller {
         List<Department> departmentList = this.gui.getConcept().getAllDepartments();
         this.departmentComboBox.getItems().setAll(departmentList);
         if(departmentComboBoxIndex == index){
-            departmentComboBox.getSelectionModel().select(index);
+            departmentComboBox.getSelectionModel().select(index - 1);
         }
+        departmentTableView.getSelectionModel().select(index - 1);
     }
 }
