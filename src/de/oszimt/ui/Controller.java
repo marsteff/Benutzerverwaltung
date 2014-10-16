@@ -1,6 +1,7 @@
 package de.oszimt.ui;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
@@ -8,8 +9,6 @@ import de.oszimt.util.SplitPaneDividerSlider;
 import de.oszimt.util.Validation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -26,7 +25,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import de.oszimt.ui.templates.AdvancedSearch;
 import de.oszimt.util.RestService;
-import javafx.util.converter.IntegerStringConverter;
 
 /**
  * Kontroller für das GUI
@@ -153,7 +151,8 @@ public class Controller {
 	private boolean writeError = false;
 
     StackPane glass = null;
-    String cssFile = Controller.class.getResource("errorTextField.css").toExternalForm();
+    String splitPaneCSS = Controller.class.getResource("splitPane.css").toExternalForm();
+    String errorCSS = Controller.class.getResource("errorTextField.css").toExternalForm();
 
     @FXML
     public SplitPane split;
@@ -170,7 +169,6 @@ public class Controller {
 		
 		//bei klicken auf einen Nutzer Felder mit Daten fuellen
 		fillControls();
-
   
 		//setzt die Listener der Controls
 		setListenerForControls();
@@ -205,7 +203,6 @@ public class Controller {
                                     .otherwise((ContextMenu) null));
                     return row;
                 });
-
             }
         });
         customerTable.getColumns().forEach(e -> {
@@ -217,7 +214,7 @@ public class Controller {
          * ONLY TRY THE SPLITSLIDE SHIT
          */
         split.setDividerPositions(0.7);
-        split.getStylesheets().addAll(cssFile);
+        split.getStylesheets().addAll(splitPaneCSS);
         SplitPaneDividerSlider slider = new SplitPaneDividerSlider(split, 0, SplitPaneDividerSlider.Direction.RIGHT);
         slider.setAimContentVisible(false);
         slide.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
@@ -282,14 +279,6 @@ public class Controller {
 		}
 	}
 
-    private boolean validateInput(String text){
-        if(!Validation.checkIfOnlyLetters(text)){
-            firstnameField.getStylesheets().add(cssFile);
-            return true;
-        }
-        return false;
-    }
-
     /**
      * Ändert einen Benutzer
      *
@@ -297,13 +286,11 @@ public class Controller {
      */
 	@FXML
 	private void changeButtonAction(){
+        eraseAllStylesheets();
+
 		//index der Tabellenauswahl
 		int index = customerTable.getSelectionModel().getSelectedIndex();
 
-        if(validateInput(firstnameField.getText())) {
-            setErrorMessage("Falsche Eingaben, bitte berichtigen");
-            return;
-        }
 		//Tabellen Zeile zu Benutzer Objekt
 		String firstname = firstnameField.getText();
 		String lastname = lastnameField.getText();
@@ -315,6 +302,11 @@ public class Controller {
         Department department = departmentComboBox.getValue();
 
         User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode, department);
+
+        if(validateThisShit(newUser)){
+            setErrorMessage("Falsche eingabe, bitte berichtigen");
+            return;
+        }
 
         //Neuer Benutzer oder Änderung?
         boolean isNew = true;
@@ -342,6 +334,51 @@ public class Controller {
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().select(index);
 	}
+
+    private void eraseAllStylesheets() {
+        firstnameField.getStylesheets().removeAll(errorCSS);
+        lastnameField.getStylesheets().removeAll(errorCSS);
+        streetNrField.getStylesheets().removeAll(errorCSS);
+        streetField.getStylesheets().removeAll(errorCSS);
+        cityField.getStylesheets().removeAll(errorCSS);
+        zipCodeField.getStylesheets().removeAll(errorCSS);
+        birthdayField.getStylesheets().removeAll(errorCSS);
+    }
+
+    private boolean validateThisShit(User newUser) {
+        boolean isFailed = false;
+        if(!Validation.checkIfLetters(newUser.getFirstname())){
+            firstnameField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfLetters(newUser.getLastname())){
+            lastnameField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfLetters(newUser.getCity())){
+            cityField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfStreet(newUser.getStreet())){
+            streetField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfStreetnr(newUser.getStreetnr())){
+            streetNrField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfZipCode(newUser.getZipcode() + "")){
+            zipCodeField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(     newUser.getBirthday().isBefore(LocalDate.now().minusYears(115)) ||
+                newUser.getBirthday().isAfter(LocalDate.now().minusYears(14))){
+            birthdayField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+
+        return isFailed;
+    }
 
     /**
      * Erstellt zufällige Benutzer

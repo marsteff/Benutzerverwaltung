@@ -6,7 +6,19 @@ import java.util.regex.Pattern;
  * Created by Marci on 08.10.2014.
  */
 public class Validation {
-    public static boolean checkIfOnlyLetters(String text) {
-        return text.matches("[a-zA-Z]");
+    public static boolean checkIfLetters(String text) {
+        return text.matches("[a-zA-Z|Ä-Üä-ü|ß]*");
+    }
+
+    public static boolean checkIfZipCode(String text) {
+        return text.matches("[\\d]{5}");
+    }
+
+    public static boolean checkIfStreetnr(String text) {
+        return text.matches("[0-9]{1,3}[a-zA-Z]{0,2}");
+    }
+
+    public static boolean checkIfStreet(String text) {
+        return text.matches("[\\w|\\s|ß]*");
     }
 }
