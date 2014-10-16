@@ -171,7 +171,7 @@
                                 <padding>
                                     <Insets left="10" right="10" top="10" bottom="10" />
                                 </padding>
-                                <TextField fx:id="departmentTextField" promptText="Abteilung"/>
+                                <TextField fx:id="departmentTextField" promptText="Abteilung" onAction="#departmentChangeAction"/>
                                 <TextField fx:id="searchFieldDepartment" promptText="Suchanfrage eingeben"/>
                                 <HBox spacing="5">
                                     <Button fx:id="departmentChangeButton" text="Übernehmen" onAction="#departmentChangeAction"/>

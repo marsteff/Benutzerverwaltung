@@ -819,11 +819,6 @@ public class Controller {
 
     @FXML
     private void departmentChangeAction() {
-//        Department dep = departmentTableView.getSelectionModel().getSelectedItem();
-//        String newDepartmentName = departmentTextField.getText();
-//        dep.setName(newDepartmentName);
-//        this.gui.getConcept().upsertDepartment(dep);
-
         int index = departmentTableView.getSelectionModel().getSelectedItem().getId();
         int departmentComboBoxIndex = departmentComboBox.getSelectionModel().getSelectedItem().getId();
 
