@@ -261,12 +261,12 @@ public class Concept implements IConcept {
 
     @Override
     public void upsertDepartment(Department department) {
-        this.database.updateDepartment(this.departmentToDepMap(department));
+        this.database.upsertDepartment(this.departmentToDepMap(department));
     }
 
     @Override
     public void deleteDepartment(Department department) {
-        //TODO implement
+        this.database.deleteDepartment(department.getId());
     }
 
     /**

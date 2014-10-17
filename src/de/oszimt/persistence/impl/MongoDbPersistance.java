@@ -459,7 +459,7 @@ public class MongoDbPersistance implements IPersistance{
      * @param dep
      */
     @Override
-    public void updateDepartment(Map<String, Object> dep){
+    public void upsertDepartment(Map<String, Object> dep){
         //Laden der Abteilung Collection
         DBCollection coll = this.getCollection("Departments");
         //Map zu BasicDBOject konvertieren
@@ -476,7 +476,7 @@ public class MongoDbPersistance implements IPersistance{
      * @param id
      */
     @Override
-    public void removeDepartment(int id){
+    public void deleteDepartment(int id){
         //Laden der Abteilungs Collection
         DBCollection coll = this.getCollection("Departments");
         //Dokument anhand der Id finden

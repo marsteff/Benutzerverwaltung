@@ -311,7 +311,14 @@ public class SQLitePersistance implements IPersistance {
      * @param dep
      */
     @Override
-    public void updateDepartment(Map<String,Object> dep){
+    public void upsertDepartment(Map<String, Object> dep){
+        if(existDepartment((int) dep.get(this.getKeyDepartmentId())))
+            updateDepartment(dep);
+        else
+            createDepartment((String) dep.get(this.getKeyDepartmentName()));
+    }
+
+    private void updateDepartment(Map<String, Object> dep){
         this.dbUpdate("UPDATE Department SET name = '" +
                         dep.get(this.getKeyDepartmentName()) +
                         "' WHERE id = '" + dep.get(this.getKeyDepartmentId()) +
@@ -325,8 +332,8 @@ public class SQLitePersistance implements IPersistance {
      * @param id
      */
     @Override
-    public void removeDepartment(int id){
-        this.dbUpdate("DELETE FROM Department WHERE id = id = '" + id + "'");
+    public void deleteDepartment(int id){
+        this.dbUpdate("DELETE FROM Department WHERE id = '" + id + "'");
     }
 
     /**
@@ -428,6 +435,44 @@ public class SQLitePersistance implements IPersistance {
 		}
 		return false;
 	}
+
+    /**
+     * Prüfen ob ein Department existiert (anhand der ID
+     * )
+     * @param id
+     * @return
+     */
+    public boolean existDepartment(int id){
+        //Verbindungsaufbau
+        Connection con = this.getConnection();
+        //Initialisieren einer Statement Variable
+        Statement stmt = null;
+        try{
+            //Erzeugen eines neuen Statements
+            stmt = con.createStatement();
+            //SQL für die Abfrage definieren
+            String sql = "SELECT * " +
+                    "FROM Department " +
+                    "WHERE id = " + id;
+            //Abfrage ausführen und eine Refferenze auf das Ergebniss erhalten
+            ResultSet rs = stmt.executeQuery(sql);
+            //Gibt es ein Ergebniss?
+            if(rs.next()){
+                return true;
+            }
+            //Ergbinis schließen
+            rs.close();
+
+            //Fehlerhandhabung
+        } catch(Exception e) {
+            System.err.println("Fehler beim ermitteln ob Department vorhanden ist");
+            System.out.println(e.getMessage());
+            //Verbindung schießen (auch im Fehlerfall)
+        } finally {
+            this.closeConnection(con, stmt);
+        }
+        return false;
+    }
 
     /**
      * Gibt eine Liste alle Benutzer (Maps) zurück

@@ -117,4 +117,24 @@ public class Department {
     public String toString() {
         return getName();
     }
+
+    //TODO hash und equals optimieren <- gefällt mir nicht
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Department that = (Department) o;
+
+        if (id.get() != that.id.get() || !name.get().equals(that.name.get())) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
+    }
 }

@@ -1,7 +1,6 @@
 package de.oszimt.ui;
 
 import java.time.LocalDate;
-import java.time.Year;
 import java.util.List;
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
@@ -193,7 +192,26 @@ public class Controller {
                     //Erstellen des Menü-Eintrages
                     MenuItem removeItem = new MenuItem("Benutzer löschen");
                     //Wenn auf den Eintrag geklickt wird, wird der selektierte User gelöscht
-                    removeItem.onActionProperty().set(e -> deleteCustomer());
+                    removeItem.onActionProperty().set(e -> deleteUser());
+                    //hinzufügen des Menü zur Row
+                    rowMenu.getItems().add(removeItem);
+                    //Binding zwischen der Row und dem ContextMenu
+                    row.contextMenuProperty().bind(
+                            Bindings.when(Bindings.isNotNull(row.itemProperty()))
+                                    .then(rowMenu)
+                                    .otherwise((ContextMenu) null));
+                    return row;
+                });
+                //Callback Methode, um jeder Row ein ContextMenu zu geben, und nicht der gesamten Table
+                departmentTableView.setRowFactory(tableView -> {
+                    //final Deklaration einer Row
+                    final TableRow<Department> row = new TableRow<>();
+                    //final Deklaration des ContextMenu für die eine Row
+                    final ContextMenu rowMenu = new ContextMenu();
+                    //Erstellen des Menü-Eintrages
+                    MenuItem removeItem = new MenuItem("Abteilung löschen");
+                    //Wenn auf den Eintrag geklickt wird, wird der selektierte User gelöscht
+                    removeItem.onActionProperty().set(e -> deleteDepartment());
                     //hinzufügen des Menü zur Row
                     rowMenu.getItems().add(removeItem);
                     //Binding zwischen der Row und dem ContextMenu
@@ -445,6 +463,47 @@ public class Controller {
         }
     }
 
+    @FXML
+    private void departmentAbortAction() {
+        departmentTextField.setText("");
+        searchFieldDepartment.setText("");
+        departmentTableView.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    private void departmentChangeAction() {
+        int index = -1;
+        int departmentComboBoxIndex = -2;
+        if(departmentTableView.getSelectionModel().getSelectedItem() != null) {
+            index = departmentTableView.getSelectionModel().getSelectedItem().getId();
+            if(departmentComboBox.getSelectionModel().getSelectedItem() != null) {
+                departmentComboBoxIndex = departmentComboBox.getSelectionModel().getSelectedItem().getId();
+            }
+        }
+        Department dep = new Department(departmentTextField.getText());
+        boolean isNew = true;
+        if(!departmentTableView.getSelectionModel().isEmpty()){
+            dep.setId(index);
+            isNew = false;
+        }
+
+        this.gui.getConcept().upsertDepartment(dep);
+        //Benachrichtung setzen
+        this.setSuccedMessage(dep + " erfolgreich" + (isNew ? " als Abteilung hinzugefügt" : " bearbeitet"));
+        this.searchInDepartmentTable();
+        this.searchInTable();
+        customerTable.getColumns().get(0).setVisible(false);
+        customerTable.getColumns().get(0).setVisible(true);
+        List<Department> departmentList = this.gui.getConcept().getAllDepartments();
+        this.departmentComboBox.getItems().setAll(departmentList);
+        if(departmentComboBoxIndex == index){
+            departmentComboBox.getSelectionModel().select(index - 1);
+        }
+        if(index != -1) {
+            departmentTableView.getSelectionModel().select(index - 1);
+        }
+    }
+
     public Gui getGui() {
         return gui;
     }
@@ -456,7 +515,7 @@ public class Controller {
     /**
      * Löschen eines selektierten Benutzers (aus Tabelle und Datenhaltung)
      */
-    private void deleteCustomer(){
+    private void deleteUser(){
         User user = customerTable.getSelectionModel().getSelectedItem();
         if(user != null) {
             this.gui.getConcept().deleteUser(user);
@@ -464,6 +523,25 @@ public class Controller {
             if (isAdvancedSearch) {
                 advancedSearcher.setOriginalList(FXCollections.observableArrayList(this.getGui().getConcept().getAllUser()));
             }
+        }
+    }
+    /**
+     * Löschen eines selektierten Benutzers (aus Tabelle und Datenhaltung)
+     */
+    private void deleteDepartment(){
+        Department department = departmentTableView.getSelectionModel().getSelectedItem();
+        if(department != null) {
+            //TODO wenn Anzahl der Mitarbeiter in der Abteilung steckt, kann das durchsuchen der User Liste mit dem If Statement ausgetauscht werden$
+            //if(department.getAmount() > 0){
+            List<User> userList = this.gui.getConcept().getAllUser();
+            if(userList.parallelStream().anyMatch(user -> user.getDepartment().equals(department))){
+                setErrorMessage("Der Abteilung sind noch Benutzer zugeordnet und kann daher nicht gelöscht werden");
+                return;
+            }
+            this.gui.getConcept().deleteDepartment(department);
+            setSuccedMessage("Abteilung erfolgreich gelöscht");
+            searchInTable();
+            searchInDepartmentTable();
         }
     }
 
@@ -808,40 +886,5 @@ public class Controller {
         rootPane.getChildren().add(glass);
 
         return glass;
-    }
-
-    @FXML
-    private void departmentAbortAction() {
-        departmentTextField.setText("");
-        searchFieldDepartment.setText("");
-        departmentTableView.getSelectionModel().clearSelection();
-    }
-
-    @FXML
-    private void departmentChangeAction() {
-        int index = departmentTableView.getSelectionModel().getSelectedItem().getId();
-        int departmentComboBoxIndex = departmentComboBox.getSelectionModel().getSelectedItem().getId();
-
-        Department dep = new Department(departmentTextField.getText());
-        boolean isNew = true;
-        if(!departmentTableView.getSelectionModel().isEmpty()){
-            int id = departmentTableView.getSelectionModel().getSelectedItem().getId();
-            dep.setId(id);
-            isNew = false;
-        }
-
-        this.gui.getConcept().upsertDepartment(dep);
-        //Benachrichtung setzen
-        this.setSuccedMessage(dep + " erfolgreich" + (isNew ? " als Abteilung hinzugefügt" : " bearbeitet"));
-        this.searchInDepartmentTable();
-        this.searchInTable();
-        customerTable.getColumns().get(0).setVisible(false);
-        customerTable.getColumns().get(0).setVisible(true);
-        List<Department> departmentList = this.gui.getConcept().getAllDepartments();
-        this.departmentComboBox.getItems().setAll(departmentList);
-        if(departmentComboBoxIndex == index){
-            departmentComboBox.getSelectionModel().select(index - 1);
-        }
-        departmentTableView.getSelectionModel().select(index - 1);
     }
 }

@@ -156,14 +156,14 @@ public interface IPersistance {
      *
      * @param dep
      */
-    void updateDepartment(Map<String,Object> dep);
+    void upsertDepartment(Map<String, Object> dep);
 
     /**
      * Entfernen einer Abteilung
      *
      * @param id
      */
-    void removeDepartment(int id);
+    void deleteDepartment(int id);
 
     /**
      * Laden eines einzelnen Benutzers anhand seiner Id
