@@ -742,25 +742,26 @@ public class Controller {
 //                zipCodeField.setText(oldValue);
 //            }
 
-				
-			//Wenn RestService benutzt wird, soll der Ort beim löschen der 5 Stelle der PLZ auch der Ort geloescht werden
-			if(restServiceMainMenu.isSelected() || serviceTown && newValue.length() == 4 && oldValue.length() == 5){
-				cityField.setText("");
-				serviceTown = false;
-			}
+            if (!isNewSelection) {
+                //Wenn RestService benutzt wird, soll der Ort beim löschen der 5 Stelle der PLZ auch der Ort geloescht werden
+                if(restServiceMainMenu.isSelected() || serviceTown && newValue.length() == 4 && oldValue.length() == 5){
+                    cityField.setText("");
+                    serviceTown = false;
+                }
 
-			//Wenn RestService benutzt wird und 5 PLZ-Zahlen eingegeben wurden, soll nach dem jeweiligen Ort gesucht und gesetzt werden
-			//Wenn keiner gefunden wird, Fehlermeldung ausgeben
-			if(restServiceMainMenu.isSelected()){
-				if(newValue.length() == 5){
-					String town = service.getTown(zipCodeField.getText());
-					if(!town.equals(""))
-						cityField.setText(town);
-					else
-						setErrorMessage("Diese PLZ ist uns leider nicht bekannt");
-					serviceTown = true;
-				}
-			}
+                //Wenn RestService benutzt wird und 5 PLZ-Zahlen eingegeben wurden, soll nach dem jeweiligen Ort gesucht und gesetzt werden
+                //Wenn keiner gefunden wird, Fehlermeldung ausgeben
+                if(restServiceMainMenu.isSelected()){
+                    if(newValue.length() == 5){
+                        String town = service.getTown(zipCodeField.getText());
+                        if(!town.equals(""))
+                            cityField.setText(town);
+                        else
+                            setErrorMessage("Diese PLZ ist uns leider nicht bekannt");
+                        serviceTown = true;
+                    }
+                }
+            }
 
             //Ausgabe der Fehlermeldung
             if(writeError){
