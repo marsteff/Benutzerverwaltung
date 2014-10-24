@@ -212,7 +212,7 @@ public class SearchUserMenu extends Menu {
         }while (option < 1 || option > 3);
         switch (option){
             case 1:
-                builder.setActualState(new SearchUserMenu(builder, user));
+                buildMenu(user);
                 return;
             case 2:
                 buildMenu(Helper.createDummyUser());

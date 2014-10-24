@@ -24,7 +24,7 @@ public class DeleteUserMenu extends Menu {
         int user_id = Helper.printGetUserId();
 
         if (user_id == -1) {
-            buildMenu(RED, "Ungültige Kunden ID");
+            builder.setActualState(new MainMenu(builder));
             return;
         }
         User user = getConcept().getUser(user_id);

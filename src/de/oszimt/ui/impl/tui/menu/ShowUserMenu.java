@@ -25,7 +25,7 @@ public class ShowUserMenu extends Menu {
         int inp = Helper.printGetUserId();
 
         if(inp == -1){
-            buildMenu(RED,"Ungültige Kunden ID");
+            builder.setActualState(new MainMenu(builder));
             return;
         }
         User user = getConcept().getUser(inp);
@@ -34,7 +34,7 @@ public class ShowUserMenu extends Menu {
             return;
         }
         Helper.printUser(user, entrys);
-        printGoOnYesNo("showUser","Weiteren benutzer anzeigen");
+        printGoOnYesNo("showUser", "Weiteren benutzer anzeigen");
     }
 
     private void printGoOnYesNo(String method, String text){

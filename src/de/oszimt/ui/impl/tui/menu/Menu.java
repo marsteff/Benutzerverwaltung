@@ -4,6 +4,7 @@ import de.oszimt.concept.iface.IConcept;
 import de.oszimt.ui.iface.UserInterface;
 import de.oszimt.ui.impl.tui.util.Helper;
 import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
 
 /**
  * Created by Marci on 24.10.2014.
@@ -29,6 +30,8 @@ public abstract class Menu implements UserInterface{
     }
 
     public Menu(MenuBuilder builder, String message, Ansi.Color color){
+        this.concept = builder.getConcept();
+        AnsiConsole.systemInstall();
         this.builder = builder;
         this.message = message;
         this.color = color;

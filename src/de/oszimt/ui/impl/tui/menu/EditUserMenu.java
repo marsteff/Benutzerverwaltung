@@ -38,7 +38,7 @@ public class EditUserMenu extends Menu {
         }
 
         if (kunden_id == -1) {
-            buildMenu(RED, "Ungültige Kunden ID");
+            builder.setActualState(new MainMenu(builder));
             return;
         }
         User user = getConcept().getUser(kunden_id);

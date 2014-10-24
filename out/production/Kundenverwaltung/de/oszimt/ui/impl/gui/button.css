@@ -1,7 +1,0 @@
-.changeButton:selected{
-    -fx-background-image: url("");
-}
-
-.changeButton{
-    -fx-background-image: url("img/apply.png");
-}
