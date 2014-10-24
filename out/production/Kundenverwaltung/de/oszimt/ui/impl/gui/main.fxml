@@ -4,7 +4,7 @@
 <?import javafx.geometry.Insets?>
 
 <?import de.oszimt.NumberTextField?>
-<StackPane fx:id="rootPane" fx:controller="de.oszimt.ui.Controller" xmlns:fx="http://javafx.com/fxml">
+<StackPane fx:id="rootPane" fx:controller="de.oszimt.ui.impl.gui.Controller" xmlns:fx="http://javafx.com/fxml">
     <BorderPane fx:id="mainPane">
         <!-- !!!!!!!!!!!!!!!!!!! Menubar !!!!!!!!!!-->
         <top>

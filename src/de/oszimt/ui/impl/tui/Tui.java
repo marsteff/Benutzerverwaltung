@@ -1,4 +1,4 @@
-package de.oszimt.ui;
+package de.oszimt.ui.impl.tui;
 
 import de.oszimt.concept.iface.IConcept;
 import de.oszimt.model.Department;
@@ -7,14 +7,8 @@ import de.oszimt.ui.iface.UserInterface;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
-import javax.ws.rs.core.StreamingOutput;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.*;

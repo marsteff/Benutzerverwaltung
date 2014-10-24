@@ -1,4 +1,4 @@
-package de.oszimt.ui;
+package de.oszimt.ui.impl.gui;
 
 import de.oszimt.concept.iface.IConcept;
 import de.oszimt.ui.iface.UserInterface;
