@@ -17,7 +17,7 @@ public class Tui implements UserInterface {
 
     private void showMainMenu(IConcept concept) {
         MenuBuilder builder = new MenuBuilder(concept);
-        while (true) {
+        while(true) {
             builder.buildMenu();
         }
     }

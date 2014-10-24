@@ -23,6 +23,11 @@ public class SearchUserMenu extends Menu {
         this.user = dummyUser;
     }
 
+    public SearchUserMenu(MenuBuilder builder) {
+        super(builder);
+        this.user = Helper.createDummyUser();
+    }
+
     @Override
     protected void buildMenu(Ansi.Color color, String message) {
         // TODO Mal sehen was ich mit dem im Konstruktor gesetzten User mache

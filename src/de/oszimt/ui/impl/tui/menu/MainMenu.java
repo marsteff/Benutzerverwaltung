@@ -1,7 +1,10 @@
 package de.oszimt.ui.impl.tui.menu;
 
+import com.google.common.reflect.ClassPath;
 import de.oszimt.ui.impl.tui.util.Helper;
 import org.fusesource.jansi.Ansi;
+
+import java.io.IOException;
 
 import static org.fusesource.jansi.Ansi.Color.RED;
 
@@ -46,6 +49,21 @@ public class MainMenu extends Menu{
             return;
         }
 
+        //TODO hier werde ich mal was versuchen
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+        try {
+            for (final ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
+                if (info.getName().startsWith("my.package.")) {
+                    final Class<?> clazz = info.load();
+
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         //Prüfung, welches Menue aufgerufen werden soll
         switch (input) {
             case 1:
@@ -61,7 +79,7 @@ public class MainMenu extends Menu{
                 builder.setActualState(new DeleteUserMenu(builder));
                 break;
             case 5:
-                builder.setActualState(new SearchUserMenu(builder, Helper.createDummyUser()));
+                builder.setActualState(new SearchUserMenu(builder));
                 break;
             case 6:
                 builder.setActualState(new ShowAllUsersMenu(builder));
