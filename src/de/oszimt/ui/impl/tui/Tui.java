@@ -14,8 +14,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color;
 import static org.fusesource.jansi.Ansi.Color.*;
+import static org.fusesource.jansi.Ansi.ansi;
 
 /**
  * Created by user on 17.09.2014.

@@ -1,9 +1,10 @@
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.geometry.Insets?>
-
 <?import de.oszimt.NumberTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <StackPane fx:id="rootPane" fx:controller="de.oszimt.ui.impl.gui.Controller" xmlns:fx="http://javafx.com/fxml">
     <BorderPane fx:id="mainPane">
         <!-- !!!!!!!!!!!!!!!!!!! Menubar !!!!!!!!!!-->
@@ -89,8 +90,24 @@
                                         </HBox>
                                         <HBox spacing="5">
                                             <Button text="Übernehmen" fx:id="changeButton" onAction="#changeButtonAction"
-                                                    disable="true"/>
-                                            <Button text="Abbrechen" fx:id="abortButton" onAction="#abortButtonAction"/>
+                                                    disable="true" >
+                                                <graphic>
+                                                    <ImageView fitWidth="21" preserveRatio="true" smooth="true">
+                                                        <image>
+                                                            <Image url="@../img/apply.png" />
+                                                        </image>
+                                                    </ImageView>
+                                                </graphic>
+                                            </Button>
+                                            <Button text="Abbrechen" fx:id="abortButton" onAction="#abortButtonAction" >
+                                                <graphic>
+                                                    <ImageView fitWidth="21" preserveRatio="true" smooth="true">
+                                                        <image>
+                                                            <Image url="@../img/cancel.png" />
+                                                        </image>
+                                                    </ImageView>
+                                                </graphic>
+                                            </Button>
                                         </HBox>
                                     </VBox>
                                 </AnchorPane>
@@ -107,7 +124,15 @@
                                                        styleClass="advancedSearchLink"/>
                                         </left>
                                         <right>
-                                            <ToggleButton fx:id="slide" text=">" />
+                                            <ToggleButton fx:id="slide" text="Aufklappen" graphicTextGap="50">
+                                                <graphic>
+                                                    <ImageView fitWidth="21" preserveRatio="true" smooth="true">
+                                                        <image>
+                                                            <Image url="@../img/leftArrow.png" />
+                                                        </image>
+                                                    </ImageView>
+                                                </graphic>
+                                            </ToggleButton>
                                         </right>
                                     </BorderPane>
                                 </VBox>
