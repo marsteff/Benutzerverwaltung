@@ -1,14 +1,12 @@
 package de.oszimt.util;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Random;
-
 import de.oszimt.concept.iface.IConcept;
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Random;
 
 public class Util {
 	

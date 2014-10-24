@@ -1,10 +1,6 @@
 package de.oszimt.ui.templates;
 
 import de.oszimt.model.User;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,6 +9,10 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AdvancedSearch extends StackPane{
 	@FXML

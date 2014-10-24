@@ -1,12 +1,8 @@
 package de.oszimt.persistence.impl;
 
+import com.mongodb.*;
 import de.oszimt.persistence.iface.IPersistance;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
+
 import java.net.UnknownHostException;
 import java.time.Instant;
 import java.time.LocalDate;

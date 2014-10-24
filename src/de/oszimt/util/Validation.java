@@ -1,13 +1,15 @@
 package de.oszimt.util;
 
-import java.util.regex.Pattern;
-
 /**
  * Created by Marci on 08.10.2014.
  */
 public class Validation {
     public static boolean checkIfLetters(String text) {
         return text.matches("[a-zA-Z|Ä-Üä-ü|ß|\\-|é|è|ê|ú|ù|û|í|ì|î|á|à|â|ó|ò|ô]*");
+    }
+
+    public static boolean checkIfCity(String text) {
+        return text.matches("[a-zA-Z|Ä-Üä-ü|ß|\\s|\\-|é|è|ê|ú|ù|û|í|ì|î|á|à|â|ó|ò|ô]*");
     }
 
     public static boolean checkIfZipCode(String text) {

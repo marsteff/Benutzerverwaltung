@@ -1,9 +1,9 @@
 package de.oszimt.ui.impl.gui;
 
-import java.time.LocalDate;
-import java.util.List;
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
+import de.oszimt.ui.templates.AdvancedSearch;
+import de.oszimt.util.RestService;
 import de.oszimt.util.SplitPaneDividerSlider;
 import de.oszimt.util.Validation;
 import javafx.application.Platform;
@@ -19,11 +19,16 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import de.oszimt.ui.templates.AdvancedSearch;
-import de.oszimt.util.RestService;
+
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Kontroller für das GUI
@@ -152,6 +157,7 @@ public class Controller {
     StackPane glass = null;
     String splitPaneCSS = Controller.class.getResource("splitPane.css").toExternalForm();
     String errorCSS = Controller.class.getResource("errorTextField.css").toExternalForm();
+    String changeCSS = Controller.class.getResource("button.css").toExternalForm();
 
     @FXML
     public SplitPane split;
@@ -170,8 +176,7 @@ public class Controller {
 		fillControls();
   
 		//setzt die Listener der Controls
-		setListenerForControls();
-
+		setListenerForControls();;
         //Hiermit ist es möglich, nach der Initialierung Code auszuführen. Notwendig, um in der initialize Methode auf das GUI Objekt zugreifen zu können
         Platform.runLater(new Runnable() {
             @Override
@@ -238,15 +243,24 @@ public class Controller {
         slide.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
             slider.setAimContentVisible(t1);
         });
+        slide.setContentDisplay(ContentDisplay.RIGHT);
         slide.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
+            ImageView leftArrow = new ImageView(new Image(this.getClass().getResourceAsStream("img/leftArrow.png")));
+            leftArrow.setPreserveRatio(true);
+            leftArrow.setFitWidth(21);
+
+            ImageView rightArrow = new ImageView(new Image(this.getClass().getResourceAsStream("img/rightArrow.png")));
+            rightArrow.setPreserveRatio(true);
+            rightArrow.setFitWidth(21);
             if(t1){
-                slide.setText(">");
+                slide.setText("Zuklappen");
+                slide.setGraphic(rightArrow);
             }
             else{
-                slide.setText("<");
+                slide.setText("Aufklappen");
+                slide.setGraphic(leftArrow);
             }
         });
-
 	}
 
     /**
@@ -352,51 +366,6 @@ public class Controller {
 		changeButton.setDisable(true);
 		customerTable.getSelectionModel().select(index);
 	}
-
-    private void eraseAllStylesheets() {
-        firstnameField.getStylesheets().removeAll(errorCSS);
-        lastnameField.getStylesheets().removeAll(errorCSS);
-        streetNrField.getStylesheets().removeAll(errorCSS);
-        streetField.getStylesheets().removeAll(errorCSS);
-        cityField.getStylesheets().removeAll(errorCSS);
-        zipCodeField.getStylesheets().removeAll(errorCSS);
-        birthdayField.getStylesheets().removeAll(errorCSS);
-    }
-
-    private boolean validateThisShit(User newUser) {
-        boolean isFailed = false;
-        if(!Validation.checkIfLetters(newUser.getFirstname())){
-            firstnameField.getStylesheets().add(errorCSS);
-            isFailed = true;
-        }
-        if(!Validation.checkIfLetters(newUser.getLastname())){
-            lastnameField.getStylesheets().add(errorCSS);
-            isFailed = true;
-        }
-        if(!Validation.checkIfLetters(newUser.getCity())){
-            cityField.getStylesheets().add(errorCSS);
-            isFailed = true;
-        }
-        if(!Validation.checkIfStreet(newUser.getStreet())){
-            streetField.getStylesheets().add(errorCSS);
-            isFailed = true;
-        }
-        if(!Validation.checkIfStreetnr(newUser.getStreetnr())){
-            streetNrField.getStylesheets().add(errorCSS);
-            isFailed = true;
-        }
-        if(!Validation.checkIfZipCode(newUser.getZipcode() + "")){
-            zipCodeField.getStylesheets().add(errorCSS);
-            isFailed = true;
-        }
-        if(     newUser.getBirthday().isBefore(LocalDate.now().minusYears(115)) ||
-                newUser.getBirthday().isAfter(LocalDate.now().minusYears(14))){
-            birthdayField.getStylesheets().add(errorCSS);
-            isFailed = true;
-        }
-
-        return isFailed;
-    }
 
     /**
      * Erstellt zufällige Benutzer
@@ -510,6 +479,52 @@ public class Controller {
 
     public void setGui(Gui gui) {
         this.gui = gui;
+    }
+
+
+    private void eraseAllStylesheets() {
+        firstnameField.getStylesheets().removeAll(errorCSS);
+        lastnameField.getStylesheets().removeAll(errorCSS);
+        streetNrField.getStylesheets().removeAll(errorCSS);
+        streetField.getStylesheets().removeAll(errorCSS);
+        cityField.getStylesheets().removeAll(errorCSS);
+        zipCodeField.getStylesheets().removeAll(errorCSS);
+        birthdayField.getStylesheets().removeAll(errorCSS);
+    }
+
+    private boolean validateThisShit(User newUser) {
+        boolean isFailed = false;
+        if(!Validation.checkIfLetters(newUser.getFirstname())){
+            firstnameField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfLetters(newUser.getLastname())){
+            lastnameField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfCity(newUser.getCity())){
+            cityField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfStreet(newUser.getStreet())){
+            streetField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfStreetnr(newUser.getStreetnr())){
+            streetNrField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(!Validation.checkIfZipCode(newUser.getZipcode() + "")){
+            zipCodeField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+        if(     newUser.getBirthday().isBefore(LocalDate.now().minusYears(115)) ||
+                newUser.getBirthday().isAfter(LocalDate.now().minusYears(14))){
+            birthdayField.getStylesheets().add(errorCSS);
+            isFailed = true;
+        }
+
+        return isFailed;
     }
 
     /**
@@ -690,7 +705,6 @@ public class Controller {
                 departmentNameColumn.prefWidthProperty().bind(departmentPart.widthProperty().multiply(0.5));
                 amountColumn.prefWidthProperty().bind(departmentPart.widthProperty().multiply(0.5));
 	}
-	
 	
 	/**
 	 * Set a Listener for the TextField Controls

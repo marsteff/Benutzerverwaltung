@@ -2,7 +2,6 @@ package de.oszimt.concept.iface;
 
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
-import de.oszimt.persistence.iface.IPersistance;
 
 import java.util.List;
 
