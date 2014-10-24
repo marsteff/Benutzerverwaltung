@@ -15,7 +15,7 @@ public class MenuBuilder {
     }
 
     public void buildMenu(){
-        this.actualState.buildMenu();
+            this.actualState.buildMenu();
     }
 
 

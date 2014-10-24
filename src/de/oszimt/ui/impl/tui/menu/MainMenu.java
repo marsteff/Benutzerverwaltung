@@ -1,6 +1,7 @@
 package de.oszimt.ui.impl.tui.menu;
 
 import de.oszimt.ui.impl.tui.util.Helper;
+import org.fusesource.jansi.Ansi;
 
 import static org.fusesource.jansi.Ansi.Color.RED;
 
@@ -8,8 +9,18 @@ import static org.fusesource.jansi.Ansi.Color.RED;
  * Created by m588 on 24.10.2014.
  */
 public class MainMenu extends Menu{
+
+
+    public MainMenu(MenuBuilder builder) {
+        super(builder);
+    }
+
+    public MainMenu(MenuBuilder builder, String message, Ansi.Color color) {
+        super(builder, message, color);
+    }
+
     @Override
-    public void buildMenu() {
+    protected void buildMenu(Ansi.Color color, String message) {
         Helper.clean();
 
         String[] entrys = {
@@ -22,41 +33,41 @@ public class MainMenu extends Menu{
                 "Einstellugen",
                 "Beenden"};
 
-        writeHeader(getConcept().getTitle());
-        buildMenue(entrys,color,message);
+        Helper.writeHeader(getConcept().getTitle());
+        Helper.buildMenue(entrys, color, message);
 
 
         //einlesen des Input´s
-        int input = readInt();
+        int input = Helper.readInt();
 
         //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
         if (input == -1 || input > entrys.length || input < 1) {
-            showMainMenu(RED,"Falsche Eingabe, bitte eine Zahl zwischen 1 und " + entrys.length + " eingeben");
+            this.buildMenu(RED, "Falsche Eingabe, bitte eine Zahl zwischen 1 und " + entrys.length + " eingeben");
             return;
         }
 
         //Prüfung, welches Menue aufgerufen werden soll
         switch (input) {
             case 1:
-                createUser();
+                builder.setActualState(new CreateUserMenu(builder));
                 break;
             case 2:
-                showUser();
+                builder.setActualState(new ShowUserMenu(builder));
                 break;
             case 3:
-                editUser();
+                builder.setActualState(new EditUserMenu(builder));
                 break;
             case 4:
-                deleteUser();
+                builder.setActualState(new DeleteUserMenu(builder));
                 break;
             case 5:
-                searchUser(createDummyUser());
+                builder.setActualState(new SearchUserMenu(builder, Helper.createDummyUser()));
                 break;
             case 6:
-                showAllUsers();
+                builder.setActualState(new ShowAllUsersMenu(builder));
                 break;
             case 7:
-                settigns();
+                builder.setActualState(new SettignsMenu(builder));
                 break;
             case 8:
                 System.exit(0);

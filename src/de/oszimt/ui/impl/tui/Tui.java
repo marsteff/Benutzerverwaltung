@@ -352,7 +352,16 @@ public class Tui implements UserInterface {
         String inpString = readString();
 
         if (inpString.trim().compareTo("z") == 0) {
-            showMainMenu();
+            /* TODO
+                entfernen des Aufrufes showMainMenu !
+                Würde hier das MainMenu aufgerufen werden, hätte das unschöne Nebeneffekte.
+                Verdeutlichung am Aufrufbeispiel deleteUser !
+                In deleteUser() wird die Methode aufgerufen, wenn sie -1 erhält, ruft Sie von sich aus deleteUser mit Parametern auf.
+                Hier wird allerdings erst showMainMenu aufgerufen. Kommt dieses irgendwann zum Ende, wird dann der return Wert -1 aufgerufen und in der deleteUser Methode
+                wird deleteUser() aufgerufen.
+             */
+
+//            showMainMenu();
             return -1;
         }
 
@@ -365,6 +374,7 @@ public class Tui implements UserInterface {
         user_id = inp;
         return user_id;
     }
+
     private void editUser(Color color, String message, int kunden_id) {
         clean();
         boolean errorshown = false;
