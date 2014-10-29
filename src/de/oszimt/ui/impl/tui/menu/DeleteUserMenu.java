@@ -13,7 +13,7 @@ import static org.fusesource.jansi.Ansi.Color.RED;
  */
 public class DeleteUserMenu extends Menu {
     public static final String FIELDNAME = "Benutzer loeschen";
-    public static final int menuId = 4;
+    public static final int priority = 30;
 
     public DeleteUserMenu(MenuBuilder builder) {
         super(builder);
@@ -62,4 +62,5 @@ public class DeleteUserMenu extends Menu {
             builder.setActualState(new MainMenu(builder, "'" + jn + "' ist keine gültige Eingabe und wird als Nein gewertet", Ansi.Color.RED));
         }
     }
+
 }

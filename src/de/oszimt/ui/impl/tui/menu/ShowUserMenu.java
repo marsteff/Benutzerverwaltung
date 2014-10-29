@@ -13,7 +13,7 @@ import static org.fusesource.jansi.Ansi.Color.RED;
  */
 public class ShowUserMenu extends Menu {
     public static final String FIELDNAME = "Benutzer anzeigen";
-    public static final int menuId = 2;
+    public static final int priority = 10;
 
     public ShowUserMenu(MenuBuilder builder) {
         super(builder);
@@ -55,4 +55,6 @@ public class ShowUserMenu extends Menu {
             builder.setActualState(new MainMenu(builder, "'" + jn + "' ist keine gültige Eingabe und wird als Nein gewertet", Ansi.Color.RED));
         }
     }
+
+
 }

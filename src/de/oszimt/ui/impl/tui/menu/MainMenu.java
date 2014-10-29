@@ -7,9 +7,9 @@ import de.oszimt.ui.impl.tui.util.Helper;
 import org.fusesource.jansi.Ansi;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.fusesource.jansi.Ansi.Color.RED;
 
@@ -34,7 +34,7 @@ public class MainMenu extends Menu {
         //TODO hier werde ich mal was versuchen
         //Laden der Menue Klassen im Package 'de.oszimt.ui.impl.tui.menu' und speichern dieser in einer Map
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        Map<Integer, Class<Menu>> map = new HashMap<>();
+        Map<Integer, Class<Menu>> sortedMap = new TreeMap<>();
         try {
             //Hier wirds die Google-Bibliothek Guava benutzt, um aus dem Package die Klassen zu laden
             for (final ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
@@ -45,7 +45,7 @@ public class MainMenu extends Menu {
                     if(Helper.getDeclaredField(clazz, "FIELDNAME") != null &&
                             Helper.getDeclaredField(clazz, "FIELDNAME") instanceof String) {
                         //Auslesen des Statischen Feldes 'menuId', um eine feste Reihenfolge zu gewährleisten
-                        map.put((Integer) Helper.getDeclaredField(clazz, "menuId"), clazz);
+                        sortedMap.put((Integer) Helper.getDeclaredField(clazz, "priority"), clazz);
                     }
                 }
             }
@@ -53,12 +53,16 @@ public class MainMenu extends Menu {
             e.printStackTrace();
         }
 
-        String[] entrys = new String[map.size()+1];
+        String[] entrys = new String[sortedMap.size() + 1];
 
         // Befüllen des Arrays mit den Bezeichnungen der Klassen für das Tui-Menue
         // Dieser statische String wird mittels Reflection aus der Klasse gelesen.
-        for (int i = 0; i < map.size(); i++) {
-            entrys[i] = (String) Helper.getDeclaredField(map.get(i+1), "FIELDNAME");
+        int i = 0;
+        Map<Integer, Class<Menu>> map = new HashMap<>();
+        for (Map.Entry<Integer, Class<Menu>> entry : sortedMap.entrySet()) {
+            entrys[i] = (String) Helper.getDeclaredField(sortedMap.get(entry.getKey()), "FIELDNAME");
+            map.put(i + 1, entry.getValue());
+            i++;
         }
         //Als letztes Element das Beenden Feld hinzufügen
         entrys[entrys.length - 1] = "Beenden";

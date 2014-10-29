@@ -13,7 +13,7 @@ import static org.fusesource.jansi.Ansi.Color.RED;
  */
 public class SettignsMenu extends Menu {
     public static final String FIELDNAME = "Einstellungen";
-    public static final int menuId = 7;
+    public static final int priority = 60;
 
     private boolean useRestService = false;
 

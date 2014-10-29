@@ -19,7 +19,7 @@ import static org.fusesource.jansi.Ansi.Color.RED;
  */
 public class EditUserMenu extends Menu {
     public static final String FIELDNAME = "Benutzer bearbeiten";
-    public static final int menuId = 3;
+    public static final int priority = 20;
 
     public EditUserMenu(MenuBuilder builder) {
         super(builder);
@@ -160,4 +160,5 @@ public class EditUserMenu extends Menu {
         concept.upsertUser(user);
         buildMenu(GREEN,"Änderung erfolgreich übernommen",user.getId());
     }
+
 }

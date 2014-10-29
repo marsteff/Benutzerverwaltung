@@ -18,7 +18,7 @@ import static org.fusesource.jansi.Ansi.Color.RED;
  */
 public class CreateUserMenu extends Menu {
     public static final String FIELDNAME = "Benutzer anlegen";
-    public static final int menuId = 1;
+    public static final int priority = 0;
 
     public CreateUserMenu(MenuBuilder builder) {
         super(builder);
@@ -76,7 +76,8 @@ public class CreateUserMenu extends Menu {
         Department dep = new Department(departmentValue, departmentArray[departmentValue - 1]);
         User newUser = new User(firstname, lastname, date, city, street, streetNr, Integer.parseInt(zipCode), dep);
         concept.upsertUser(newUser);
-        //TODO muss glaube einkommentiert werden, da sonst automatisch noch ein User angelegt wird <- pruefen
+
+        //TODO Rückmeldung ob erfolgreich oder nicht ?
         builder.setActualState(new MainMenu(builder));
     }
 }

@@ -19,7 +19,7 @@ import static org.fusesource.jansi.Ansi.Color.RED;
  */
 public class SearchUserMenu extends Menu {
     public static final String FIELDNAME = "Benutzer suchen";
-    public static final int menuId = 5;
+    public static final int priority = 40;
 
     private User user;
     public SearchUserMenu(MenuBuilder builder, User dummyUser) {

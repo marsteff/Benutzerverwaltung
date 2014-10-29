@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class ShowAllUsersMenu extends Menu {
     public static final String FIELDNAME = "Alle Benutzer anzeigen";
-    public static final int menuId = 6;
+    public static final int priority = 50;
 
     public ShowAllUsersMenu(MenuBuilder builder) {
         super(builder);
@@ -53,4 +53,5 @@ public class ShowAllUsersMenu extends Menu {
 
         buildMenu(entriesPerPage, page, userList);
     }
+
 }
