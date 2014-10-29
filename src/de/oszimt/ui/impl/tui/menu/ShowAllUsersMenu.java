@@ -1,6 +1,8 @@
 package de.oszimt.ui.impl.tui.menu;
 
 import de.oszimt.model.User;
+import de.oszimt.ui.impl.tui.Menu;
+import de.oszimt.ui.impl.tui.MenuBuilder;
 import de.oszimt.ui.impl.tui.util.Helper;
 import org.fusesource.jansi.Ansi;
 
@@ -10,6 +12,9 @@ import java.util.List;
  * Created by m588 on 24.10.2014.
  */
 public class ShowAllUsersMenu extends Menu {
+    public static final String FIELDNAME = "Alle Benutzer anzeigen";
+    public static final int menuId = 6;
+
     public ShowAllUsersMenu(MenuBuilder builder) {
         super(builder);
     }

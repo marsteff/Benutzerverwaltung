@@ -2,6 +2,8 @@ package de.oszimt.ui.impl.tui.menu;
 
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
+import de.oszimt.ui.impl.tui.Menu;
+import de.oszimt.ui.impl.tui.MenuBuilder;
 import de.oszimt.ui.impl.tui.util.Helper;
 import org.fusesource.jansi.Ansi;
 
@@ -16,6 +18,8 @@ import static org.fusesource.jansi.Ansi.Color.RED;
  * Created by m588 on 24.10.2014.
  */
 public class SearchUserMenu extends Menu {
+    public static final String FIELDNAME = "Benutzer suchen";
+    public static final int menuId = 5;
 
     private User user;
     public SearchUserMenu(MenuBuilder builder, User dummyUser) {

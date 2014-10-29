@@ -2,7 +2,6 @@ package de.oszimt.ui.impl.tui;
 
 import de.oszimt.concept.iface.IConcept;
 import de.oszimt.ui.iface.UserInterface;
-import de.oszimt.ui.impl.tui.menu.MenuBuilder;
 
 /**
  * Created by user on 17.09.2014.
