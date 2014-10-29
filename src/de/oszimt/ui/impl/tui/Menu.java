@@ -1,7 +1,8 @@
-package de.oszimt.ui.impl.tui.menu;
+package de.oszimt.ui.impl.tui;
 
 import de.oszimt.concept.iface.IConcept;
 import de.oszimt.ui.iface.UserInterface;
+import de.oszimt.ui.impl.tui.MenuBuilder;
 import de.oszimt.ui.impl.tui.util.Helper;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;

@@ -1,6 +1,7 @@
-package de.oszimt.ui.impl.tui.menu;
+package de.oszimt.ui.impl.tui;
 
 import de.oszimt.concept.iface.IConcept;
+import de.oszimt.ui.impl.tui.menu.MainMenu;
 
 /**
  * Created by m588 on 24.10.2014.
