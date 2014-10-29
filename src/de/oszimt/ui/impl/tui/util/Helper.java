@@ -1,8 +1,11 @@
 package de.oszimt.ui.impl.tui.util;
 
 import de.oszimt.model.User;
+import de.oszimt.ui.impl.tui.Menu;
+import de.oszimt.ui.impl.tui.MenuBuilder;
 import org.fusesource.jansi.Ansi;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -517,6 +520,42 @@ public class Helper {
             }
         }
         printTable(table);
+    }
+
+    /**
+     * Gibt eine Statische Variable einer Klasse zurück
+     * @param clazz Klasse, aus der man die Variable lesen will
+     * @param field Name der Variable
+     * @return Inhalt der Variable
+     */
+    public static Object getDeclaredField(Class<Menu> clazz, String field) {
+        try {
+            return clazz.getDeclaredField(field).get(null);
+        } catch (IllegalAccessException | NoSuchFieldException e1) {
+        }
+        return null;
+    }
+
+    /**
+     * Erzeugt eine neue Instanz der angegeben Klasse mit dem übergebenen MenuBuilder.
+     * Nur brauchbar für die Instanziierung der Klassen im Package de.oszimt.ui.impl.tui.menu mit dem
+     * Konstruktor Menu(MenuBuilder)
+     * @param builder der jeweilige Builder
+     * @return das erzeugt Menu
+     */
+    public static Menu getObject(Class<Menu> clazz, MenuBuilder builder){
+        try {
+            return clazz.getConstructor(MenuBuilder.class).newInstance(builder);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

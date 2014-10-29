@@ -32,15 +32,20 @@ public class MainMenu extends Menu {
         Helper.clean();
 
         //TODO hier werde ich mal was versuchen
-        //Laden der Menue Klassen und speichern in einer Map
+        //Laden der Menue Klassen im Package 'de.oszimt.ui.impl.tui.menu' und speichern dieser in einer Map
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         Map<Integer, Class<Menu>> map = new HashMap<>();
         try {
+            //Hier wirds die Google-Bibliothek Guava benutzt, um aus dem Package die Klassen zu laden
             for (final ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
                 if (info.getName().startsWith("de.oszimt.ui.impl.tui.menu.")) {
                     final Class<Menu> clazz = (Class<Menu>)info.load();
-                    if(getDeclaredField(clazz, "FIELDNAME") != null) {
-                        map.put((Integer) getDeclaredField(clazz, "menuId"), clazz);
+                    // Prüfen, ob die Klasse eine statische Variable namens 'FIELDNAME' hat und ob diese ein String ist
+                    // Wenn ja, Klasse der Map hinzufügen
+                    if(Helper.getDeclaredField(clazz, "FIELDNAME") != null &&
+                            Helper.getDeclaredField(clazz, "FIELDNAME") instanceof String) {
+                        //Auslesen des Statischen Feldes 'menuId', um eine feste Reihenfolge zu gewährleisten
+                        map.put((Integer) Helper.getDeclaredField(clazz, "menuId"), clazz);
                     }
                 }
             }
@@ -50,11 +55,15 @@ public class MainMenu extends Menu {
 
         String[] entrys = new String[map.size()+1];
 
+        // Befüllen des Arrays mit den Bezeichnungen der Klassen für das Tui-Menue
+        // Dieser statische String wird mittels Reflection aus der Klasse gelesen.
         for (int i = 0; i < map.size(); i++) {
-            entrys[i] = (String)getDeclaredField(map.get(i+1), "FIELDNAME");
+            entrys[i] = (String) Helper.getDeclaredField(map.get(i+1), "FIELDNAME");
         }
+        //Als letztes Element das Beenden Feld hinzufügen
         entrys[entrys.length - 1] = "Beenden";
 
+        //Aufbauen des Menues in der Konsole
         Helper.writeHeader(getConcept().getTitle());
         Helper.buildMenue(entrys, color, message);
 
@@ -66,33 +75,12 @@ public class MainMenu extends Menu {
             this.buildMenu(RED, "Falsche Eingabe, bitte eine Zahl zwischen 1 und " + entrys.length + " eingeben");
             return;
         }
-        if(input == 8){
+        //Wenn das letzte Element gewaehlt wurde (Beenden) dann das Programm beenden
+        if(input == entrys.length){
             System.exit(0);
         }
 
-        builder.setActualState(getObject(map, builder, input));
-    }
-
-    public static Object getDeclaredField(Class<Menu> clazz, String field) {
-        try {
-            return clazz.getDeclaredField(field).get(null);
-        } catch (IllegalAccessException | NoSuchFieldException e1) {
-        }
-        return null;
-    }
-
-    public static Menu getObject(Map<Integer, Class<Menu>> map, MenuBuilder builder, Integer input){
-        try {
-            return map.get(input).getConstructor(MenuBuilder.class).newInstance(builder);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return null;
+        //Aufgrund des gewaehlten Menue, mit Reflection das entsprechende Objekt erzeugen und den Builder-Status setzen
+        builder.setActualState(Helper.getObject(map.get(input), builder));
     }
 }
