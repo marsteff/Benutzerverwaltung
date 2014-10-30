@@ -77,7 +77,7 @@ public class CreateUserMenu extends Menu {
         User newUser = new User(firstname, lastname, date, city, street, streetNr, Integer.parseInt(zipCode), dep);
         concept.upsertUser(newUser);
 
-        //TODO Rückmeldung ob erfolgreich oder nicht ?
+        //TODO Rückmeldung ob erfolgreich oder nicht ausgeben?
         builder.setActualState(new MainMenu(builder));
     }
 }

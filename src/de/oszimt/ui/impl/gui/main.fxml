@@ -67,7 +67,7 @@
                                     <VBox spacing="5" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"
                                           AnchorPane.bottomAnchor="0">
                                         <HBox spacing="5">
-                                            <TextField promptText="Stadt" fx:id="cityField"/>
+                                            <TextField promptText="Stadt" fx:id="cityField" />
                                             <NumberTextField promptText="PLZ" fx:id="zipCodeField">
                                                 <tooltip>
                                                     <Tooltip
