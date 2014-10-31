@@ -37,18 +37,23 @@ public class MainMenu extends Menu {
         Map<Integer, Class<Menu>> sortedMap = new TreeMap<>();
         try {
             //Hier wirds die Google-Bibliothek Guava benutzt, um aus dem Package die Klassen zu laden
-            for (final ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
-                if (info.getName().startsWith("de.oszimt.ui.impl.tui.menu.")) {
-                    final Class<Menu> clazz = (Class<Menu>)info.load();
-                    // Prüfen, ob die Klasse eine statische Variable namens 'FIELDNAME' hat und ob diese ein String ist
-                    // Wenn ja, Klasse der Map hinzufügen
-                    if(Helper.getDeclaredField(clazz, "FIELDNAME") != null &&
-                            Helper.getDeclaredField(clazz, "FIELDNAME") instanceof String) {
-                        //Auslesen des Statischen Feldes 'menuId', um eine feste Reihenfolge zu gewährleisten
-                        sortedMap.put((Integer) Helper.getDeclaredField(clazz, "priority"), clazz);
+            // Prüfen, ob die Klasse eine statische Variable namens 'FIELDNAME' hat und ob diese ein String ist
+            // Wenn ja, Klasse der Map hinzufügen
+            //Auslesen des Statischen Feldes 'menuId', um eine feste Reihenfolge zu gewährleisten
+            ClassPath.from(loader).getTopLevelClasses().stream().filter(
+                    info -> info.getName().startsWith("de.oszimt.ui.impl.tui.menu.")
+            ).forEach(
+                    info -> {
+                        final Class<Menu> clazz = (Class<Menu>) info.load();
+                        // Prüfen, ob die Klasse eine statische Variable namens 'FIELDNAME' hat und ob diese ein String ist
+                        // Wenn ja, Klasse der Map hinzufügen
+                        if (Helper.getDeclaredField(clazz, "FIELDNAME") != null &&
+                                Helper.getDeclaredField(clazz, "FIELDNAME") instanceof String) {
+                            //Auslesen des Statischen Feldes 'menuId', um eine feste Reihenfolge zu gewährleisten
+                            sortedMap.put((Integer) Helper.getDeclaredField(clazz, "priority"), clazz);
+                        }
                     }
-                }
-            }
+            );
         } catch (IOException e) {
             e.printStackTrace();
         }
