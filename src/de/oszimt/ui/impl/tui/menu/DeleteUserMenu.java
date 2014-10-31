@@ -6,6 +6,7 @@ import de.oszimt.ui.impl.tui.MenuBuilder;
 import de.oszimt.ui.impl.tui.util.Helper;
 import org.fusesource.jansi.Ansi;
 
+import static org.fusesource.jansi.Ansi.Color.GREEN;
 import static org.fusesource.jansi.Ansi.Color.RED;
 
 /**
@@ -43,6 +44,7 @@ public class DeleteUserMenu extends Menu {
         //Soll der Benutzer wirklich gelöscht werden ?
         if (Helper.checkInputForYesOrNo("Benutzer wirklich löschen ? (j/n)")) {
             concept.deleteUser(user);
+            Helper.println(GREEN, user.getFirstname() + " " + user.getLastname() + " (id: " + user.getId() + ") wurde gelöscht");
         }
 
         //Soll ein weiterer Benutzer gelöscht werden ?
