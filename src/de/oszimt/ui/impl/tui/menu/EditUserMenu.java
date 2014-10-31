@@ -30,23 +30,23 @@ public class EditUserMenu extends Menu {
         buildMenu(color, message, -1);
     }
 
-    private void buildMenu(Ansi.Color color, String message, int kunden_id){
+    private void buildMenu(Ansi.Color color, String message, int user_id){
         Helper.clean();
         boolean errorshown = false;
         Helper.writeHeader("Kunden bearbeiten");
-        if(kunden_id < 0) {
+        if(user_id < 0) {
             if (message.length() > 0) {
                 Helper.println(color, message);
                 errorshown = true;
             }
-            kunden_id = Helper.printGetUserId();
+            user_id = Helper.printGetUserId();
         }
 
-        if (kunden_id == -1) {
+        if (user_id == -1) {
             builder.setActualState(new MainMenu(builder));
             return;
         }
-        User user = getConcept().getUser(kunden_id);
+        User user = getConcept().getUser(user_id);
         if (user == null) {
             buildMenu(RED, "Kein Benutzer mit der ID gefunden");
             return;
@@ -56,7 +56,7 @@ public class EditUserMenu extends Menu {
         if (message.length() > 0 && !errorshown) {
             Helper.println(color, message);
         }
-        int input = 0;
+        int input;
         do {
             Helper.println("");
             Helper.print("Wählen Sie die zuändernde Eigenschaft aus (0=zurück | 1-" + entrys.length + "): ");
@@ -76,7 +76,7 @@ public class EditUserMenu extends Menu {
             return;
         }
 
-        String value = null;
+        String value;
         //Prüfung, welches Menue aufgerufen werden soll
         switch (input) {
             //Vorname
@@ -103,7 +103,7 @@ public class EditUserMenu extends Menu {
                     int year = Helper.determineBirthday("Jahr", 1900, LocalDate.now().getYear());
                     try {
                         date = LocalDate.of(year, month, day);
-                    } catch (DateTimeException e) {
+                    } catch (DateTimeException ignored) {
                     }
                     if (date != null && date.isBefore(LocalDate.now())) {
                         break;

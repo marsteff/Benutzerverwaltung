@@ -19,29 +19,37 @@ public class Helper {
 
     public static final Ansi.Color STANDARD_COLOR = WHITE;
 
-    private static final char BORDER = '#';
+    /*
+     *  @todo
+     *  Ich habe die Chars jetzt erstmal wieder zu der unspektalkulären Variante geändert, das ist zumindest
+     *  auf allen OS stabiel, evtl sollen wir das auch so abgeben und nur für die Präsentation die fancy Chars benutzen.
+     *
+     *  Ich habe versucht es für alle gleich zu machen aber das ist echt kaum möglich, selbst wenn ich in Linux in den
+     *  Textmode wechsel können nicht alle Zeichen dargestellt werden.. Das Problem hier sind die Fonts, manche stellen
+     *  die Zeichen anders, gar nicht oder in einer anderen Größe dar.
+     *
+     *  Philipp
+     */
     private static final int HEADER_MARGIN = 3;
     private static final int TABLE_COLUMN_MARGIN = 2;
-    private static final char BORDER_CROSS_THIN = (char) 9532;//9532 ┼
-    private static final char BORDER_CROSS_ONLY_BOTTOM_THIN = (char) 9543;//╇ 9543
-    private static final char BORDER_HALF_CROSS_RIGHT_THIN = (char) 9500;//9500 ├
-    private static final char BORDER_HALF_CROSS_TOP_THIN = (char) 9524;//9524 ┴
-    private static final char BORDER_HALF_CROSS_BOTTOM_THIN = (char) 9516;//9516 ┬
-    private static final char BORDER_HALF_CROSS_LEFT_THIN = (char) 9508;//9508 ┤
-    private static final char BORDER_HALF_CROSS_BOTTOM_BOLD = (char) 9523;//┳ 9523
-    private static final char BORDER_HALF_CROSS_RIGHT_ONLY_BOTTOM_THIN = (char) 9505;//┡ 9505
-    private static final char BORDER_HALF_CROSS_LEFT_ONLY_BOTTOM_THIN = (char) 9513;//┩ 9513
-    private static final char BORDER_HALF_CROSS_BOTTOM_ONLY_BOTTOM_THIN = (char) 9519;//┯ 9519
-    private static final char BORDER_LEFT_BOTTOM_ROUNDED = (char) 9584;//9584 ╰
-    private static final char BORDER_LEFT_TOP_ROUNDED = (char) 9581;//9581 ╭
-    private static final char BORDER_RIGHT_BOTTOM_ROUNDED = (char) 9583;//9583 ╯
-    private static final char BORDER_RIGHT_TOP_ROUNDED = (char) 9582;//9582 ╮
-    private static final char BORDER_MINUS_THIN = (char) 9472;//9472 ─
-    private static final char BORDER_MINUS_BOLD = (char) 9473;//━ 9473
-    private static final char BORDER_LEFT_TOP_BOLD = (char) 9487;//┏ 9487
-    private static final char BORDER_RIGHT_TOP_BOLD = (char) 9491;//┓ 9491
-    private static final char BORDER_PIPE_BOLD = (char) 9475;//┃ 9475
-    private static final char BORDER_PIPE_THIN = (char) 9474;//┃ 9475
+    private static final char BORDER_CROSS_THIN = '+';//(char) 9532;//9532 ┼
+    private static final char BORDER_CROSS_ONLY_BOTTOM_THIN = '+';// (char) 9543;//╇ 9543
+    private static final char BORDER_HALF_CROSS_RIGHT_THIN = '+';//(char) 9500;//9500 ├
+    private static final char BORDER_HALF_CROSS_TOP_THIN = '+';//(char) 9524;//9524 ┴
+    private static final char BORDER_HALF_CROSS_LEFT_THIN = '+';// (char) 9508;//9508 ┤
+    private static final char BORDER_HALF_CROSS_BOTTOM_BOLD = '+';// (char) 9523;//┳ 9523
+    private static final char BORDER_HALF_CROSS_RIGHT_ONLY_BOTTOM_THIN = '+';//(char) 9505;//┡ 9505
+    private static final char BORDER_HALF_CROSS_LEFT_ONLY_BOTTOM_THIN = '+';//(char) 9513;//┩ 9513
+    private static final char BORDER_LEFT_BOTTOM_ROUNDED = '+';//(char) 9584;//9584 ╰
+    private static final char BORDER_LEFT_TOP_ROUNDED = '+';//(char) 9581;//9581 ╭
+    private static final char BORDER_RIGHT_BOTTOM_ROUNDED = '+';//(char) 9583;//9583 ╯
+    private static final char BORDER_RIGHT_TOP_ROUNDED = '+';//(char) 9582;//9582 ╮
+    private static final char BORDER_MINUS_THIN = '-';//(char) 9472;//9472 ─
+    private static final char BORDER_MINUS_BOLD = '-';//(char) 9473;//━ 9473
+    private static final char BORDER_LEFT_TOP_BOLD = '+';//(char) 9487;//┏ 9487
+    private static final char BORDER_RIGHT_TOP_BOLD = '+';//(char) 9491;//┓ 9491
+    private static final char BORDER_PIPE_BOLD = '|';//(char) 9475;//┃ 9475
+    private static final char BORDER_PIPE_THIN = '|'; //(char) 9474;//┃ 9475
 
     public static User createDummyUser() {
         return new User("", "", null, "", "", "", 0, null);
@@ -153,7 +161,7 @@ public class Helper {
      */
     public static int readInt() {
         Scanner scan = new Scanner(System.in);
-        int choice = 0;
+        int choice;
         try {
             choice = scan.nextInt();
         } catch (InputMismatchException e) {
@@ -266,9 +274,7 @@ public class Helper {
         print(entrys[i]);
         printWhitespace(entrys, i, 2);
         print(": ");
-        String value = readString();
-//        println("");
-        return value;
+        return readString();
     }
 
     public static int determineBirthday(String text, int min, int max) {
@@ -304,7 +310,7 @@ public class Helper {
         String[] values = userParameterToArray(user);
         for (int i = 0; i < entrys.length; i++) {
             table[i+1][0] = entrys[i];
-            table[i+1][1] = values[i].toString().length() < 1 ? "-" : values[i];
+            table[i+1][1] = values[i].length() < 1 ? "-" : values[i];
         }
         printTable(table);
     }
@@ -394,7 +400,7 @@ public class Helper {
         String[] values = userParameterToArray(user);
         for (int i = 0; i < entrys.length; i++) {
             table[i+1][0] = entrys[i];
-            table[i+1][1] = values[i].toString().length() < 1 ? "-" : values[i];
+            table[i+1][1] = values[i].length() < 1 ? "-" : values[i];
             table[i+1][2] = "" + (i+1);
         }
         printTable(table);
@@ -408,7 +414,7 @@ public class Helper {
             printWhitespace(departmentArray, i, 2);
             println("(" + (i + 1) + ")");
         }
-        int departmentValue = 0;
+        int departmentValue;
         do {
             print("Neuen Wert fuer " + entrys[input - 1] + " eingeben" + (deleteable ? "(0 = leeren)" : "") + ":");
             departmentValue = readInt();
@@ -427,7 +433,7 @@ public class Helper {
      * @return true, wenn 'j' eingegeben wurde. Andernfalls falls
      */
     public static boolean checkInputForYesOrNo(String message) {
-        String input = null;
+        String input;
         while (true) {
             println("");
             print(message + " ");
@@ -438,10 +444,7 @@ public class Helper {
             println("");
             printErrorMessage("Bitte 'j' oder 'n' eingeben");
         }
-        if (input.toLowerCase().equals("j")) {
-            return true;
-        }
-        return false;
+        return input.toLowerCase().equals("j");
     }
 
     /**
@@ -455,26 +458,25 @@ public class Helper {
         //Filtert nach allen Scuhkriterien und gibt diesen als Liste zurück
         filteredUsers = userList.stream()
                 .filter(e -> {
-                    final User bUser = user;
                     int paramNumber = getSettedParamsNumber(user);
                     int checkNumber = 0;
-                    if (!bUser.getFirstname().equals("") && e.getFirstname().trim().toLowerCase().contains(bUser.getFirstname().trim().toLowerCase()))
+                    if (!user.getFirstname().equals("") && e.getFirstname().trim().toLowerCase().contains(user.getFirstname().trim().toLowerCase()))
                         checkNumber++;
-                    if (!bUser.getLastname().equals("") && e.getLastname().trim().toLowerCase().contains(bUser.getLastname().trim().toLowerCase()))
+                    if (!user.getLastname().equals("") && e.getLastname().trim().toLowerCase().contains(user.getLastname().trim().toLowerCase()))
                         checkNumber++;
-                    if (bUser.getBirthday() != null && e.getBirthday().equals(bUser.getBirthday()))
+                    if (user.getBirthday() != null && e.getBirthday().equals(user.getBirthday()))
                         checkNumber++;
-                    if (e.getZipcode() == bUser.getZipcode())
+                    if (e.getZipcode() == user.getZipcode())
                         checkNumber++;
-                    if (!bUser.getCity().equals("") && e.getCity().toLowerCase().trim().contains(bUser.getCity().trim().toLowerCase()))
+                    if (!user.getCity().equals("") && e.getCity().toLowerCase().trim().contains(user.getCity().trim().toLowerCase()))
                         checkNumber++;
-                    if (!bUser.getStreet().equals("") && e.getStreet().trim().toLowerCase().contains(bUser.getStreet().trim().toLowerCase()))
+                    if (!user.getStreet().equals("") && e.getStreet().trim().toLowerCase().contains(user.getStreet().trim().toLowerCase()))
                         checkNumber++;
-                    if (!bUser.getStreetnr().equals("") && e.getStreetnr().trim().toLowerCase().contains(bUser.getStreetnr().trim().toLowerCase()))
+                    if (!user.getStreetnr().equals("") && e.getStreetnr().trim().toLowerCase().contains(user.getStreetnr().trim().toLowerCase()))
                         checkNumber++;
 
-                    if (bUser.getDepartment() != null) {
-                        if (e.getDepartment().getId() == bUser.getDepartment().getId())
+                    if (user.getDepartment() != null) {
+                        if (e.getDepartment().getId() == user.getDepartment().getId())
                             checkNumber++;
                     }
                     return paramNumber == checkNumber;
@@ -514,9 +516,7 @@ public class Helper {
 
         String[][] table = new String[end - start + 1][entrys.length];
 
-        for (int column = 0; column < entrys.length; column++) {
-            table[0][column] = entrys[column];
-        }
+        System.arraycopy(entrys, 0, table[0], 0, entrys.length);
 
 
         int index;
@@ -539,7 +539,7 @@ public class Helper {
     public static Object getDeclaredField(Class<Menu> clazz, String field) {
         try {
             return clazz.getDeclaredField(field).get(null);
-        } catch (IllegalAccessException | NoSuchFieldException e1) {
+        } catch (IllegalAccessException | NoSuchFieldException ignored) {
         }
         return null;
     }
@@ -554,13 +554,7 @@ public class Helper {
     public static Menu getObject(Class<Menu> clazz, MenuBuilder builder){
         try {
             return clazz.getConstructor(MenuBuilder.class).newInstance(builder);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
         return null;
