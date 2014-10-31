@@ -507,16 +507,26 @@ public class Helper {
     }
 
     public static void buildTable(List<User> userList, int entriesPerPage, int page, String[] entrys) {
-        String[][] table = new String[entriesPerPage + 1][entrys.length];
+        int end = entriesPerPage * page + entriesPerPage;
+        if(end > userList.size()){
+            end = userList.size();
+        }
+
+        int start = entriesPerPage * page;
+
+        String[][] table = new String[end - start + 1][entrys.length];
 
         for (int column = 0; column < entrys.length; column++) {
             table[0][column] = entrys[column];
         }
 
-        for (int row = entriesPerPage * page; row < (entriesPerPage * page + entriesPerPage); row++) {
+
+        int index;
+        for (int row = start; row < end; row++) {
             String[] values = userParameterToArray(userList.get(row));
             for (int column = 0; column < values.length; column++) {
-                table[row - entriesPerPage * page + 1][column] = values[column];
+                index = row - entriesPerPage * page + 1;
+                table[index][column] = values[column];
             }
         }
         printTable(table);
