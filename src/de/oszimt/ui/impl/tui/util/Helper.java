@@ -318,13 +318,11 @@ public class Helper {
             return -1;
         }
 
-        int inp;
         try {
-            inp = Integer.parseInt(inpString);
+            user_id = Integer.parseInt(inpString);
         } catch (NumberFormatException e) {
-            inp = -1;
+            user_id = -1;
         }
-        user_id = inp;
         return user_id;
     }
 
