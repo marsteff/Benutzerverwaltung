@@ -19,7 +19,7 @@ import static org.fusesource.jansi.Ansi.Color.RED;
  */
 public class CreateDepartmentMenu extends Menu {
     public static final String FIELDNAME = "Neue Abteilung anlegen";
-    public static final int priority = 70;
+    public static final int priority = 55;
 
     public CreateDepartmentMenu(MenuBuilder builder) {
         super(builder);
