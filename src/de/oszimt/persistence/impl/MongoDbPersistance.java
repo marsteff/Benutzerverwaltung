@@ -191,6 +191,18 @@ public class MongoDbPersistance implements IPersistance{
     }
 
     /**
+     * Für die Rückgabe der Datenbank-Methoden werden allgemeine Datentypen
+     * wie z.B. Map verwendet. Da somit nicht immer direkt klar ist wie ein Key
+     * benannt ist, kann er hier abgefragt werden.
+     *
+     * Gibt den Key-Namen des Abteilungsnames zurück
+     * @return String
+     */
+    public String getKeyDepartmentAmount(){
+        return "amount";
+    }
+
+    /**
      * Um den Zugriff auf eine Collection zu vereinfachen wird die Methode
      * getCollection() mit aufgenommen
      *
@@ -491,7 +503,7 @@ public class MongoDbPersistance implements IPersistance{
     @Override
     public List<Map<String,Object>> getAllDepartments(){
         //leere Liste erzeugen
-        List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+        List<Map<String,Object>> list = new ArrayList<>();
         //laden der Abteiungs Collection
         DBCollection coll = db.getCollection("Departments");
         //Zeiger auf Anfang der Collection setzten
@@ -502,14 +514,20 @@ public class MongoDbPersistance implements IPersistance{
                 //aktuelles Dokument in den Scope laden und Zeiger einen weiter bewegen
                 DBObject tmp = cursor.next();
                 //leere map für die Abteilung initialisieren
-                Map<String, Object> map = new HashMap<String, Object>();
+                Map<String, Object> map = new HashMap<>();
+                //Abteilungs id
+                int id = Integer.parseInt(tmp.toMap().get(this.getKeyDepartmentId()).toString());
                 //Abteilungs Map füllen
-                map.put(this.getKeyDepartmentId(),Integer.parseInt(tmp.toMap().get(
-                        this.getKeyDepartmentId()).toString())
-                );
+                map.put(this.getKeyDepartmentId(),id);
                 map.put(this.getKeyDepartmentName(),tmp.toMap().get(
                         this.getKeyDepartmentName()
                 ).toString());
+
+                //Anzahl der Benutzer in dieser Abteilung ermitten
+                int amount = getUserAmount(id);
+                //Anzahl der Map hinzufügen
+                map.put(this.getKeyDepartmentAmount(),amount);
+
                 //Abteilungs map der Liste hinzufügen
                 list.add(map);
             }
@@ -518,6 +536,15 @@ public class MongoDbPersistance implements IPersistance{
         }
 
         return list;
+    }
+
+    private int getUserAmount(int department_id){
+        //Laden der Benutzer Collection
+        DBCollection coll = db.getCollection("Users");
+        //Suche auf Abteilungs ID begenzen
+        BasicDBObject query = new BasicDBObject("department_id", department_id);
+        //suchen + zählen
+        return (int) coll.count(query);
     }
 
 }

@@ -112,6 +112,16 @@ public interface IPersistance {
      * wie z.B. Map verwendet. Da somit nicht immer direkt klar ist wie ein Key
      * benannt ist, kann er hier abgefragt werden.
      *
+     * Gibt den Key-Namen für die Anzahl der Benutzer in der Abteilunh zurück
+     * @return String
+     */
+    String getKeyDepartmentAmount();
+
+    /**
+     * Für die Rückgabe der Datenbank-Methoden werden allgemeine Datentypen
+     * wie z.B. Map verwendet. Da somit nicht immer direkt klar ist wie ein Key
+     * benannt ist, kann er hier abgefragt werden.
+     *
      * Gibt den Key-Namen des Abteilungsnames zurück
      * @return String
      */

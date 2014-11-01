@@ -173,8 +173,10 @@ public class Concept implements IConcept {
      * @return
      */
     private Department depMapToDepartment(Map<String,Object> depMap){
-        Department dep = new Department(depMap.get(this.database.getKeyDepartmentName()).toString());
-        dep.setId((int)depMap.get(this.database.getKeyDepartmentId()));
+        Department dep = new Department(
+                (int)depMap.get(this.database.getKeyDepartmentId()),
+                depMap.get(this.database.getKeyDepartmentName()).toString(),
+                (int)depMap.get(this.database.getKeyDepartmentAmount()));
         return dep;
     }
 

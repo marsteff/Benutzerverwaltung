@@ -56,7 +56,7 @@ public class Department {
     public Department(int id, String name, int amount) {
         this.id = new SimpleIntegerProperty(id);
         this.name = new SimpleStringProperty(name);
-        this.amount = new SimpleIntegerProperty();
+        this.amount = new SimpleIntegerProperty(amount);
     }
 
     /**

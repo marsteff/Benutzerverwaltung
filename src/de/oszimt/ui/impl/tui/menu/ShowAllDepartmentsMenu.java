@@ -39,11 +39,11 @@ public class ShowAllDepartmentsMenu extends Menu {
                 depList,
                 entriesPerPage,
                 page,
-                new String[]{"ID","Name"},
+                new String[]{"ID","Name","Anzahl Mitarbeiter"},
                 new Helper.entryToTableRow<Department>(){
                     @Override
                     public String[] toArray(Department entry) {
-                        return new String[]{entry.getId() + "",entry.getName()};
+                        return new String[]{entry.getId() + "",entry.getName(),entry.getAmount() + ""};
                     }
                 }
         );

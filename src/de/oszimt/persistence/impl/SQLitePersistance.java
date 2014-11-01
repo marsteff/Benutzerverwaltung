@@ -196,6 +196,19 @@ public class SQLitePersistance implements IPersistance {
      * wie z.B. Map verwendet. Da somit nicht immer direkt klar ist wie ein Key
      * benannt ist, kann er hier abgefragt werden.
      *
+     * Gibt den Key-Namen der Abteilungsnummer zurück
+     * @return String
+     */
+    @Override
+    public String getKeyDepartmentAmount() {
+        return "amount";
+    }
+
+    /**
+     * Für die Rückgabe der Datenbank-Methoden werden allgemeine Datentypen
+     * wie z.B. Map verwendet. Da somit nicht immer direkt klar ist wie ein Key
+     * benannt ist, kann er hier abgefragt werden.
+     *
      * Gibt den Key-Namen des Abteilungsnames zurück
      * @return String
      */
@@ -354,7 +367,14 @@ public class SQLitePersistance implements IPersistance {
             //neues Statement erzeugen
             stmt = con.createStatement();
             //SQL Abfrage auf alle Abtleiungen setzten
-            String sql = "SELECT * FROM Department;";
+            String sql = "select Department.id,Department.name,sub.amount " +
+                         "from Department " +
+                         "left join ( " +
+                            "select department_id, count(1) as amount " +
+                            "from User " +
+                            "group by department_id " +
+                         ") sub " +
+                        "on Department.id = sub.department_id;";
             //SQL ausführen und Ergebniss Reffernce entgegen nehmen
             ResultSet rs = stmt.executeQuery(sql);
             //Ergebniss durchlaufen, Zeiger Iteration
@@ -363,8 +383,10 @@ public class SQLitePersistance implements IPersistance {
                 Map<String,Object> dep = new HashMap<String, Object>();
                 //Abteilungs Id der Map hinzufügen
                 dep.put(this.getKeyDepartmentId(),rs.getInt(this.getKeyDepartmentId()));
-                //Abteilungd Name der Map hinzufügen
+                //AbteilungS Name der Map hinzufügen
                 dep.put(this.getKeyDepartmentName(),rs.getString(this.getKeyDepartmentName()));
+                //Anzahl der Mitarbeiter in einer Abteilung hinzufügen
+                dep.put(this.getKeyDepartmentAmount(),rs.getInt(this.getKeyDepartmentAmount()));
                 //Zwischenergebniss der Liste hinzufügen
                 list.add(dep);
             }
