@@ -4,10 +4,13 @@ import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import de.oszimt.ui.impl.tui.Menu;
 import de.oszimt.ui.impl.tui.MenuBuilder;
+import de.oszimt.util.Validation;
 import org.fusesource.jansi.Ansi;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -517,6 +520,69 @@ public class Helper {
         if (user.getDepartment() != null)
             number++;
         return number;
+    }
+
+    public static int readZipCode(String[] entrys, int index, char abort){
+        do {
+            String zipCode = Helper.toShortUgly(index, entrys);
+            if(zipCode.trim().compareTo(abort+"") == 0){
+                return -1;
+            }
+            if(Validation.checkIfZipCode(zipCode)){
+                return Integer.parseInt(zipCode.trim());
+            }else{
+                Helper.println(RED,"PLZ kann nur aus 5 Zahlen bestehen!");
+            }
+        }while (true);
+    }
+    public static  Department readDepartment(String[] entrys, int index, int spaces, List<Department> alldeps){
+        print(entrys[index]);
+        printWhitespace(entrys, index, spaces);
+        println(": ");
+        List<Department> departmentList = alldeps;
+        String[] departmentArray = new String[departmentList.size()];
+
+        for (int i = 0; i < departmentArray.length; i++) {
+            departmentArray[i] = departmentList.get(i).getName();
+        }
+        for (int i = 0; i < departmentArray.length; i++) {
+            print(departmentArray[i]);
+            printWhitespace(departmentArray, i, 2);
+            println("(" + (i + 1) + ")");
+        }
+        int departmentValue;
+        do {
+            print("Zahl für Department eingeben: ");
+            departmentValue = Helper.readInt();
+            if (departmentValue > 0 && departmentValue <= departmentArray.length) {
+                break;
+            }
+            println(RED, "Eingabe nicht gueltig. Wert muss zwischen 1 und " + departmentArray.length + " liegen");
+        } while (true);
+        return new Department(departmentValue, departmentArray[departmentValue - 1]);
+    }
+
+    public static LocalDate readDate(){
+        LocalDate date = null;
+        do {
+            print("Geburtstag eingeben (");
+            print(YELLOW,"'0' zum abbrechen eingeben");
+            println("):");
+            int day = determineBirthday("Tag", 1, 31);
+            if(day == 0) return null;
+            int month = determineBirthday("Monat", 1, 12);
+            if(month == 0) return null;
+            int year = determineBirthday("Jahr", 1900, LocalDate.now().getYear());
+            if(month == 0) return null;
+            try {
+                date = LocalDate.of(year, month, day);
+            } catch (DateTimeException e) {}
+            if (date != null && date.isBefore(LocalDate.now())) {
+                break;
+            }
+            println(RED, "Das Datum ist nicht gültig");
+        } while (true);
+        return date;
     }
 
     public static abstract class entryToTableRow<T>{
