@@ -1,9 +1,11 @@
 package de.oszimt.ui.impl.tui.menu;
 
+import com.sun.deploy.util.ArrayUtil;
 import de.oszimt.model.User;
 import de.oszimt.ui.impl.tui.Menu;
 import de.oszimt.ui.impl.tui.MenuBuilder;
 import de.oszimt.ui.impl.tui.util.Helper;
+import jdk.nashorn.internal.ir.LiteralNode;
 import org.fusesource.jansi.Ansi;
 
 import java.util.List;
@@ -35,10 +37,14 @@ public class ShowAllUsersMenu extends Menu {
 
     protected void buildMenu(int entriesPerPage, int page, List<User> userList){
         Helper.clean();
-        Helper.buildTable(userList, entriesPerPage, page, entrys, new Helper.entryToTableRow<User>() {
+        String[] labels = Helper.ArrayMerge(new String[]{"id"},entrys);
+        Helper.buildTable(userList, entriesPerPage, page, labels, new Helper.entryToTableRow<User>() {
             @Override
             public String[] toArray(User entry) {
-                return Helper.userParameterToArray(entry);
+                return Helper.ArrayMerge(
+                        new String[]{entry.getId() + ""},
+                        Helper.userParameterToArray(entry)
+                );
             }
         });
         Helper.print("Seite " + (page + 1) + "/" + (int) Math.ceil( userList.size() / (double) entriesPerPage) + " (0: Zurück):");

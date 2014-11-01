@@ -19,7 +19,8 @@ public abstract class Menu implements UserInterface{
 
     protected Ansi.Color color;
 
-    protected String[] entrys = {"Vorname",
+    protected String[] entrys = {
+            "Vorname",
             "Nachname",
             "Geburtstag",
             "Stadt",

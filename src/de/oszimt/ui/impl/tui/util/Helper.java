@@ -6,6 +6,7 @@ import de.oszimt.ui.impl.tui.Menu;
 import de.oszimt.ui.impl.tui.MenuBuilder;
 import org.fusesource.jansi.Ansi;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -96,6 +97,7 @@ public class Helper {
      */
     public static String[] userParameterToArray(User user) {
         String[] params = new String[8];
+
         params[0] = toAscii(user.getFirstname());
         params[1] = toAscii(user.getLastname());
         params[2] = toAscii(user.getBirthday() != null ? user.getBirthday().toString() : "");
@@ -564,6 +566,18 @@ public class Helper {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static <T> T[] ArrayMerge(T[] A, T[] B) {
+        int aLen = A.length;
+        int bLen = B.length;
+
+        @SuppressWarnings("unchecked")
+        T[] C = (T[]) Array.newInstance(A.getClass().getComponentType(), aLen + bLen);
+        System.arraycopy(A, 0, C, 0, aLen);
+        System.arraycopy(B, 0, C, aLen, bLen);
+
+        return C;
     }
 
 }

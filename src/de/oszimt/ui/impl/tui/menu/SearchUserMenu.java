@@ -209,10 +209,14 @@ public class SearchUserMenu extends Menu {
         }
 
         List<User> userList = Helper.searchUsers(user, this.getConcept().getAllUser());
-        Helper.buildTable(userList, userList.size(), 0, entrys, new Helper.entryToTableRow<User>() {
+        String[] labels = Helper.ArrayMerge(new String[]{"id"},entrys);
+        Helper.buildTable(userList, userList.size(), 0, labels, new Helper.entryToTableRow<User>() {
             @Override
             public String[] toArray(User entry) {
-                return Helper.userParameterToArray(entry);
+                return Helper.ArrayMerge(
+                        new String[]{entry.getId() + ""},
+                        Helper.userParameterToArray(entry)
+                );
             }
         });
         Helper.println("Filter ändern (1), Neue Suche(2), zum Hauptmenü (3)");
