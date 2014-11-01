@@ -15,6 +15,8 @@ public abstract class Menu implements UserInterface{
     protected MenuBuilder builder;
 
     protected String message;
+
+
     protected Ansi.Color color;
 
     protected String[] entrys = {"Vorname",
@@ -48,8 +50,26 @@ public abstract class Menu implements UserInterface{
         this.concept = concept;
     }
 
-    protected abstract void buildMenu(Ansi.Color color, String message);
-    protected void buildMenu() {
-        buildMenu(Helper.STANDARD_COLOR, "");
+    protected abstract void buildMenu();
+    protected void buildMenu(Ansi.Color color, String message){
+        this.setColor(color);
+        this.setMessage(message);
     }
+    public Ansi.Color getColor() {
+        return color == null ? Helper.STANDARD_COLOR : color;
+    }
+
+    public void setColor(Ansi.Color color) {
+        this.color = color;
+    }
+
+    public String getMessage() {
+        return message == null ? "" : message;
+    }
+
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
 }

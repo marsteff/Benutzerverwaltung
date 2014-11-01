@@ -26,7 +26,7 @@ public class CreateDepartmentMenu extends Menu {
     }
 
     @Override
-    protected void buildMenu(Ansi.Color color, String message) {
+    protected void buildMenu() {
         Helper.writeHeader("Neue Abteilung anlegen");
 
         Helper.print("Name: ");

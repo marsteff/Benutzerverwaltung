@@ -20,7 +20,7 @@ public class ShowAllUsersMenu extends Menu {
     }
 
     @Override
-    protected void buildMenu(Ansi.Color color, String message) {
+    protected void buildMenu() {
         Helper.clean();
         Helper.print("Anzahl der Benutzer pro Seite (5):");
         String entriesPerPageStr = Helper.readString();

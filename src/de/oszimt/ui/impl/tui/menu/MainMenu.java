@@ -28,7 +28,7 @@ public class MainMenu extends Menu {
     }
 
     @Override
-    protected void buildMenu(Ansi.Color color, String message) {
+    protected void buildMenu() {
         Helper.clean();
 
         //TODO hier werde ich mal was versuchen
@@ -74,14 +74,14 @@ public class MainMenu extends Menu {
 
         //Aufbauen des Menues in der Konsole
         Helper.writeHeader(getConcept().getTitle());
-        Helper.buildMenue(entrys, color, message);
+        Helper.buildMenue(entrys, super.getColor(), super.getMessage());
 
         //einlesen des Input´s
         int input = Helper.readInt();
 
         //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
         if (input == -1 || input > entrys.length || input < 1) {
-            this.buildMenu(RED, "Falsche Eingabe, bitte eine Zahl zwischen 1 und " + entrys.length + " eingeben");
+            this.buildMenu(RED,"Falsche Eingabe, bitte eine Zahl zwischen 1 und " + entrys.length + " eingeben");
             return;
         }
         //Wenn das letzte Element gewaehlt wurde (Beenden) dann das Programm beenden

@@ -21,7 +21,7 @@ public class SettignsMenu extends Menu {
         super(builder);
     }
     @Override
-    protected void buildMenu(Ansi.Color color, String message) {
+    protected void buildMenu() {
         Helper.clean();
 
         Helper.writeHeader("Einstellungen");

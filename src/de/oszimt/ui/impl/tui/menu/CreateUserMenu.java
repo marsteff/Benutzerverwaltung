@@ -11,6 +11,7 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.fusesource.jansi.Ansi.Color.GREEN;
 import static org.fusesource.jansi.Ansi.Color.RED;
 
 /**
@@ -25,7 +26,7 @@ public class CreateUserMenu extends Menu {
     }
 
     @Override
-    protected void buildMenu(Ansi.Color color, String message) {
+    protected void buildMenu() {
         Helper.writeHeader("Neuen Benutzer anlegen");
         //TODO - at first i make it a lot ugly .. then i think to make it more comfortable
         String firstname = Helper.toShortUgly(0, entrys);
@@ -64,7 +65,7 @@ public class CreateUserMenu extends Menu {
             Helper.printWhitespace(departmentArray, i, 2);
             Helper.println("(" + (i + 1) + ")");
         }
-        int departmentValue = 0;
+        int departmentValue;
         do {
             Helper.print("Zahl für Department eingeben: ");
             departmentValue = Helper.readInt();
@@ -77,7 +78,10 @@ public class CreateUserMenu extends Menu {
         User newUser = new User(firstname, lastname, date, city, street, streetNr, Integer.parseInt(zipCode), dep);
         concept.upsertUser(newUser);
 
-        //TODO Rückmeldung ob erfolgreich oder nicht ausgeben?
-        builder.setActualState(new MainMenu(builder));
+
+        builder.setActualState(new MainMenu(
+                builder,
+                "Benutzer: " + newUser.getFirstname() + " " + newUser.getLastname() + " hinzugefügt",GREEN)
+        );
     }
 }

@@ -21,7 +21,7 @@ public class DeleteUserMenu extends Menu {
     }
 
     @Override
-    protected void buildMenu(Ansi.Color color, String message) {
+    protected void buildMenu() {
         Helper.clean();
         Helper.writeHeader("Benutzer löschen");
         if(message.length() > 0){

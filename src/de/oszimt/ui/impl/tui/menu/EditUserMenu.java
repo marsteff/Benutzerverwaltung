@@ -26,11 +26,13 @@ public class EditUserMenu extends Menu {
     }
 
     @Override
-    protected void buildMenu(Ansi.Color color, String message) {
-        buildMenu(color, message, -1);
+    protected void buildMenu() {
+        buildMenu(-1);
     }
 
-    private void buildMenu(Ansi.Color color, String message, int user_id){
+    private void buildMenu(int user_id){
+        Ansi.Color color = getColor();
+        String message = getMessage();
         Helper.clean();
         boolean errorshown = false;
         Helper.writeHeader("Kunden bearbeiten");
@@ -158,7 +160,9 @@ public class EditUserMenu extends Menu {
 
         }
         concept.upsertUser(user);
-        buildMenu(GREEN,"Änderung erfolgreich übernommen",user.getId());
+        setColor(GREEN);
+        setMessage("Änderung erfolgreich übernommen");
+        buildMenu(user.getId());
     }
 
 }

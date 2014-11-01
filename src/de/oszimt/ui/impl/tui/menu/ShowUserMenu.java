@@ -20,7 +20,7 @@ public class ShowUserMenu extends Menu {
     }
 
     @Override
-    protected void buildMenu(Ansi.Color color, String message) {
+    protected void buildMenu() {
         Helper.clean();
 
         Helper.writeHeader("Kunden anzeigen");

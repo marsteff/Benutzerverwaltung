@@ -33,22 +33,21 @@ public class SearchUserMenu extends Menu {
     }
 
     @Override
-    protected void buildMenu(Ansi.Color color, String message) {
+    protected void buildMenu() {
         // TODO Mal sehen was ich mit dem im Konstruktor gesetzten User mache
-        buildMenu(color, message, Helper.createDummyUser());
+        buildMenu(Helper.createDummyUser());
     }
 
     protected void buildMenu(User user){
-        buildMenu(color, message, user);
-    }
+        Ansi.Color color = getColor();
+        String message = getMessage();
 
-    protected void buildMenu(Ansi.Color color, String message, User user){
         Helper.clean();
         Helper.writeHeader("Benutzer Suchen");
 
         Helper.printUserOptions(user, entrys);
 
-        int input = 0;
+        int input;
         String inputString;
 
         if(message.length() > 0){
@@ -70,10 +69,11 @@ public class SearchUserMenu extends Menu {
             } catch (NumberFormatException e) {
                 input = 0;
             }
-            //im Fehlerfall oder wenn Eingabe ausserhalb des Gültigkeitsbereiches Fehlermeldung ausgeben
 
             if (input < 1 || input > entrys.length) {
-                buildMenu(RED, "Falsche Eingabe", user);
+                setColor(RED);
+                setMessage("Falsche Eingabe");
+                buildMenu(user);
                 return;
             }
 
@@ -202,7 +202,9 @@ public class SearchUserMenu extends Menu {
 
             }
 
-            buildMenu(GREEN, "Suche erweitert", user);
+            setColor(GREEN);
+            setMessage("Suche erweitert");
+            buildMenu(user);
             return;
         }
 
