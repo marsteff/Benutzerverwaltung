@@ -4,6 +4,8 @@ import de.oszimt.concept.iface.IConcept;
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;

@@ -118,23 +118,19 @@ public class Department {
         return getName();
     }
 
-    //TODO hash und equals optimieren <- gefällt mir nicht
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Department that = (Department) o;
-
-        if (id.get() != that.id.get() || !name.get().equals(that.name.get())) return false;
-
-        return true;
+        return o != null && o instanceof Department && this.hashCode() == o.hashCode();
     }
 
     @Override
+    /**
+     * create unqiue number related to id and name hash number
+     * @see http://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function
+     */
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + name.hashCode();
-        return result;
+        int x = id.hashCode();
+        int y = name.hashCode();
+        return (1/2)*(x+y)*(x+y+1)+y;
     }
 }

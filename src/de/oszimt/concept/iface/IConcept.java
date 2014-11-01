@@ -62,7 +62,7 @@ public interface IConcept {
     void createDepartment(String name);
 
     /**
-     * //TODO Text erstellen
+     * erstellt eine neue Abteilung oder ändert eine bestehende
      * @param department
      */
     void upsertDepartment(Department department);
@@ -70,7 +70,7 @@ public interface IConcept {
     Department getDepartmentById(int id);
 
     /**
-     * //TODO Text erstellen
+     * löscht eine Abteilung
      * @param department
      */
     void deleteDepartment(Department department);
