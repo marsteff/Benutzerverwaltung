@@ -1,21 +1,21 @@
 package de.oszimt.ui.impl.tui.menu;
 
+import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import de.oszimt.ui.impl.tui.Menu;
 import de.oszimt.ui.impl.tui.MenuBuilder;
 import de.oszimt.ui.impl.tui.util.Helper;
-import org.fusesource.jansi.Ansi;
 
 import java.util.List;
 
 /**
  * Created by m588 on 24.10.2014.
  */
-public class ShowAllUsersMenu extends Menu {
-    public static final String FIELDNAME = "Alle Benutzer anzeigen";
-    public static final int priority = 50;
+public class ShowAllDepartmentsMenu extends Menu {
+    public static final String FIELDNAME = "Alle Abteilungen anzeigen";
+    public static final int priority = 56;
 
-    public ShowAllUsersMenu(MenuBuilder builder) {
+    public ShowAllDepartmentsMenu(MenuBuilder builder) {
         super(builder);
     }
 
@@ -29,20 +29,20 @@ public class ShowAllUsersMenu extends Menu {
             entiresPerPage = new Integer(entriesPerPageStr);
         } catch (NumberFormatException e) {}
 
-        List<User> userList = concept.getAllUser();
-        buildMenu(entiresPerPage, 0, userList);
+        List<Department> depList = concept.getAllDepartments();
+        buildMenu(entiresPerPage, 0, depList);
     }
 
-    protected void buildMenu(int entriesPerPage, int page, List<User> userList){
+    protected void buildMenu(int entriesPerPage, int page, List<Department> depList){
         Helper.clean();
-        Helper.buildUserTable(userList,entriesPerPage,page, entrys);
-        Helper.print("Seite " + (page + 1) + "/" + (int) Math.ceil( userList.size() / (double) entriesPerPage) + " (0: Zurück):");
+        Helper.buildDepartmentTable(depList,entriesPerPage,page);
+        Helper.print("Seite " + (page + 1) + "/" + (int) Math.ceil( depList.size() / (double) entriesPerPage) + " (0: Zurück):");
         String pageStr = Helper.readString();
         try {
             page = new Integer(pageStr) - 1;
         } catch (NumberFormatException e) {}
 
-        if(page * entriesPerPage >= userList.size()){
+        if(page * entriesPerPage >= depList.size()){
             page = 0;
         }
 
@@ -51,7 +51,7 @@ public class ShowAllUsersMenu extends Menu {
             return;
         }
 
-        buildMenu(entriesPerPage, page, userList);
+        buildMenu(entriesPerPage, page, depList);
     }
 
 }

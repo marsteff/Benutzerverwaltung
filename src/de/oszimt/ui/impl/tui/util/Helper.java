@@ -1,5 +1,6 @@
 package de.oszimt.ui.impl.tui.util;
 
+import de.oszimt.model.Department;
 import de.oszimt.model.User;
 import de.oszimt.ui.impl.tui.Menu;
 import de.oszimt.ui.impl.tui.MenuBuilder;
@@ -506,7 +507,7 @@ public class Helper {
         return number;
     }
 
-    public static void buildTable(List<User> userList, int entriesPerPage, int page, String[] entrys) {
+    public static void buildUserTable(List<User> userList, int entriesPerPage, int page, String[] entrys) {
         int end = entriesPerPage * page + entriesPerPage;
         if(end > userList.size()){
             end = userList.size();
@@ -522,6 +523,33 @@ public class Helper {
         int index;
         for (int row = start; row < end; row++) {
             String[] values = userParameterToArray(userList.get(row));
+            for (int column = 0; column < values.length; column++) {
+                index = row - entriesPerPage * page + 1;
+                table[index][column] = values[column];
+            }
+        }
+        printTable(table);
+    }
+
+    public static void buildDepartmentTable(List<Department> depList, int entriesPerPage, int page) {
+        int end = entriesPerPage * page + entriesPerPage;
+        if(end > depList.size()){
+            end = depList.size();
+        }
+
+        int start = entriesPerPage * page;
+
+        //@todo add more columens (i.e. Number of employees in department)
+        String[] columns = {"ID","Name"};
+        String[][] table = new String[end - start + 1][columns.length];
+
+        System.arraycopy(columns, 0, table[0], 0, columns.length);
+
+
+        int index;
+        for (int row = start; row < end; row++) {
+            Department curDep = depList.get(row);
+            String[] values = {curDep.getId() + "",curDep.getName()};
             for (int column = 0; column < values.length; column++) {
                 index = row - entriesPerPage * page + 1;
                 table[index][column] = values[column];
