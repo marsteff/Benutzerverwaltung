@@ -35,7 +35,7 @@ public class CreateDepartmentMenu extends Menu {
             builder.setActualState(new MainMenu(builder));
             return;
         }
-        concept.createDepartment(name);
+        concept.upsertDepartment(new Department(name));
         builder.setActualState(new MainMenu(builder,"Abteilung '" + name + "' hinzufügt",GREEN));
     }
 }

@@ -274,6 +274,35 @@ public class MongoDbPersistance implements IPersistance{
     }
 
     /**
+     * Laden einer einzelnen Abteilung anhand der Id
+     * @param id int
+     * @return Map<String,Object>
+     */
+    public Map<String,Object> getDepartmentById(int id){
+        //leere Map inialisieren
+        Map<String,Object> dep = null;
+        //zeiger auf Abteilungs-Collection
+        DBCollection coll = this.getCollection("Departments10");
+        //Datenbankzeiger mittels Such-Query auf das Abteilungs
+        //Dokument zeigen lassen
+        DBCursor cursor = coll.find(
+                new BasicDBObject(
+                        this.getKeyDepartmentId(),
+                        id
+                )
+        );
+        //prüfen ob etwas gefunden wurde
+        if(cursor.hasNext()){
+            //erzeuge Benutzer Map anhand des Datenbank-Dokuments
+            dep = this.cursorNextToDepartmentMap(cursor);
+        }
+        //zeiger löschen
+        cursor.close();
+        //Benutzer (oder wenn nicht vorhanden NULL) zurückgeben
+        return dep;
+    }
+
+    /**
      * Benutzer Dokument aus der Collection entfernen
      * @param id int
      */
@@ -468,15 +497,25 @@ public class MongoDbPersistance implements IPersistance{
      */
     @Override
     public void upsertDepartment(Map<String, Object> dep){
-        //Laden der Abteilung Collection
-        DBCollection coll = this.getCollection("Departments");
-        //Map zu BasicDBOject konvertieren
-        BasicDBObject doc = this.departmentToBasicDBObject(dep);
-        //sucher query nach id erzeugen
-        BasicDBObject serach = new BasicDBObject(
-                this.getKeyDepartmentId(),dep.get(this.getKeyDepartmentId()));
-        //Dokument in der Collection ändern
-        coll.update(serach,doc);
+        //versuchen die Abteilung zu laden um zu prüfen ob sie existiert
+        Map<String,Object> d = this.getDepartmentById((int)dep.get(this.getKeyDepartmentId()));
+        //prüfen ob existiert
+        if(d != null){
+            //konvertieren der Abteilungs Map in ein BasicDBObject
+            BasicDBObject doc = this.departmentToBasicDBObject(dep);
+            //erstellen des Such-Queries
+            BasicDBObject search = new BasicDBObject(
+                    this.getKeyDepartmentId(),
+                    dep.get(this.getKeyDepartmentId())
+            );
+            //Zeiger auf Abteilungs-Collection laden
+            DBCollection coll = this.getCollection("Departments");
+            //update an gefundenem Dokument durchführen
+            coll.update(search,doc);
+        }else{
+            //erstellen eines neues Benutzers
+            this.createDepartment(dep.get(this.getKeyDepartmentName()) + "");
+        }
     }
 
     /**
@@ -494,6 +533,33 @@ public class MongoDbPersistance implements IPersistance{
         coll.remove(doc);
     }
 
+    /**
+     * Erstellen einer Abteilungs Map mittel eines Datenbankzeigers
+     *
+     * @notice  Die Methode bewegt den Datenbankzeiger (cursor) eine Position
+     *          nach vorn
+     * @param cursor DBCursor
+     * @return Map<String,Object>
+     */
+    private Map<String,Object> cursorNextToDepartmentMap(DBCursor cursor){
+        //aktuelles Dokument in den Scope laden und Zeiger einen weiter bewegen
+        DBObject tmp = cursor.next();
+        //leere map für die Abteilung initialisieren
+        Map<String, Object> map = new HashMap<>();
+        //Abteilungs id
+        int id = Integer.parseInt(tmp.toMap().get(this.getKeyDepartmentId()).toString());
+        //Abteilungs Map füllen
+        map.put(this.getKeyDepartmentId(),id);
+        map.put(this.getKeyDepartmentName(),tmp.toMap().get(
+                this.getKeyDepartmentName()
+        ).toString());
+
+        //Anzahl der Benutzer in dieser Abteilung ermitten
+        int amount = getUserAmount(id);
+        //Anzahl der Map hinzufügen
+        map.put(this.getKeyDepartmentAmount(),amount);
+        return map;
+    }
 
     /**
      * Gibt eine Liste aller Abteilungen zurück
@@ -511,25 +577,8 @@ public class MongoDbPersistance implements IPersistance{
         try {
             //Collection durchlaufen
             while(cursor.hasNext()) {
-                //aktuelles Dokument in den Scope laden und Zeiger einen weiter bewegen
-                DBObject tmp = cursor.next();
-                //leere map für die Abteilung initialisieren
-                Map<String, Object> map = new HashMap<>();
-                //Abteilungs id
-                int id = Integer.parseInt(tmp.toMap().get(this.getKeyDepartmentId()).toString());
-                //Abteilungs Map füllen
-                map.put(this.getKeyDepartmentId(),id);
-                map.put(this.getKeyDepartmentName(),tmp.toMap().get(
-                        this.getKeyDepartmentName()
-                ).toString());
-
-                //Anzahl der Benutzer in dieser Abteilung ermitten
-                int amount = getUserAmount(id);
-                //Anzahl der Map hinzufügen
-                map.put(this.getKeyDepartmentAmount(),amount);
-
                 //Abteilungs map der Liste hinzufügen
-                list.add(map);
+                list.add(cursorNextToDepartmentMap(cursor));
             }
         } finally {
             cursor.close();
