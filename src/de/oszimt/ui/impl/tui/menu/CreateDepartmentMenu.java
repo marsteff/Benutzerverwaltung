@@ -27,7 +27,7 @@ public class CreateDepartmentMenu extends Menu {
 
     @Override
     protected void buildMenu() {
-        Helper.writeHeader("Neue Abteilung anlegen");
+        Helper.writeHeader(FIELDNAME);
 
         Helper.print("Name: ");
         String name = Helper.readString();

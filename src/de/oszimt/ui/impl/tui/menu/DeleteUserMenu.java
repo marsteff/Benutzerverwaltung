@@ -13,7 +13,7 @@ import static org.fusesource.jansi.Ansi.Color.RED;
  * Created by m588 on 24.10.2014.
  */
 public class DeleteUserMenu extends Menu {
-    public static final String FIELDNAME = "Benutzer loeschen";
+    public static final String FIELDNAME = "Benutzer löschen";
     public static final int priority = 30;
 
     public DeleteUserMenu(MenuBuilder builder) {
@@ -23,7 +23,7 @@ public class DeleteUserMenu extends Menu {
     @Override
     protected void buildMenu() {
         Helper.clean();
-        Helper.writeHeader("Benutzer löschen");
+        Helper.writeHeader(FIELDNAME);
         if(message.length() > 0){
             Helper.println(color,message);
         }

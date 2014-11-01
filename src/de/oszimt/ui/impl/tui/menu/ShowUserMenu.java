@@ -23,7 +23,7 @@ public class ShowUserMenu extends Menu {
     protected void buildMenu() {
         Helper.clean();
 
-        Helper.writeHeader("Kunden anzeigen");
+        Helper.writeHeader(FIELDNAME);
         if(message.length() > 0){
             Helper.println(color, message);
         }

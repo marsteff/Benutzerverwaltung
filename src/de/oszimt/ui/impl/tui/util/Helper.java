@@ -318,9 +318,10 @@ public class Helper {
         printTable(table);
     }
 
-    public static int printGetUserId(){
-        int user_id;
-        print("Bitte geben Sie die Kunden ID ein (z=zurück): ");
+
+    public static int printGetId(String label){
+        int id;
+        print("Bitte geben Sie die " + label + " ID ein (z=zurück): ");
         String inpString = readString();
 
         if (inpString.trim().compareTo("z") == 0) {
@@ -328,12 +329,21 @@ public class Helper {
         }
 
         try {
-            user_id = Integer.parseInt(inpString);
+            id = Integer.parseInt(inpString);
         } catch (NumberFormatException e) {
-            user_id = -1;
+            id = -1;
         }
-        return user_id;
+        return id;
     }
+
+    public static int printGetUserId(){
+        return printGetId("Benutzer");
+    }
+
+    public static int printGetDepartmentId(){
+        return  printGetId("Abteilungs");
+    }
+
 
     private static void printTable(String[][] table) {
 

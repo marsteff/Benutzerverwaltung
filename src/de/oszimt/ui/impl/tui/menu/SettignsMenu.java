@@ -24,7 +24,7 @@ public class SettignsMenu extends Menu {
     protected void buildMenu() {
         Helper.clean();
 
-        Helper.writeHeader("Einstellungen");
+        Helper.writeHeader(FIELDNAME);
         String[] StettingLabels = {
                 "Alle Kunden löschen",
                 "Zufalls Kunden erstellen",

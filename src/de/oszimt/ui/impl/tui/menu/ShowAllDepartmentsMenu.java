@@ -22,6 +22,7 @@ public class ShowAllDepartmentsMenu extends Menu {
     @Override
     protected void buildMenu() {
         Helper.clean();
+        Helper.writeHeader(FIELDNAME);
         Helper.print("Anzahl der Benutzer pro Seite (5):");
         String entriesPerPageStr = Helper.readString();
         int entiresPerPage = 5;

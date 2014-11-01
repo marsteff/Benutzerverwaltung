@@ -31,11 +31,9 @@ public class EditUserMenu extends Menu {
     }
 
     private void buildMenu(int user_id){
-        Ansi.Color color = getColor();
-        String message = getMessage();
         Helper.clean();
         boolean errorshown = false;
-        Helper.writeHeader("Kunden bearbeiten");
+        Helper.writeHeader(FIELDNAME);
         if(user_id < 0) {
             if (message.length() > 0) {
                 Helper.println(color, message);

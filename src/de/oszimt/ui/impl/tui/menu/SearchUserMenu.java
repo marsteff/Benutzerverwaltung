@@ -220,7 +220,7 @@ public class SearchUserMenu extends Menu {
             }
         });
         Helper.println("Filter ändern (1), Neue Suche(2), zum Hauptmenü (3)");
-        int option = -1;
+        int option;
         boolean first = true;
         do {
             if(first){

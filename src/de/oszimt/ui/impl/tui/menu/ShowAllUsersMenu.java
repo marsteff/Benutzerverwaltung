@@ -8,6 +8,7 @@ import de.oszimt.ui.impl.tui.util.Helper;
 import jdk.nashorn.internal.ir.LiteralNode;
 import org.fusesource.jansi.Ansi;
 
+import javax.ws.rs.HEAD;
 import java.util.List;
 
 /**
@@ -37,6 +38,7 @@ public class ShowAllUsersMenu extends Menu {
 
     protected void buildMenu(int entriesPerPage, int page, List<User> userList){
         Helper.clean();
+        Helper.writeHeader(FIELDNAME);
         String[] labels = Helper.ArrayMerge(new String[]{"id"},entrys);
         Helper.buildTable(userList, entriesPerPage, page, labels, new Helper.entryToTableRow<User>() {
             @Override

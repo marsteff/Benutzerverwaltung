@@ -18,7 +18,7 @@ import static org.fusesource.jansi.Ansi.Color.RED;
  * Created by m588 on 24.10.2014.
  */
 public class CreateUserMenu extends Menu {
-    public static final String FIELDNAME = "Benutzer anlegen";
+    public static final String FIELDNAME = "Neuen Benutzer anlegen";
     public static final int priority = 0;
 
     public CreateUserMenu(MenuBuilder builder) {
@@ -27,7 +27,7 @@ public class CreateUserMenu extends Menu {
 
     @Override
     protected void buildMenu() {
-        Helper.writeHeader("Neuen Benutzer anlegen");
+        Helper.writeHeader(FIELDNAME);
         //TODO - at first i make it a lot ugly .. then i think to make it more comfortable
         String firstname = Helper.toShortUgly(0, entrys);
         String lastname = Helper.toShortUgly(1, entrys);
