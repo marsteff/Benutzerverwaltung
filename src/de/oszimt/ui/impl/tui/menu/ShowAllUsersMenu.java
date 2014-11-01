@@ -35,7 +35,12 @@ public class ShowAllUsersMenu extends Menu {
 
     protected void buildMenu(int entriesPerPage, int page, List<User> userList){
         Helper.clean();
-        Helper.buildUserTable(userList,entriesPerPage,page, entrys);
+        Helper.buildTable(userList, entriesPerPage, page, entrys, new Helper.entryToTableRow<User>() {
+            @Override
+            public String[] toArray(User entry) {
+                return Helper.userParameterToArray(entry);
+            }
+        });
         Helper.print("Seite " + (page + 1) + "/" + (int) Math.ceil( userList.size() / (double) entriesPerPage) + " (0: Zurück):");
         String pageStr = Helper.readString();
         try {

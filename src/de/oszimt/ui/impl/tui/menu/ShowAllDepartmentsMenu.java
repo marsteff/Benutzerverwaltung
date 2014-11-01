@@ -35,7 +35,18 @@ public class ShowAllDepartmentsMenu extends Menu {
 
     protected void buildMenu(int entriesPerPage, int page, List<Department> depList){
         Helper.clean();
-        Helper.buildDepartmentTable(depList,entriesPerPage,page);
+        Helper.buildTable(
+                depList,
+                entriesPerPage,
+                page,
+                new String[]{"ID","Name"},
+                new Helper.entryToTableRow<Department>(){
+                    @Override
+                    public String[] toArray(Department entry) {
+                        return new String[]{entry.getId() + "",entry.getName()};
+                    }
+                }
+        );
         Helper.print("Seite " + (page + 1) + "/" + (int) Math.ceil( depList.size() / (double) entriesPerPage) + " (0: Zurück):");
         String pageStr = Helper.readString();
         try {

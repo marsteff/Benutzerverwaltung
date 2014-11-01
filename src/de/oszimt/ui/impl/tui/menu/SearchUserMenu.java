@@ -209,7 +209,12 @@ public class SearchUserMenu extends Menu {
         }
 
         List<User> userList = Helper.searchUsers(user, this.getConcept().getAllUser());
-        Helper.buildUserTable(userList, userList.size(), 0, entrys);
+        Helper.buildTable(userList, userList.size(), 0, entrys, new Helper.entryToTableRow<User>() {
+            @Override
+            public String[] toArray(User entry) {
+                return Helper.userParameterToArray(entry);
+            }
+        });
         Helper.println("Filter ändern (1), Neue Suche(2), zum Hauptmenü (3)");
         int option = -1;
         boolean first = true;
