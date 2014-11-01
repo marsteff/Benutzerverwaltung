@@ -5,6 +5,7 @@ import de.oszimt.model.User;
 import de.oszimt.ui.impl.tui.Menu;
 import de.oszimt.ui.impl.tui.MenuBuilder;
 import de.oszimt.ui.impl.tui.util.Helper;
+import de.oszimt.util.Validation;
 import org.fusesource.jansi.Ansi;
 
 import java.time.DateTimeException;
@@ -66,10 +67,10 @@ public class CreateUserMenu extends Menu {
             if(zipCode.trim().compareTo(abort+"") == 0){
                 return -1;
             }
-            if(zipCode.trim().matches("^\\d+$")){
+            if(Validation.checkIfZipCode(zipCode)){
                 return Integer.parseInt(zipCode.trim());
             }else{
-                Helper.println(RED,"PLZ darf nur Zahlen enthalten!");
+                Helper.println(RED,"PLZ kann nur aus 5 Zahlen bestehen!");
             }
         }while (true);
     }

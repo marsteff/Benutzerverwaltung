@@ -13,7 +13,7 @@ public class Validation {
     }
 
     public static boolean checkIfZipCode(String text) {
-        return text.matches("[\\d]{5}");
+        return text.matches("^[\\d]{5}$");
     }
 
     public static boolean checkIfStreetnr(String text) {
