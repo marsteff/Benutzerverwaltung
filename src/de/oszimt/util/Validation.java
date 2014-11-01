@@ -21,6 +21,6 @@ public class Validation {
     }
 
     public static boolean checkIfStreet(String text) {
-        return text.matches("[\\w|\\s|Ä-Üä-ü|ß|\\-|é|è|ê|ú|ù|û|í|ì|î|á|à|â|ó|ò|ô]*");
+        return text.matches("[\\w|\\s|Ä-Üä-ü|ß|\\-|é|è|ê|ú|ù|û|í|ì|î|á|à|â|ó|ò|ô|.]*");
     }
 }
