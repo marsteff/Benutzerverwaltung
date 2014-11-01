@@ -25,8 +25,12 @@ public class ShowAllUsersMenu extends Menu {
     @Override
     protected void buildMenu() {
         Helper.clean();
-        Helper.print("Anzahl der Benutzer pro Seite (5):");
+        Helper.print("Anzahl der Benutzer pro Seite (z=zurück):");
         String entriesPerPageStr = Helper.readString();
+        if(entriesPerPageStr.trim().compareTo("z") == 0){
+            builder.setActualState(new MainMenu(builder));
+            return;
+        }
         int entiresPerPage = 5;
         try {
             entiresPerPage = new Integer(entriesPerPageStr);

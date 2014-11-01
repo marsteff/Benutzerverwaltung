@@ -27,13 +27,15 @@ public class CreateDepartmentMenu extends Menu {
 
     @Override
     protected void buildMenu() {
+        Helper.clean();
         Helper.writeHeader(FIELDNAME);
-
-        Helper.print("Name: ");
+        Helper.print("Name (z=zurück): ");
         String name = Helper.readString();
+        if(name.trim().compareTo("z") == 0){
+            builder.setActualState(new MainMenu(builder));
+            return;
+        }
         concept.createDepartment(name);
-
-        //TODO Rückmeldung ob erfolgreich oder nicht ausgeben?
         builder.setActualState(new MainMenu(builder,"Abteilung '" + name + "' hinzufügt",GREEN));
     }
 }
