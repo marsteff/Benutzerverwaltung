@@ -94,7 +94,7 @@
                                                 <graphic>
                                                     <ImageView fitWidth="21" preserveRatio="true" smooth="true">
                                                         <image>
-                                                            <Image url="@../img/apply.png" />
+                                                            <Image url="@img/apply.png" />
                                                         </image>
                                                     </ImageView>
                                                 </graphic>
@@ -103,7 +103,7 @@
                                                 <graphic>
                                                     <ImageView fitWidth="21" preserveRatio="true" smooth="true">
                                                         <image>
-                                                            <Image url="@../img/cancel.png" />
+                                                            <Image url="@img/cancel.png" />
                                                         </image>
                                                     </ImageView>
                                                 </graphic>
@@ -128,7 +128,7 @@
                                                 <graphic>
                                                     <ImageView fitWidth="21" preserveRatio="true" smooth="true">
                                                         <image>
-                                                            <Image url="@../img/leftArrow.png" />
+                                                            <Image url="@img/leftArrow.png" />
                                                         </image>
                                                     </ImageView>
                                                 </graphic>
@@ -205,7 +205,7 @@
                             </VBox>
                         </top>
                         <center>
-                            <TableView fx:id="departmentTableView">
+                            <TableView fx:id="departmentTableView" >
                                 <columns>
                                     <TableColumn text="Abteilung" fx:id="departmentNameColumn">
                                         <cellValueFactory>

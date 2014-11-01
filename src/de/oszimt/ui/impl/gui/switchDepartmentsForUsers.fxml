@@ -1,0 +1,29 @@
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Label?>
+<StackPane fx:id="rootPane" fx:controller="de.oszimt.ui.impl.gui.EraseDepartmentController" xmlns:fx="http://javafx.com/fxml">
+    <VBox>
+        <HBox>
+            <RadioButton/>
+            <StackPane>
+                <TableView>
+
+                </TableView>
+            </StackPane>
+        </HBox>
+        <HBox>
+            <RadioButton/>
+            <StackPane>
+                <Label text="Alle Benutzer folgender Abteilung zuordnen" />
+            </StackPane>
+        </HBox>
+        <HBox>
+            <RadioButton/>
+            <StackPane>
+                <Label text="Allen Benutzer die Abteilung entfernen" />
+            </StackPane>
+        </HBox>
+    </VBox>
+
+</StackPane>
