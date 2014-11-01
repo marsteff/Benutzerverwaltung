@@ -155,6 +155,8 @@ public interface IPersistance {
      */
 	List<Map<String,Object>> getAllUser();
 
+    Map<String,Object> getDepartmentById(int id);
+
     /**
      * Neue Abteilung erzeugen
      * @param name String

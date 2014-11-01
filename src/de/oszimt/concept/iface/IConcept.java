@@ -67,6 +67,8 @@ public interface IConcept {
      */
     void upsertDepartment(Department department);
 
+    Department getDepartmentById(int id);
+
     /**
      * //TODO Text erstellen
      * @param department

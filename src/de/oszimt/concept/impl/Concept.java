@@ -271,6 +271,11 @@ public class Concept implements IConcept {
     }
 
     @Override
+    public Department getDepartmentById(int id){
+        return depMapToDepartment(this.database.getDepartmentById(id));
+    }
+
+    @Override
     public void deleteDepartment(Department department) {
         this.database.deleteDepartment(department.getId());
     }

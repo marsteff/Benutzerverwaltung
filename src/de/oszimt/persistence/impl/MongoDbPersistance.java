@@ -278,6 +278,7 @@ public class MongoDbPersistance implements IPersistance{
      * @param id int
      * @return Map<String,Object>
      */
+    @Override
     public Map<String,Object> getDepartmentById(int id){
         //leere Map inialisieren
         Map<String,Object> dep = null;

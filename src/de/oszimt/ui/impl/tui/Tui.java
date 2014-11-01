@@ -1,6 +1,7 @@
 package de.oszimt.ui.impl.tui;
 
 import de.oszimt.concept.iface.IConcept;
+import de.oszimt.model.Department;
 import de.oszimt.ui.iface.UserInterface;
 
 /**

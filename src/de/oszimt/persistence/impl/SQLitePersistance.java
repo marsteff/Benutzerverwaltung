@@ -379,16 +379,8 @@ public class SQLitePersistance implements IPersistance {
             ResultSet rs = stmt.executeQuery(sql);
             //Ergebniss durchlaufen, Zeiger Iteration
             while(rs.next()){
-                //Neue Map für Zwischenergenis initialisieren
-                Map<String,Object> dep = new HashMap<String, Object>();
-                //Abteilungs Id der Map hinzufügen
-                dep.put(this.getKeyDepartmentId(),rs.getInt(this.getKeyDepartmentId()));
-                //AbteilungS Name der Map hinzufügen
-                dep.put(this.getKeyDepartmentName(),rs.getString(this.getKeyDepartmentName()));
-                //Anzahl der Mitarbeiter in einer Abteilung hinzufügen
-                dep.put(this.getKeyDepartmentAmount(),rs.getInt(this.getKeyDepartmentAmount()));
                 //Zwischenergebniss der Liste hinzufügen
-                list.add(dep);
+                list.add(departmentResultToDepartmentMap(rs));
             }
             //Ergebinss schließen
             rs.close();
@@ -401,6 +393,18 @@ public class SQLitePersistance implements IPersistance {
             this.closeConnection(con, stmt);
         }
         return list;
+    }
+
+    private Map<String, Object> departmentResultToDepartmentMap(ResultSet rs) throws SQLException {
+        //Neue Map für Zwischenergenis initialisieren
+        Map<String,Object> dep = new HashMap<String, Object>();
+        //Abteilungs Id der Map hinzufügen
+        dep.put(this.getKeyDepartmentId(),rs.getInt(this.getKeyDepartmentId()));
+        //AbteilungS Name der Map hinzufügen
+        dep.put(this.getKeyDepartmentName(),rs.getString(this.getKeyDepartmentName()));
+        //Anzahl der Mitarbeiter in einer Abteilung hinzufügen
+        dep.put(this.getKeyDepartmentAmount(),rs.getInt(this.getKeyDepartmentAmount()));
+        return  dep;
     }
 
     /**
@@ -548,6 +552,43 @@ public class SQLitePersistance implements IPersistance {
         //Liste zurückgeben
 		return list;
 	}
+
+    @Override
+    public Map<String, Object> getDepartmentById(int id) {
+        String sql;
+        //Verbindungsaufbau
+        Connection con = this.getConnection();
+        //Statement Variable initialisieren
+        Statement stmt = null;
+        try {
+            //neues Statement erzeugeb
+            stmt = con.createStatement();
+            //Abfrage, unter Berüchksichtiung der gegebenen Keynamen, definieren
+            sql = "select Department.id,Department.name,sub.amount " +
+                    "from Department " +
+                    "left join ( " +
+                    "select department_id, count(1) as amount " +
+                    "from User " +
+                    "group by department_id " +
+                    ") sub " +
+                    "on Department.id = sub.department_id " +
+                    "WHERE Department." + this.getKeyDepartmentId() + " = '" + id + "';";
+            //Abfrage ausführen, Reffereze auf Ergebnis entgegennehmen
+            ResultSet rs = stmt.executeQuery(sql);
+            //Gibt es ein Ergebnis?
+            if(rs.next()){
+                //Ergebnis in eine Map umwandeln und zturückgeben
+                return this.departmentResultToDepartmentMap(rs);
+            }
+            //Fehlerbehandlung
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+            //Verbindung schließen (auch im Fehlerfall)
+        } finally{
+            this.closeConnection(con, stmt);
+        }
+        return null;
+    }
 
     /**
      * Wandelt ein ResultSet in eine Benutzer Map um
