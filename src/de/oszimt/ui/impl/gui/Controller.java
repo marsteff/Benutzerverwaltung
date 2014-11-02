@@ -18,15 +18,21 @@ import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -387,6 +393,7 @@ public class Controller {
         task.setOnSucceeded(e -> {
             rootPane.getChildren().remove(glass);
             searchInTable();
+            searchInDepartmentTable();
             setSuccedMessage("Zufallsnutzer erfolgreich erstellt!");
         });
 	}
@@ -546,11 +553,38 @@ public class Controller {
     private void deleteDepartment(){
         Department department = departmentTableView.getSelectionModel().getSelectedItem();
         if(department != null) {
-            //TODO wenn Anzahl der Mitarbeiter in der Abteilung steckt, kann das durchsuchen der User Liste mit dem If Statement ausgetauscht werden$
-            //if(department.getAmount() > 0){
-            List<User> userList = this.gui.getConcept().getAllUser();
-            if(userList.parallelStream().anyMatch(user -> user.getDepartment().equals(department))){
-                setErrorMessage("Der Abteilung sind noch Benutzer zugeordnet und kann daher nicht gelöscht werden");
+            if(department.getAmount() > 0){
+                //TODO - Department Teil Überdecken oder neues Fenster aufmachen ? das ist hier die Frage ...
+                Parent root;
+                try{
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("switchDepartmentsForUsers.fxml"));
+                    root = loader.load();
+
+                    EraseDepartmentController contr = loader.getController();
+                    contr.setGui(this.gui);
+                    contr.setEraseDepartment(department);
+
+                    Stage stage = new Stage();
+                    stage.initModality(Modality.WINDOW_MODAL);
+                    stage.initOwner(customerTable.getScene().getWindow());
+                    stage.setTitle("Abteilungszuweisung");
+                    stage.setScene(new Scene(root, 400, 450));
+                    stage.setResizable(false);
+                    stage.showAndWait();
+
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+                if(this.getGui().getConcept().getAllUser().stream().noneMatch(e -> e.getDepartment().equals(department)))
+                    this.getGui().getConcept().deleteDepartment(department);
+
+                //Daten neu aus DB laden um konsistenz gewährleisten zu können
+                searchInDepartmentTable();
+                searchInTable();
+                customerTable.getColumns().get(0).setVisible(false);
+                customerTable.getColumns().get(0).setVisible(true);
+                this.setSuccedMessage("");
+
                 return;
             }
             this.gui.getConcept().deleteDepartment(department);
