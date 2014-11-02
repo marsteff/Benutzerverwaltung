@@ -4,6 +4,8 @@ import de.oszimt.concept.iface.IConcept;
 import de.oszimt.model.Department;
 import de.oszimt.ui.iface.UserInterface;
 
+import java.util.stream.Collectors;
+
 /**
  * Created by user on 17.09.2014.
  */
@@ -16,6 +18,7 @@ public class Tui implements UserInterface {
     }
 
     private void showMainMenu(IConcept concept) {
+
         MenuBuilder builder = new MenuBuilder(concept);
         while(true) {
             builder.buildMenu();

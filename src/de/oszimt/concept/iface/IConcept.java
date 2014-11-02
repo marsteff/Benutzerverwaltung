@@ -69,6 +69,8 @@ public interface IConcept {
 
     Department getDepartmentById(int id);
 
+    List<User> getUsersByDepartment(Department dep);
+
     /**
      * löscht eine Abteilung
      * @param department

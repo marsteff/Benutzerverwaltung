@@ -554,6 +554,50 @@ public class SQLitePersistance implements IPersistance {
 	}
 
     @Override
+    public List<Map<String, Object>> getUsersByDepartmentId(int id) {
+        String sql;
+        //Verbindungsaufbau
+        Connection con = this.getConnection();
+        //Statement Variable initialisieren
+        Statement stmt = null;
+        List<Map<String, Object>> users = new ArrayList<>();
+        try {
+            //neues Statement erzeugeb
+            stmt = con.createStatement();
+            //Abfrage, unter Berüchksichtiung der gegebenen Keynamen, definieren
+            sql = "SELECT " +
+                    "User." + this.getKeyUserId() + ", " +
+                    "User." + this.getKeyUserFirstname() + ", " +
+                    "User." + this.getKeyUserLastname() + ", " +
+                    "User." + this.getKeyUserCity() + ", " +
+                    "User." + this.getKeyUserStreet() + ", " +
+                    "User." + this.getKeyUserStreetNr() + ", " +
+                    "User." + this.getKeyUserZipCode() + ", " +
+                    "User." + this.getKeyUserBirthday() + ", " +
+                    "Department." + this.getKeyDepartmentId() + " as department_id, " +
+                    "Department." + this.getKeyDepartmentName() + " as " + this.getKeyDepartmentName() + " " +
+                    "FROM User " +
+                    "LEFT JOIN Department ON User.department_id" +
+                    " = Department." + this.getKeyDepartmentId() + " " +
+                    "WHERE User.department_id = '" + id + "';";
+            //Abfrage ausführen, Reffereze auf Ergebnis entgegennehmen
+            ResultSet rs = stmt.executeQuery(sql);
+            //Gibt es ein Ergebnis?
+            while(rs.next()){
+                //Ergebnis in eine Map umwandeln und zturückgeben
+                users.add(this.userResultSetToUserMap(rs));
+            }
+            //Fehlerbehandlung
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+            //Verbindung schließen (auch im Fehlerfall)
+        } finally{
+            this.closeConnection(con, stmt);
+        }
+        return users.size() == 0 ? null : users;
+    }
+
+    @Override
     public Map<String, Object> getDepartmentById(int id) {
         String sql;
         //Verbindungsaufbau

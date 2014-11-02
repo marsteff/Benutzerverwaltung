@@ -444,6 +444,36 @@ public class MongoDbPersistance implements IPersistance{
     }
 
     /**
+     * Gibt eine Liste alle Benutzer (Maps) die einer Abteilungs IDs zugeordnet sind, zurück
+     * @return List<Map<String,Object>>
+     */
+    @Override
+    public List<Map<String, Object>> getUsersByDepartmentId(int id) {
+        //leere Map List inialisieren
+        List<Map<String, Object>> users = new ArrayList<>();
+        //zeiger auf Benutzer-Collection laden
+        DBCollection coll = this.getCollection("Users");
+        //Datenbankzeiger mittels Such-Query auf das Benutzer
+        //Dokument zeigen lassen
+        DBCursor cursor = coll.find(
+                new BasicDBObject(
+                        "department_id",
+                        id
+                )
+        );
+        //prüfen ob etwas gefunden wurde
+        while(cursor.hasNext()){
+            //erzeuge Benutzer Map anhand des Datenbank-Dokuments und
+            //füge es der Liste hinzu
+            users.add(this.cursorNextToUserMap(cursor));
+        }
+        //zeiger löschen
+        cursor.close();
+        //Benutzer Liste (oder wenn nicht vorhanden NULL) zurückgeben
+        return users.size() == 0 ? null : users;
+    }
+
+    /**
      * Anbeilungs Map zu BasicDBObject konvertieren
      * @param dep Map<String,Object>
      * @return BasicDBObject

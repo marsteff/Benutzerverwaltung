@@ -276,6 +276,11 @@ public class Concept implements IConcept {
     }
 
     @Override
+    public List<User> getUsersByDepartment(Department dep) {
+        return this.database.getUsersByDepartmentId(dep.getId()).stream().map(this::userMapToUser).collect(Collectors.toList());
+    }
+
+    @Override
     public void deleteDepartment(Department department) {
         this.database.deleteDepartment(department.getId());
     }

@@ -129,7 +129,7 @@ public class Department {
      * @see http://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function
      */
     public int hashCode() {
-        int x = id.hashCode();
+        int x = id.intValue();
         int y = name.hashCode();
         return (1/2)*(x+y)*(x+y+1)+y;
     }

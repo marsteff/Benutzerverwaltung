@@ -155,6 +155,17 @@ public interface IPersistance {
      */
 	List<Map<String,Object>> getAllUser();
 
+    /**
+     * Gibt eine Liste alle Benutzer (Maps) die einer Abteilungs IDs zugeordnet sind, zurück
+     * @return List<Map<String,Object>>
+     */
+    List<Map<String,Object>> getUsersByDepartmentId(int id);
+
+    /**
+     * Gibt eine Abteilung (Map) anhand ihrer ID
+     * @param id
+     * @return
+     */
     Map<String,Object> getDepartmentById(int id);
 
     /**
