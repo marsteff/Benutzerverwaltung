@@ -5,7 +5,6 @@ import de.oszimt.model.User;
 import de.oszimt.ui.impl.tui.Menu;
 import de.oszimt.ui.impl.tui.MenuBuilder;
 import de.oszimt.ui.impl.tui.util.Helper;
-import org.fusesource.jansi.Ansi;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -125,7 +124,7 @@ public class EditUserMenu extends Menu {
             case 5:
                 Helper.print("Neuen Wert fuer " + entrys[input - 1] + " eingeben: ");
                 value = Helper.readString();
-                user.setPLZ(Integer.parseInt(value));
+                user.setZipcode(Integer.parseInt(value));
                 break;
 
             //Strasse

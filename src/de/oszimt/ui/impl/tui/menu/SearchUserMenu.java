@@ -153,9 +153,9 @@ public class SearchUserMenu extends Menu {
                     value = Helper.readString();
                     if(value.trim().compareTo("-") == 0){
 
-                        user.setPLZ(tmp.getZipcode());
+                        user.setZipcode(tmp.getZipcode());
                     }else{
-                        user.setPLZ(Integer.parseInt(value));
+                        user.setZipcode(Integer.parseInt(value));
                     }
                     break;
 
