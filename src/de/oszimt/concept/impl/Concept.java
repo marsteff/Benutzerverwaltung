@@ -149,26 +149,21 @@ public class Concept implements IConcept {
      * @return
      */
     private Map<String,Object> userToUserMap(User user){
-        //Datenhaltungsreffernce in keys speicher (erspart schreibarbeit)
-        IPersistance keys = this.db;
         //erstellen einer Map, hier Hashmap um put nutzen zu können
-        Map<String, Object> userMap = new HashMap<String, Object>();
+        Map<String, Object> userMap = new HashMap<>();
         //map für Abteilung erstellen
-        Map<String, Object> depMap = this.departmentToDepMap(
-                user.getDepartment()
-        );
+        Map<String, Object> depMap = this.departmentToDepMap(user.getDepartment());
         //hinzufügen der Werte mittel, in der Datenhaltundschicht,
         //definierten Keys
-        userMap.put(keys.getKeyUserId(),user.getId());
-        userMap.put(keys.getKeyUserFirstname(),user.getFirstname());
-        userMap.put(keys.getKeyUserLastname(),user.getLastname());
-        userMap.put(keys.getKeyUserBirthday(),user.getBirthday());
-        userMap.put(keys.getKeyUserCity(),user.getCity());
-        userMap.put(keys.getKeyUserStreet(),user.getStreet());
-        userMap.put(keys.getKeyUserStreetNr(),user.getStreetnr());
-        userMap.put(keys.getKeyUserZipCode(),user.getZipcode());
-        userMap.put(keys.getKeyUserDepartment(),depMap);
-
+        userMap.put(db.getKeyUserId(),user.getId());
+        userMap.put(db.getKeyUserFirstname(),user.getFirstname());
+        userMap.put(db.getKeyUserLastname(),user.getLastname());
+        userMap.put(db.getKeyUserBirthday(),user.getBirthday());
+        userMap.put(db.getKeyUserCity(),user.getCity());
+        userMap.put(db.getKeyUserStreet(),user.getStreet());
+        userMap.put(db.getKeyUserStreetNr(),user.getStreetnr());
+        userMap.put(db.getKeyUserZipCode(),user.getZipcode());
+        userMap.put(db.getKeyUserDepartment(),depMap);
         return userMap;
     }
 
