@@ -13,6 +13,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Diese Klasse bildet das Fachkonzept der Anwendung ab.
+ * Sie schafft die Verbindung zwischen Anzeige (UI) und der
+ * Datenhaltung.
+ *
+ * Die Datenhaltungsschicht gibt alle Daten als Map wieder.
+ * Die Keys sind in den Datenhaltungsklassen hinterlegt IPersistens.getKey[..]()
+ *
+ * Das Fachkonzept wandet die Maps in Java Objekte um (de.oszimt.model)
+ *
+ * Weiterhin hält das Fachkonzept eine Instance einer Datenhaltungsklasse
+ */
 public class Concept implements IConcept {
 
     /**
@@ -28,7 +40,6 @@ public class Concept implements IConcept {
     /**
      * Konstruktor, bekommnt eine Datenhaltungs Klasse
      * übergeben
-     *
      * @param db
      */
     public Concept(IPersistance db){
@@ -50,7 +61,6 @@ public class Concept implements IConcept {
 
     /**
      * Löscht einen Benutzer aus der Datenhaltung
-     *
      * @param user
      * @return
      */
@@ -65,7 +75,6 @@ public class Concept implements IConcept {
      * trägt in ein Benutzer Object konvertiert. Die Bezeichungen der
      * einzelnen Felder sind in der Datenhaltung festgelegt und können
      * über die getKey..() Methoden abgefragt werden.
-     *
      * @param userMap
      * @return
      */
@@ -109,7 +118,6 @@ public class Concept implements IConcept {
      * Für die Datenhaltungsschicht werden alle Objecte in Form
      * einer Map mit den ensprechenden Werten benötigt. Hier
      * wir ein Department Object in die entsprechende Map umgewandelt
-     *
      * @param dep
      * @return
      */
@@ -127,7 +135,6 @@ public class Concept implements IConcept {
      * Die Datenhaltungschicht gibt Ihre Resultate immer als
      * Map zurück. Hier wird die Map, einer Abteilung in ein
      * Department Object konvertiert.
-     *
      * @param depMap
      * @return
      */
@@ -144,7 +151,6 @@ public class Concept implements IConcept {
      * Für die Datenhaltungsschicht werden alle Objecte in Form
      * einer Map mit den ensprechenden Werten benötigt. Hier
      * wir ein Benutzer-Object in eine solche Map umgewandelt.
-     *
      * @param user
      * @return
      */
@@ -171,7 +177,6 @@ public class Concept implements IConcept {
      * Erstellt einen Neuen User
      * Benutzer Objekt wird in eine Map umgewandelt und dann
      * zu speichern an die Datenhaltungschicht weitergegeben
-     *
      * @param user
      */
     @Override
@@ -182,7 +187,6 @@ public class Concept implements IConcept {
     /**
      * Erstellt einen Benutzer insofern er noch nicht existsiert, andererseits werden
      * die Benutzerdetails aktualisiert
-     *
      * @param user
      */
     @Override
@@ -198,7 +202,6 @@ public class Concept implements IConcept {
      * @notice Bei Benutzung REST Paramter muss Internet vorhanden sein.
      * Hier wird eine realistische Zuordnung von PLZ zu Stadt generiert.
      * Das Abfragen der Städte geschieht mittels eines REST Services
-     *
      * @param useRest
      */
     @Override
@@ -212,7 +215,6 @@ public class Concept implements IConcept {
     /**
      * Erstllen einer neuen Abteilung
      * wird an die Datenhaltung weitergeleited
-     *
      * @param name
      */
     @Override
@@ -220,21 +222,39 @@ public class Concept implements IConcept {
         this.db.createDepartment(name);
     }
 
+    /**
+     * Erstell eine neue Abteilung oder ändert eine bestehende
+     * @param department
+     */
     @Override
     public void upsertDepartment(Department department) {
         this.db.upsertDepartment(this.departmentToDepMap(department));
     }
 
+    /**
+     * Gibt eine Abteilung anhand ihrer id
+     * @param id
+     * @return
+     */
     @Override
     public Department getDepartmentById(int id){
         return depMapToDepartment(this.db.getDepartmentById(id));
     }
 
+    /**
+     * Gibt eine Liste von Benutzern anhand einer Abteilung
+     * @param dep
+     * @return
+     */
     @Override
     public List<User> getUsersByDepartment(Department dep) {
         return this.db.getUsersByDepartmentId(dep.getId()).stream().map(this::userMapToUser).collect(Collectors.toList());
     }
 
+    /**
+     * Löscht eine Abteilung aus der Datenhaltung
+     * @param department
+     */
     @Override
     public void deleteDepartment(Department department) {
         this.db.deleteDepartment(department.getId());
@@ -242,7 +262,6 @@ public class Concept implements IConcept {
 
     /**
      * Gibt eine Liste aller Abteilungen zurück
-     *
      * @return
      */
     @Override
@@ -253,7 +272,6 @@ public class Concept implements IConcept {
 
     /**
      * Gibt eine Liste aller Benutzer zurück
-     *
      * @return
      */
     @Override
@@ -262,10 +280,8 @@ public class Concept implements IConcept {
         return this.db.getAllUser().stream().map(this::userMapToUser).collect(Collectors.toList());
     }
 
-
     /**
      * Gibt einen einzlnen Benutzer anhand seiner ID zurück
-     *
      * @param id
      * @return
      */
