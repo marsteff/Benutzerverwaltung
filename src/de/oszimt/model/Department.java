@@ -129,15 +129,7 @@ public class Department {
      */
     @Override
     public boolean equals(Object o) {
-//        return o != null && o instanceof Department && this.hashCode() == o.hashCode();
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        Department that = (Department) o;
-
-        if(id.get() != that.id.get() || !name.get().equals(that.name.get())) return false;
-
-        return true;
+        return o != null && o instanceof Department && this.hashCode() == o.hashCode();
     }
 
 
@@ -147,12 +139,8 @@ public class Department {
      */
     @Override
     public int hashCode() {
-//        int x = id.intValue();
-//        int y = name.hashCode();
-//        return (1/2)*(x+y)*(x+y+1)+y;
-
-        int result = id.hashCode();
-        result = 31 * result + name.hashCode();
-        return result;
+        int x = id.get();
+        int y = name.get().hashCode();
+        return (1/2)*(x+y)*(x+y+1)+y;
     }
 }
