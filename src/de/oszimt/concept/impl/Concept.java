@@ -6,10 +6,7 @@ import de.oszimt.model.User;
 import de.oszimt.persistence.iface.IPersistance;
 import de.oszimt.util.Util;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +23,7 @@ public class Concept implements IConcept {
     /**
      * Datenhaltung
      */
-    private IPersistance database;
+    private IPersistance db;
 
     /**
      * Konstruktor, bekommnt eine Datenhaltungs Klasse
@@ -35,7 +32,7 @@ public class Concept implements IConcept {
      * @param db
      */
     public Concept(IPersistance db){
-        this.database = db;
+        this.db = db;
         //Prüfen, ob Departments vorhanden sind, und wenn nicht, erzeugen
         if(this.getAllDepartments().size() < 1){
             Util.createDepartments(this);
@@ -59,7 +56,7 @@ public class Concept implements IConcept {
      */
     @Override
     public void deleteUser(User user){
-        this.database.deleteUser(user.getId());
+        this.db.deleteUser(user.getId());
     }
 
     /**
@@ -78,36 +75,33 @@ public class Concept implements IConcept {
             return null;
         }
 
-        //Datenhaltungsreffernce in keys speicher (erspart Schreibarbeit)
-        IPersistance keys = this.database;
-
         //initialisieren der PLZ
-        int zipCode = Util.readSaveFromMap(userMap,keys.getKeyUserZipCode());
+        int zipCode = Util.readSaveFromMap(userMap, db.getKeyUserZipCode());
 
         //initialisieren des Geburtstages
-        Date bday = Util.readSaveFromMap(userMap,keys.getKeyUserBirthday());
+        Date bday = Util.readSaveFromMap(userMap, db.getKeyUserBirthday());
         LocalDate birthday = Util.DateToLocalDate(bday);
 
         //initialisieren der Abteilungs Map
-        Map department = Util.readSaveFromMap(userMap,keys.getKeyUserDepartment());
+        Map department = Util.readSaveFromMap(userMap, db.getKeyUserDepartment());
 
         //Neuen Benutzer anlegen und mittels des Konstruktor initalisieren
         //containsKey() Abfragen sollen NullPointerExceptions verhindern
         User user = new User(
-                Util.readSaveFromMap(userMap,keys.getKeyUserFirstname()),
-                Util.readSaveFromMap(userMap, keys.getKeyUserLastname()),
+                Util.readSaveFromMap(userMap, db.getKeyUserFirstname()),
+                Util.readSaveFromMap(userMap, db.getKeyUserLastname()),
                 birthday,
-                Util.readSaveFromMap(userMap,keys.getKeyUserCity()),
-                Util.readSaveFromMap(userMap,keys.getKeyUserStreet()),
-                Util.readSaveFromMap(userMap,keys.getKeyUserStreetNr()),
+                Util.readSaveFromMap(userMap, db.getKeyUserCity()),
+                Util.readSaveFromMap(userMap, db.getKeyUserStreet()),
+                Util.readSaveFromMap(userMap, db.getKeyUserStreetNr()),
                 zipCode,
                 new Department(
-                        Util.readSaveFromMap(department,keys.getKeyDepartmentId()),
-                        Util.readSaveFromMap(department,keys.getKeyDepartmentName())
+                        Util.readSaveFromMap(department, db.getKeyDepartmentId()),
+                        Util.readSaveFromMap(department, db.getKeyDepartmentName())
                 )
         );
         //setzen der Benutzer ID
-        user.setId(Util.readSaveFromMap(userMap,keys.getKeyUserId()));
+        user.setId(Util.readSaveFromMap(userMap, db.getKeyUserId()));
         return user;
     }
 
@@ -121,11 +115,11 @@ public class Concept implements IConcept {
      */
     private Map<String,Object> departmentToDepMap(Department dep){
         //erstellen einer Map, hier Hashmap um put nutzen zu können
-        Map<String, Object> depMap = new HashMap<String, Object>();
+        Map<String, Object> depMap = new HashMap<>();
         //hinzufügen der Werte mittel, in der Datenhaltundschicht,
         //definierten Keys
-        depMap.put(this.database.getKeyDepartmentId(),dep.getId());
-        depMap.put(this.database.getKeyDepartmentName(),dep.getName());
+        depMap.put(this.db.getKeyDepartmentId(),dep.getId());
+        depMap.put(this.db.getKeyDepartmentName(),dep.getName());
         return depMap;
     }
 
@@ -139,9 +133,10 @@ public class Concept implements IConcept {
      */
     private Department depMapToDepartment(Map<String,Object> depMap){
         Department dep = new Department(
-                (int)depMap.get(this.database.getKeyDepartmentId()),
-                depMap.get(this.database.getKeyDepartmentName()).toString(),
-                (int)depMap.get(this.database.getKeyDepartmentAmount()));
+                Util.readSaveFromMap(depMap, db.getKeyDepartmentId()),
+                Util.readSaveFromMap(depMap, db.getKeyDepartmentName()),
+                Util.readSaveFromMap(depMap, db.getKeyDepartmentAmount())
+        );
         return dep;
     }
 
@@ -155,7 +150,7 @@ public class Concept implements IConcept {
      */
     private Map<String,Object> userToUserMap(User user){
         //Datenhaltungsreffernce in keys speicher (erspart schreibarbeit)
-        IPersistance keys = this.database;
+        IPersistance keys = this.db;
         //erstellen einer Map, hier Hashmap um put nutzen zu können
         Map<String, Object> userMap = new HashMap<String, Object>();
         //map für Abteilung erstellen
@@ -186,7 +181,7 @@ public class Concept implements IConcept {
      */
     @Override
     public void createUser(User user){
-        this.database.createUser(this.userToUserMap(user));
+        this.db.createUser(this.userToUserMap(user));
     }
 
     /**
@@ -197,7 +192,7 @@ public class Concept implements IConcept {
      */
     @Override
     public void upsertUser(User user){
-        this.database.upsertUser(this.userToUserMap(user));
+        this.db.upsertUser(this.userToUserMap(user));
     }
 
     /**
@@ -227,27 +222,27 @@ public class Concept implements IConcept {
      */
     @Override
     public void createDepartment(String name){
-        this.database.createDepartment(name);
+        this.db.createDepartment(name);
     }
 
     @Override
     public void upsertDepartment(Department department) {
-        this.database.upsertDepartment(this.departmentToDepMap(department));
+        this.db.upsertDepartment(this.departmentToDepMap(department));
     }
 
     @Override
     public Department getDepartmentById(int id){
-        return depMapToDepartment(this.database.getDepartmentById(id));
+        return depMapToDepartment(this.db.getDepartmentById(id));
     }
 
     @Override
     public List<User> getUsersByDepartment(Department dep) {
-        return this.database.getUsersByDepartmentId(dep.getId()).stream().map(this::userMapToUser).collect(Collectors.toList());
+        return this.db.getUsersByDepartmentId(dep.getId()).stream().map(this::userMapToUser).collect(Collectors.toList());
     }
 
     @Override
     public void deleteDepartment(Department department) {
-        this.database.deleteDepartment(department.getId());
+        this.db.deleteDepartment(department.getId());
     }
 
     /**
@@ -258,7 +253,7 @@ public class Concept implements IConcept {
     @Override
     public List<Department> getAllDepartments(){
         //List mit Maps aus Datenhaltung empfangen und alle Elemente in Department Objekte umwandeln
-        return this.database.getAllDepartments().stream().map(this::depMapToDepartment).collect(Collectors.toList());
+        return this.db.getAllDepartments().stream().map(this::depMapToDepartment).collect(Collectors.toList());
     }
 
     /**
@@ -269,7 +264,7 @@ public class Concept implements IConcept {
     @Override
     public List<User> getAllUser(){
         //List mit Maps aus Datenhaltung empfangen und alle Elemente in User Objekte umwandeln
-        return this.database.getAllUser().stream().map(this::userMapToUser).collect(Collectors.toList());
+        return this.db.getAllUser().stream().map(this::userMapToUser).collect(Collectors.toList());
     }
 
 
@@ -283,6 +278,6 @@ public class Concept implements IConcept {
     public User getUser(int id) {
         //Hole den Benutzer aus der Datenhaltung und konvertiere die Map
         //zu einem User Object
-        return this.userMapToUser(this.database.getUserById(id));
+        return this.userMapToUser(this.db.getUserById(id));
     }
 }
