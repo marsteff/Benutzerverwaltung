@@ -5,12 +5,15 @@ import de.oszimt.model.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 
@@ -33,7 +36,7 @@ public class EraseDepartmentController extends StackPane{
     @FXML
     private TableColumn<User, String> lastnameColumn;
     @FXML
-    private TableColumn<String, String> departmentColumn;
+    private TableColumn<User, ComboBox<String>> departmentColumn;
 
     @FXML
     private StackPane tableRadioPane;
@@ -44,6 +47,8 @@ public class EraseDepartmentController extends StackPane{
     private RadioButton allUsersRadioButton;
     @FXML
     private HBox allUsersPane;
+    @FXML
+    private ComboBox<Department> allUsersComboBox;
 
     @FXML
     private RadioButton eraseRadioButton;
@@ -59,6 +64,8 @@ public class EraseDepartmentController extends StackPane{
      * Hält eine Instance des GUI Objects
      */
     private Gui gui;
+
+    private Department eraseDepartment;
 
     @FXML
     public void initialize(){
@@ -80,22 +87,26 @@ public class EraseDepartmentController extends StackPane{
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                //Blöder Workaround, um eine ComboBox in die Table zu bekommen
+                //TODO - entfernen des erstellen der eigenen UserList
+                departmentColumn.setEditable(true);
                 List<User> userList = getGui().getConcept().getAllUser();
-                userDepartmentTableView.getItems().addAll(userList);
 
                 List<Department> list = getGui().getConcept().getAllDepartments();
-                List<String> department = new ArrayList<String>();
-                for (Department dep : list) {
-                    department.add(dep.getName());
-                }
-                ObservableList<String> departments = FXCollections.observableArrayList(department);
+                list.remove(eraseDepartment);
+                userList.removeIf(e -> !e.getDepartment().equals(eraseDepartment));
 
-                departmentColumn.setCellFactory(ComboBoxTableCell.<String, String>forTableColumn(departments));
+                for (User user : userList) {
+                    ComboBox<Department> comboBox = new ComboBox<Department>();
+                    comboBox.getItems().addAll(list);
+                    user.setCombobox(comboBox);
+                }
+                userDepartmentTableView.getItems().addAll(userList);
+                departmentColumn.setCellValueFactory(new PropertyValueFactory<User, ComboBox<String>>("combobox"));
+
+                allUsersComboBox.getItems().addAll(list);
             }
         });
-
-
-//        departmentColumn.setCellFactory(ComboBoxTableCell.forTableColumn(new DefaultStringConverter(), cbValues));
     }
 
     public Gui getGui() {
@@ -106,4 +117,34 @@ public class EraseDepartmentController extends StackPane{
         this.gui = gui;
     }
 
+    public Department getEraseDepartment() {
+        return eraseDepartment;
+    }
+
+    public void setEraseDepartment(Department eraseDepartment) {
+        this.eraseDepartment = eraseDepartment;
+    }
+
+    @FXML
+    private void abortAction() {
+        ((Stage)abortButton.getScene().getWindow()).close();
+    }
+
+    @FXML
+    private void changeAction() {
+        if (tableRadioButton.isSelected()) {
+            List<User> userList = userDepartmentTableView.getItems();
+            userList.forEach(e -> e.setDepartment(e.getCombobox().getValue()));
+            userList.forEach(e -> getGui().getConcept().upsertUser(e));
+        } else if (allUsersRadioButton.isSelected()) {
+            List<User> userList = userDepartmentTableView.getItems();
+            userList.forEach(e -> {
+                e.setDepartment(allUsersComboBox.getValue());
+                getGui().getConcept().upsertUser(e);
+            });
+        } else {
+
+        }
+        abortAction();
+    }
 }

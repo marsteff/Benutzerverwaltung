@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.control.ComboBox;
 
 import java.time.LocalDate;
 
@@ -18,6 +19,7 @@ public class User {
     private final SimpleIntegerProperty zipcode;
     private final SimpleObjectProperty<Department> department;
     private final SimpleObjectProperty<LocalDate> birthday;
+    private SimpleObjectProperty<ComboBox<Department>> combobox;
     
     public User(String fname, String lname, LocalDate bday,
                 String city, String street, String streetnr, int zipcode,
@@ -30,6 +32,7 @@ public class User {
 		this.zipcode = new SimpleIntegerProperty(zipcode);
 		this.birthday = new SimpleObjectProperty<LocalDate>(bday);
         this.department = new SimpleObjectProperty<Department>(department);
+        this.combobox = new SimpleObjectProperty<ComboBox<Department>>();
 	}
 
     public SimpleStringProperty firstnameProperty(){
@@ -39,6 +42,7 @@ public class User {
     public SimpleStringProperty lastnameProperty(){
         return lastname;
     }
+
     public SimpleStringProperty cityProperty(){
         return city;
     }
@@ -138,6 +142,14 @@ public class User {
 
     public StringProperty getVorProp(){
     	return this.firstname;
+    }
+
+    public ComboBox<Department> getCombobox() {
+        return combobox.get();
+    }
+
+    public void setCombobox(ComboBox<Department> combobox) {
+        this.combobox.set(combobox);
     }
 
 	@Override

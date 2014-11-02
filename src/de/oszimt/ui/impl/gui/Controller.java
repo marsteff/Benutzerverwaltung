@@ -393,6 +393,7 @@ public class Controller {
         task.setOnSucceeded(e -> {
             rootPane.getChildren().remove(glass);
             searchInTable();
+            searchInDepartmentTable();
             setSuccedMessage("Zufallsnutzer erfolgreich erstellt!");
         });
 	}
@@ -561,6 +562,7 @@ public class Controller {
 
                     EraseDepartmentController contr = loader.getController();
                     contr.setGui(this.gui);
+                    contr.setEraseDepartment(department);
 
                     Stage stage = new Stage();
                     stage.initModality(Modality.WINDOW_MODAL);
@@ -568,15 +570,20 @@ public class Controller {
                     stage.setTitle("Abteilungszuweisung");
                     stage.setScene(new Scene(root, 400, 450));
                     stage.setResizable(false);
-                    stage.show();
+                    stage.showAndWait();
 
                 } catch (IOException e){
                     e.printStackTrace();
                 }
+                if(this.getGui().getConcept().getAllUser().stream().noneMatch(e -> e.getDepartment().equals(department)))
+                    this.getGui().getConcept().deleteDepartment(department);
 
                 //Daten neu aus DB laden um konsistenz gewährleisten zu können
                 searchInDepartmentTable();
                 searchInTable();
+                customerTable.getColumns().get(0).setVisible(false);
+                customerTable.getColumns().get(0).setVisible(true);
+                this.setSuccedMessage("");
 
                 return;
             }

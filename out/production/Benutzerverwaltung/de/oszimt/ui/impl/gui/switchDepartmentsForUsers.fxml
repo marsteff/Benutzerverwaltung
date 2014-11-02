@@ -44,7 +44,7 @@
             <RadioButton fx:id="allUsersRadioButton" toggleGroup="$choice"/>
             <HBox fx:id="allUsersPane" spacing="10">
                 <Label text="Alle Benutzer folgender Abteilung zuordnen" />
-                <ComboBox promptText="Abteilung"/>
+                <ComboBox fx:id="allUsersComboBox" promptText="Abteilung"/>
             </HBox>
         </HBox>
         <HBox spacing="10">
@@ -54,8 +54,8 @@
             </StackPane>
         </HBox>
         <HBox spacing="10" fx:id="widthPane">
-            <Button text="Abbrechen" fx:id="abortButton"/>
-            <Button text="Übernehmen" fx:id="changeButton"/>
+            <Button text="Abbrechen" fx:id="abortButton" onAction="#abortAction"/>
+            <Button text="Übernehmen" fx:id="changeButton" onAction="#changeAction"/>
         </HBox>
     </VBox>
 
