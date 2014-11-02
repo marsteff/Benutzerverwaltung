@@ -15,10 +15,9 @@ import de.oszimt.persistence.iface.IPersistance;
 public class ConceptFactory {
     /**
      * Statische Methode, gibt eine Instanze der gewünschten Klasse zurück
-     *
-     * @param method
-     * @param persistance
-     * @return
+     * @param method Konzeptwahl (de.oszimt.concept.enumeration.ConceptMethod)
+     * @param persistance Datenhaltungswahl (de.oszimt.persisitence.enumeration.PersistanceMethod)
+     * @return Konzept Instanze
      */
 	public static IConcept buildConcept(ConceptMethod method, IPersistance persistance){
 		IConcept concept = null;
@@ -33,18 +32,19 @@ public class ConceptFactory {
      *
      * Kurzschreibweise: Nimmt auch einen Enum Wert für die Datenhaltung entgegen
      *
-     * @param method
-     * @param persistanceMethod
-     * @return
+     * @param method Konzeptwahl (de.oszimt.concept.enumeration.ConceptMethod)
+     * @param persistanceMethod Datenhaltungswahl (de.oszimt.persisitence.enumeration.PersistanceMethod)
+     * @return Konzept Instanze
      */
     public static IConcept buildConcept(ConceptMethod method, PersistanceMethod persistanceMethod){
         IConcept concept = null;
         switch(method){
-            case STANDARD_CONCEPT: concept = new Concept(PersistanceFactory.buildPersistance(
-                    persistanceMethod
-            )); break;
+            case STANDARD_CONCEPT: concept = new Concept(
+                    PersistanceFactory.buildPersistance(
+                        persistanceMethod
+                    )
+                ); break;
         }
         return concept;
     }
-
 }

@@ -16,9 +16,8 @@ import java.net.UnknownHostException;
 public class PersistanceFactory {
     /**
      * Statische Methode, gibt eine Instanze der gewünschten Klasse zurück
-     *
-     * @param method
-     * @return
+     * @param method Datenhaltungswahl (de.oszimt.persisitence.enumeration.PersistanceMethod)
+     * @return Datenhaltungs Instanze
      */
 	public static IPersistance buildPersistance(PersistanceMethod method){
         /**
@@ -41,8 +40,6 @@ public class PersistanceFactory {
                 }
                 break;
 		}
-		
 		return persistance;
 	}
-
 }
