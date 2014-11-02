@@ -2,27 +2,60 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <StackPane fx:id="rootPane" fx:controller="de.oszimt.ui.impl.gui.EraseDepartmentController" xmlns:fx="http://javafx.com/fxml">
-    <VBox>
-        <HBox>
-            <RadioButton/>
-            <StackPane>
-                <TableView>
-
+    <fx:define>
+        <ToggleGroup fx:id="choice"/>
+    </fx:define>
+    <VBox spacing="10">
+        <padding>
+            <Insets bottom="10" top="10" left="10" right="10" />
+        </padding>
+        <HBox spacing="10">
+            <RadioButton fx:id="tableRadioButton" toggleGroup="$choice"/>
+            <StackPane disable="true" fx:id="tableRadioPane">
+                <TableView fx:id="userDepartmentTableView">
+                    <columns>
+                        <TableColumn text="Vorname" fx:id="firstnameColumn">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="firstname"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Nachname" fx:id="lastnameColumn">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="lastname"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Abteilung" fx:id="departmentColumn">
+                            <!--<cellValueFactory>
+                                <PropertyValueFactory property="department"/>
+                            </cellValueFactory>-->
+                        </TableColumn>
+                    </columns>
                 </TableView>
             </StackPane>
         </HBox>
-        <HBox>
-            <RadioButton/>
-            <StackPane>
+        <HBox spacing="10">
+            <RadioButton fx:id="allUsersRadioButton" toggleGroup="$choice"/>
+            <HBox fx:id="allUsersPane" spacing="10">
                 <Label text="Alle Benutzer folgender Abteilung zuordnen" />
-            </StackPane>
+                <ComboBox promptText="Abteilung"/>
+            </HBox>
         </HBox>
-        <HBox>
-            <RadioButton/>
-            <StackPane>
+        <HBox spacing="10">
+            <RadioButton fx:id="eraseRadioButton" toggleGroup="$choice"/>
+            <StackPane fx:id="erasePane">
                 <Label text="Allen Benutzer die Abteilung entfernen" />
             </StackPane>
+        </HBox>
+        <HBox spacing="10" fx:id="widthPane">
+            <Button text="Abbrechen" fx:id="abortButton"/>
+            <Button text="Übernehmen" fx:id="changeButton"/>
         </HBox>
     </VBox>
 

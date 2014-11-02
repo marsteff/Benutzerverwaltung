@@ -556,18 +556,28 @@ public class Controller {
                 //TODO - Department Teil Überdecken oder neues Fenster aufmachen ? das ist hier die Frage ...
                 Parent root;
                 try{
-                    root = FXMLLoader.load(getClass().getResource("switchDepartmentsForUsers.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("switchDepartmentsForUsers.fxml"));
+                    root = loader.load();
+
+                    EraseDepartmentController contr = loader.getController();
+                    contr.setGui(this.gui);
+
                     Stage stage = new Stage();
                     stage.initModality(Modality.WINDOW_MODAL);
                     stage.initOwner(customerTable.getScene().getWindow());
                     stage.setTitle("Abteilungszuweisung");
                     stage.setScene(new Scene(root, 400, 450));
+                    stage.setResizable(false);
                     stage.show();
+
                 } catch (IOException e){
                     e.printStackTrace();
                 }
 
-                setErrorMessage("Der Abteilung sind noch Benutzer zugeordnet und kann daher nicht gelöscht werden");
+                //Daten neu aus DB laden um konsistenz gewährleisten zu können
+                searchInDepartmentTable();
+                searchInTable();
+
                 return;
             }
             this.gui.getConcept().deleteDepartment(department);

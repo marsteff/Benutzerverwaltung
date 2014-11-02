@@ -44,7 +44,6 @@ public class Gui extends Application implements UserInterface{
         primaryStage.setMinWidth(850);
         primaryStage.setMinHeight(300);
         primaryStage.show();
-
     }
 
     /**
