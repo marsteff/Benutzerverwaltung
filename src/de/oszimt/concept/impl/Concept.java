@@ -36,10 +36,8 @@ public class Concept implements IConcept {
      */
     public Concept(IPersistance db){
         this.database = db;
-
         //Prüfen, ob Departments vorhanden sind, und wenn nicht, erzeugen
-        List<Department> departmentList = this.getAllDepartments();
-        if(departmentList.size() == 0){
+        if(this.getAllDepartments().size() < 1){
             Util.createDepartments(this);
         }
     }
@@ -75,75 +73,42 @@ public class Concept implements IConcept {
      * @return
      */
     private User userMapToUser(Map<String,Object> userMap){
-
-        //Auf gpültigkeit prüfen
+        //Auf gültigkeit prüfen
         if(userMap == null){
             return null;
         }
 
-        //Datenhaltungsreffernce in keys speicher (erspart schreibarbeit)
+        //Datenhaltungsreffernce in keys speicher (erspart Schreibarbeit)
         IPersistance keys = this.database;
+
         //initialisieren der PLZ
-        int zipCode = 0;
-        if(userMap.containsKey(keys.getKeyUserZipCode())){
-            zipCode = Integer.parseInt(
-                    userMap.get(keys.getKeyUserZipCode()).toString()
-            );
-        }
+        int zipCode = Util.readSaveFromMap(userMap,keys.getKeyUserZipCode());
+
         //initialisieren des Geburtstages
-        LocalDate birthday = userMap.containsKey(keys.getKeyUserBirthday()) ?
-                this.DateToLocalDate((Date) userMap.get(
-                        keys.getKeyUserBirthday())
-                ) : null;
+        Date bday = Util.readSaveFromMap(userMap,keys.getKeyUserBirthday());
+        LocalDate birthday = Util.DateToLocalDate(bday);
+
+        //initialisieren der Abteilungs Map
+        Map department = Util.readSaveFromMap(userMap,keys.getKeyUserDepartment());
 
         //Neuen Benutzer anlegen und mittels des Konstruktor initalisieren
         //containsKey() Abfragen sollen NullPointerExceptions verhindern
         User user = new User(
-                this.readSaveFromMap(userMap,keys.getKeyUserFirstname()),
-                this.readSaveFromMap(userMap, keys.getKeyUserLastname()),
+                Util.readSaveFromMap(userMap,keys.getKeyUserFirstname()),
+                Util.readSaveFromMap(userMap, keys.getKeyUserLastname()),
                 birthday,
-                this.readSaveFromMap(userMap,keys.getKeyUserCity()),
-                this.readSaveFromMap(userMap,keys.getKeyUserStreet()),
-                this.readSaveFromMap(userMap,keys.getKeyUserStreetNr()),
+                Util.readSaveFromMap(userMap,keys.getKeyUserCity()),
+                Util.readSaveFromMap(userMap,keys.getKeyUserStreet()),
+                Util.readSaveFromMap(userMap,keys.getKeyUserStreetNr()),
                 zipCode,
                 new Department(
-                        (int) ((Map) userMap.get(
-                                keys.getKeyUserDepartment())
-                        ).get(keys.getKeyDepartmentId()),
-                        ((Map) userMap.get(
-                                keys.getKeyUserDepartment())
-                        ).get(keys.getKeyDepartmentName()).toString()
+                        Util.readSaveFromMap(department,keys.getKeyDepartmentId()),
+                        Util.readSaveFromMap(department,keys.getKeyDepartmentName())
                 )
         );
-        user.setId(userMap.containsKey(keys.getKeyUserId()) ?
-                (int) userMap.get(keys.getKeyUserId()) : 0);
+        //setzen der Benutzer ID
+        user.setId(Util.readSaveFromMap(userMap,keys.getKeyUserId()));
         return user;
-    }
-
-    /**
-     * Umwandung von LocalDate zu Date
-     *
-     * @param date
-     * @return
-     */
-    private LocalDate DateToLocalDate(Date date){
-        return LocalDateTime.ofInstant(
-                Instant.ofEpochMilli(date.getTime()),
-                ZoneId.systemDefault()
-        ).toLocalDate();
-    }
-
-    /**
-     * Gibt den Wert einer Map zurück
-     * Prüft ob der gegebene Key existsiert.
-     * @notice Gibt bei fehlendem Key NULL zurück
-     *
-     * @param map
-     * @param key
-     * @return
-     */
-    private String readSaveFromMap(Map map, String key){
-        return map.containsKey(key) ? map.get(key).toString() : null;
     }
 
     /**
