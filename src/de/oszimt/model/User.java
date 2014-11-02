@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.control.ComboBox;
 
 import java.time.LocalDate;
 
@@ -60,6 +61,8 @@ public class User {
      * Geburtsdatum des Benutzers
      */
     private final SimpleObjectProperty<LocalDate> birthday;
+    private SimpleObjectProperty<ComboBox<Department>> combobox;
+    
 
     /**
      * Voll parametrisierter Konstruktor
@@ -84,6 +87,7 @@ public class User {
 		this.zipcode = new SimpleIntegerProperty(zipcode);
 		this.birthday = new SimpleObjectProperty<>(bday);
         this.department = new SimpleObjectProperty<>(department);
+        this.combobox = new SimpleObjectProperty<ComboBox<Department>>();
 	}
 
     /**
@@ -295,6 +299,22 @@ public class User {
         this.department.set(department);
     }
 
+    /**
+     * Combobox Getter
+     * @return Combobox der Abteilung
+     */
+    public ComboBox<Department> getCombobox() {
+        return combobox.get();
+    }
+
+    /**
+     * Setzt die Abteilungs Combobox
+     * @param combobox Abteilungs Combobox
+     */
+    public void setCombobox(ComboBox<Department> combobox) {
+        this.combobox.set(combobox);
+    }
+    
     /**
      * Überschreibt die toString Methode
      * @return Vor- und Nachname des Benutzers
