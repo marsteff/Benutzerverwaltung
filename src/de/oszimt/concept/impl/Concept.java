@@ -52,7 +52,7 @@ public class Concept implements IConcept {
 
     /**
      * Gibt den Title der Anwendung zurück
-     * @return
+     * @return Title der Anwendung
      */
     @Override
     public String getTitle(){
@@ -61,8 +61,7 @@ public class Concept implements IConcept {
 
     /**
      * Löscht einen Benutzer aus der Datenhaltung
-     * @param user
-     * @return
+     * @param user zulöscheden Benutzer
      */
     @Override
     public void deleteUser(User user){
@@ -75,8 +74,8 @@ public class Concept implements IConcept {
      * trägt in ein Benutzer Object konvertiert. Die Bezeichungen der
      * einzelnen Felder sind in der Datenhaltung festgelegt und können
      * über die getKey..() Methoden abgefragt werden.
-     * @param userMap
-     * @return
+     * @param userMap Mao mit Benutzer Daten
+     * @return Benutzer Instanze
      */
     private User userMapToUser(Map<String,Object> userMap){
         //Auf gültigkeit prüfen
@@ -118,8 +117,8 @@ public class Concept implements IConcept {
      * Für die Datenhaltungsschicht werden alle Objecte in Form
      * einer Map mit den ensprechenden Werten benötigt. Hier
      * wir ein Department Object in die entsprechende Map umgewandelt
-     * @param dep
-     * @return
+     * @param dep Abteilung
+     * @return Map mit Abteilungs Daten
      */
     private Map<String,Object> departmentToDepMap(Department dep){
         //erstellen einer Map, hier Hashmap um put nutzen zu können
@@ -135,8 +134,8 @@ public class Concept implements IConcept {
      * Die Datenhaltungschicht gibt Ihre Resultate immer als
      * Map zurück. Hier wird die Map, einer Abteilung in ein
      * Department Object konvertiert.
-     * @param depMap
-     * @return
+     * @param depMap Map mit Abteilungs Daten
+     * @return Abteilung
      */
     private Department depMapToDepartment(Map<String,Object> depMap){
         Department dep = new Department(
@@ -151,8 +150,8 @@ public class Concept implements IConcept {
      * Für die Datenhaltungsschicht werden alle Objecte in Form
      * einer Map mit den ensprechenden Werten benötigt. Hier
      * wir ein Benutzer-Object in eine solche Map umgewandelt.
-     * @param user
-     * @return
+     * @param user Benutzer
+     * @return Map mit Benutzer Daten
      */
     private Map<String,Object> userToUserMap(User user){
         //erstellen einer Map, hier Hashmap um put nutzen zu können
@@ -177,7 +176,7 @@ public class Concept implements IConcept {
      * Erstellt einen Neuen User
      * Benutzer Objekt wird in eine Map umgewandelt und dann
      * zu speichern an die Datenhaltungschicht weitergegeben
-     * @param user
+     * @param user Benutzer
      */
     @Override
     public void createUser(User user){
@@ -187,7 +186,7 @@ public class Concept implements IConcept {
     /**
      * Erstellt einen Benutzer insofern er noch nicht existsiert, andererseits werden
      * die Benutzerdetails aktualisiert
-     * @param user
+     * @param user Benutzer
      */
     @Override
     public void upsertUser(User user){
@@ -202,7 +201,7 @@ public class Concept implements IConcept {
      * @notice Bei Benutzung REST Paramter muss Internet vorhanden sein.
      * Hier wird eine realistische Zuordnung von PLZ zu Stadt generiert.
      * Das Abfragen der Städte geschieht mittels eines REST Services
-     * @param useRest
+     * @param useRest REST Service an (true) aus (false)
      */
     @Override
     public void createRandomUsers(boolean useRest){
@@ -215,7 +214,7 @@ public class Concept implements IConcept {
     /**
      * Erstllen einer neuen Abteilung
      * wird an die Datenhaltung weitergeleited
-     * @param name
+     * @param name Name der zuerstellenden Abteilung
      */
     @Override
     public void createDepartment(String name){
@@ -224,7 +223,7 @@ public class Concept implements IConcept {
 
     /**
      * Erstell eine neue Abteilung oder ändert eine bestehende
-     * @param department
+     * @param department Abteilung
      */
     @Override
     public void upsertDepartment(Department department) {
@@ -233,8 +232,8 @@ public class Concept implements IConcept {
 
     /**
      * Gibt eine Abteilung anhand ihrer id
-     * @param id
-     * @return
+     * @param id Id der Abteilung
+     * @return Abteilung
      */
     @Override
     public Department getDepartmentById(int id){
@@ -243,8 +242,8 @@ public class Concept implements IConcept {
 
     /**
      * Gibt eine Liste von Benutzern anhand einer Abteilung
-     * @param dep
-     * @return
+     * @param dep Abteiung
+     * @return Liste von Benutzern
      */
     @Override
     public List<User> getUsersByDepartment(Department dep) {
@@ -253,7 +252,7 @@ public class Concept implements IConcept {
 
     /**
      * Löscht eine Abteilung aus der Datenhaltung
-     * @param department
+     * @param department Abteilung
      */
     @Override
     public void deleteDepartment(Department department) {
@@ -262,7 +261,7 @@ public class Concept implements IConcept {
 
     /**
      * Gibt eine Liste aller Abteilungen zurück
-     * @return
+     * @return Liste von Abteilungen
      */
     @Override
     public List<Department> getAllDepartments(){
@@ -272,7 +271,7 @@ public class Concept implements IConcept {
 
     /**
      * Gibt eine Liste aller Benutzer zurück
-     * @return
+     * @return Liste von Benutzern
      */
     @Override
     public List<User> getAllUser(){
@@ -282,8 +281,8 @@ public class Concept implements IConcept {
 
     /**
      * Gibt einen einzlnen Benutzer anhand seiner ID zurück
-     * @param id
-     * @return
+     * @param id Benutzer id
+     * @return Benutzer
      */
     @Override
     public User getUser(int id) {

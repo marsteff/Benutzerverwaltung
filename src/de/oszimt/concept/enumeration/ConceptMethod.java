@@ -5,5 +5,5 @@ package de.oszimt.concept.enumeration;
  * @see /src/de/oszimt/factory/ConceptFactory
  */
 public enum ConceptMethod {
-    STANDARD_CONCEPT;
+    STANDARD_CONCEPT
 }
