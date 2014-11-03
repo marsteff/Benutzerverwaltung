@@ -40,7 +40,7 @@
                 </TableView>
             </StackPane>
         </HBox>
-        <!--<HBox spacing="10">
+        <HBox spacing="10">
             <RadioButton fx:id="allUsersRadioButton" toggleGroup="$choice"/>
             <HBox fx:id="allUsersPane" spacing="10">
                 <Label text="Alle Benutzer folgender Abteilung zuordnen" />
@@ -56,7 +56,7 @@
         <HBox spacing="10" fx:id="widthPane">
             <Button text="Abbrechen" fx:id="abortButton" onAction="#abortAction"/>
             <Button text="Übernehmen" fx:id="changeButton" onAction="#changeAction"/>
-        </HBox>-->
+        </HBox>
     </VBox>
 
 </StackPane>
