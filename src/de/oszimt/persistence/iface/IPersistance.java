@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Schnittstelle zur Datenhaltung
+ * Schnittstelle zwischen Datenhaltung und Fachkonzept
  */
 public interface IPersistance {
     /**
@@ -151,54 +151,51 @@ public interface IPersistance {
 
     /**
      * Gibt eine Liste alle Benutzer (Maps) zurück
-     * @return List<Map<String,Object>>
+     * @return Liste von beutzer Maps
      */
 	List<Map<String,Object>> getAllUser();
 
     /**
      * Gibt eine Liste alle Benutzer (Maps) die einer Abteilungs IDs zugeordnet sind, zurück
-     * @return List<Map<String,Object>>
+     * @return Liste von Benutzer Maps
      */
     List<Map<String,Object>> getUsersByDepartmentId(int id);
 
     /**
      * Gibt eine Abteilung (Map) anhand ihrer ID
-     * @param id
-     * @return
+     * @param id Id der Abteiling
+     * @return Map mit Daten der Abteilung
      */
     Map<String,Object> getDepartmentById(int id);
 
     /**
      * Neue Abteilung erzeugen
-     * @param name String
+     * @param name Name der Abteilung
      */
     void createDepartment(String name);
 
     /**
      * Aktualisieren einer Abteiung
-     *
-     * @param dep
+     * @param dep Map mit Daten der zuändernden Abteilung
      */
     void upsertDepartment(Map<String, Object> dep);
 
     /**
      * Entfernen einer Abteilung
-     *
-     * @param id
+     * @param id ID der zulöschenden Abteilung
      */
     void deleteDepartment(int id);
 
     /**
      * Laden eines einzelnen Benutzers anhand seiner Id
-     * @param id int
-     * @return Map<String,Object>
+     * @param id Id des Benutzers
+     * @return Map mit Daten des Benutzers
      */
     Map<String,Object> getUserById(int id);
 
     /**
      * Gibt eine Liste aller Abteilungen zurück
-     *
-     * @return
+     * @return Liste von Maps mit Daten aller Abteilungen
      */
     List<Map<String,Object>> getAllDepartments();
 }
