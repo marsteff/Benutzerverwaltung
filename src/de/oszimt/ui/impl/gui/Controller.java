@@ -25,7 +25,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -324,7 +323,7 @@ public class Controller {
      */
 	@FXML
 	private void changeButtonAction(){
-        eraseAllStylesheets();
+        removeAllStylesheets();
 
 		//index der Tabellenauswahl
 		int index = customerTable.getSelectionModel().getSelectedIndex();
@@ -415,11 +414,16 @@ public class Controller {
         StackPane glass = callProgress();
         task.setOnSucceeded(e -> {
             rootPane.getChildren().remove(glass);
+            this.abortButtonAction();
+           removeAllStylesheets();
             searchInTable();
+
             setSuccedMessage("Alle Nutzer erfolgreich gelöscht");
         });
         abortButtonAction();
     }
+
+
 
     @FXML
     private void newCustomerAction() {
@@ -489,7 +493,7 @@ public class Controller {
     }
 
 
-    private void eraseAllStylesheets() {
+    private void removeAllStylesheets() {
         firstnameField.getStylesheets().removeAll(errorCSS);
         lastnameField.getStylesheets().removeAll(errorCSS);
         streetNrField.getStylesheets().removeAll(errorCSS);
