@@ -24,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -847,6 +848,18 @@ public class Controller {
         birthdayField.valueProperty().addListener(dateListener);
         departmentComboBox.valueProperty().addListener(departmentListener);
         birthdayField.getEditor().textProperty().addListener(textListener);
+
+        changeButton.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER && !changeButton.isDisabled()){
+                changeButtonAction();
+            }
+        });
+
+        abortButton.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER && !abortButton.isDisabled()){
+                abortButtonAction();
+            }
+        });
     }
 	
 	/**
