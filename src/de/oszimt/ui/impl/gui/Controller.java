@@ -513,11 +513,11 @@ public class Controller {
             lastnameField.getStylesheets().add(errorCSS);
             isFailed = true;
         }
-        if(!Validation.checkIfCity(newUser.getCity())){
+        if(!Validation.checkIfCity(newUser.getCity()) || newUser.getCity().startsWith(" ")){
             cityField.getStylesheets().add(errorCSS);
             isFailed = true;
         }
-        if(!Validation.checkIfStreet(newUser.getStreet())){
+        if(!Validation.checkIfStreet(newUser.getStreet()) || newUser.getStreet().startsWith(" ")){
             streetField.getStylesheets().add(errorCSS);
             isFailed = true;
         }
@@ -529,8 +529,7 @@ public class Controller {
             zipCodeField.getStylesheets().add(errorCSS);
             isFailed = true;
         }
-        if(     newUser.getBirthday().isBefore(LocalDate.now().minusYears(115)) ||
-                newUser.getBirthday().isAfter(LocalDate.now().minusYears(14))){
+        if(!Validation.checkIfBirthday(newUser.getBirthday())){
             birthdayField.getStylesheets().add(errorCSS);
             isFailed = true;
         }
@@ -604,6 +603,7 @@ public class Controller {
 	private void fillControls() {
 		customerTable.getSelectionModel().selectedItemProperty().addListener((obsValue, oldValue, newValue) -> {
 			if(newValue != null){
+                removeAllStylesheets();
 				changeButton.setDisable(true);
 				isNewSelection = true;
 				firstnameField.setText(newValue.getFirstname());
@@ -766,7 +766,7 @@ public class Controller {
 				writeError = true;
 				((StringProperty) observable).setValue(oldValue);
 			}
-				
+
 			//Ausgabe der Fehlermeldung
 			if(writeError){
 				setErrorMessage("Eingabe darf nicht länger als 30 Zeichen lang sein");
