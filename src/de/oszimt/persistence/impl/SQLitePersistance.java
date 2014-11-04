@@ -691,7 +691,7 @@ public class SQLitePersistance implements IPersistance {
         //hinzufügen der Benutzer Hausnummer (mit gegeben Keynamen)
         user.put(this.getKeyUserStreetNr(),rs.getString(this.getKeyUserStreetNr()));
         //hinzufügen der Benutzer PLZ (mit gegeben Keynamen)
-        user.put(this.getKeyUserZipCode(),rs.getString(this.getKeyUserZipCode()));
+        user.put(this.getKeyUserZipCode(),rs.getInt(this.getKeyUserZipCode()));
         //hinzufügen der Benutzer Abteilung (mit gegeben Keynamen)
         user.put(this.getKeyUserDepartment(),depMap);
         //Benutzer zurückgeben
