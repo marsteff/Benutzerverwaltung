@@ -337,6 +337,7 @@ public class MongoDbPersistance implements IPersistance{
         //leeres BasicDBObject erzeugen
         BasicDBObject doc = new BasicDBObject();
         //hinzufügen der Benutzerdaten unter Einbeziehung der festgt()));
+        doc.append(this.getKeyUserId(), user.get(this.getKeyUserId()));
         doc.append(this.getKeyUserFirstname(), user.get(this.getKeyUserFirstname()));
         doc.append(this.getKeyUserLastname(), user.get(this.getKeyUserLastname()));
         doc.append(this.getKeyUserCity(), user.get(this.getKeyUserCity()));
