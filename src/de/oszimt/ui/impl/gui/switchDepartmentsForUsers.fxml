@@ -8,11 +8,13 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.control.TextField?>
 <StackPane fx:id="rootPane" fx:controller="de.oszimt.ui.impl.gui.EraseDepartmentController" xmlns:fx="http://javafx.com/fxml">
     <fx:define>
         <ToggleGroup fx:id="choice"/>
     </fx:define>
-    <VBox spacing="10">
+    <VBox fx:id="verticalBox" spacing="10">
         <padding>
             <Insets bottom="10" top="10" left="10" right="10" />
         </padding>
@@ -43,14 +45,21 @@
         <HBox spacing="10">
             <RadioButton fx:id="allUsersRadioButton" toggleGroup="$choice"/>
             <HBox fx:id="allUsersPane" spacing="10">
-                <Label text="Alle Benutzer folgender Abteilung zuordnen" />
-                <ComboBox fx:id="allUsersComboBox" promptText="Abteilung"/>
+                <TextFlow >
+                    <children>
+                        <Label text="Alle Benutzer folgender Abteilung zuordnen " />
+                        <ComboBox fx:id="allUsersComboBox" promptText="Abteilung"/>
+                    </children>
+                </TextFlow>
             </HBox>
         </HBox>
         <HBox spacing="10">
-            <RadioButton fx:id="eraseRadioButton" toggleGroup="$choice"/>
-            <StackPane fx:id="erasePane">
-                <Label text="Allen Benutzer die Abteilung entfernen" />
+            <RadioButton fx:id="newDepartmentRadioButton" toggleGroup="$choice"/>
+            <StackPane fx:id="newDepartmentPane">
+                <TextFlow>
+                    <Label text="Alle Benutzern neuer Abteilung zuordnen " />
+                    <TextField fx:id="newDepartmentTextField" promptText="Abteilungsname"/>
+                </TextFlow>
             </StackPane>
         </HBox>
         <HBox spacing="10" fx:id="widthPane">

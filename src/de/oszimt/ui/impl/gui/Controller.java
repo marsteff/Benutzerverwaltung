@@ -572,7 +572,7 @@ public class Controller {
                     stage.initModality(Modality.WINDOW_MODAL);
                     stage.initOwner(customerTable.getScene().getWindow());
                     stage.setTitle("Abteilungszuweisung");
-                    stage.setScene(new Scene(root, 400, 450));
+                    stage.setScene(new Scene(root, 450, 450));
                     stage.setResizable(false);
                     stage.showAndWait();
 
@@ -849,12 +849,12 @@ public class Controller {
         departmentComboBox.valueProperty().addListener(departmentListener);
         birthdayField.getEditor().textProperty().addListener(textListener);
 
+        //Setzen von KeyListener, damit mit der Enter Taste die darunter liegende Funktion ausgeführt wird
         changeButton.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.ENTER && !changeButton.isDisabled()){
                 changeButtonAction();
             }
         });
-
         abortButton.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.ENTER && !abortButton.isDisabled()){
                 abortButtonAction();

@@ -5,27 +5,24 @@ import de.oszimt.model.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
-import javafx.util.converter.DefaultStringConverter;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Marci on 01.11.2014.
  */
 public class EraseDepartmentController extends StackPane{
 
+    @FXML
+    private  VBox verticalBox;
     @FXML
     private HBox widthPane;
 
@@ -51,14 +48,18 @@ public class EraseDepartmentController extends StackPane{
     private ComboBox<Department> allUsersComboBox;
 
     @FXML
-    private RadioButton eraseRadioButton;
+    private RadioButton newDepartmentRadioButton;
     @FXML
-    private StackPane erasePane;
+    private StackPane newDepartmentPane;
+    @FXML
+    private TextField newDepartmentTextField;
 
     @FXML
     private Button changeButton;
     @FXML
     private Button abortButton;
+    @FXML
+    private ToggleGroup choice;
 
     /**
      * Hält eine Instance des GUI Objects
@@ -69,8 +70,9 @@ public class EraseDepartmentController extends StackPane{
 
     @FXML
     public void initialize(){
+        choice.selectedToggleProperty().addListener(e -> removeErrorField());
         tableRadioButton.selectedProperty().setValue(true);
-        erasePane.disableProperty().bind(eraseRadioButton.selectedProperty().not());
+        newDepartmentPane.disableProperty().bind(newDepartmentRadioButton.selectedProperty().not());
         tableRadioPane.disableProperty().bind(tableRadioButton.selectedProperty().not());
         allUsersPane.disableProperty().bind(allUsersRadioButton.selectedProperty().not());
 
@@ -99,6 +101,7 @@ public class EraseDepartmentController extends StackPane{
                 for (User user : userList) {
                     ComboBox<Department> comboBox = new ComboBox<Department>();
                     comboBox.getItems().addAll(list);
+                    comboBox.setPromptText("Abteilung");
                     user.setCombobox(comboBox);
                 }
                 userDepartmentTableView.getItems().addAll(userList);
@@ -132,8 +135,13 @@ public class EraseDepartmentController extends StackPane{
 
     @FXML
     private void changeAction() {
+        removeErrorField();
         if (tableRadioButton.isSelected()) {
             List<User> userList = userDepartmentTableView.getItems();
+            if(userList.parallelStream().anyMatch(e -> e.getCombobox().getValue() == null)){
+                this.addErrorField("Jedem Benutzer muss eine Abteilung zugeordnet werden");
+                return;
+            }
             userList.forEach(e -> e.setDepartment(e.getCombobox().getValue()));
             userList.forEach(e -> getGui().getConcept().upsertUser(e));
         } else if (allUsersRadioButton.isSelected()) {
@@ -146,5 +154,17 @@ public class EraseDepartmentController extends StackPane{
 
         }
         abortAction();
+    }
+
+    private void addErrorField(String message){
+        Label label = new Label(message);
+        label.setTextFill(Color.RED);
+        verticalBox.getChildren().add(verticalBox.getChildren().size() - 2, label);
+    }
+
+    private void removeErrorField(){
+        if(verticalBox.getChildren().get(verticalBox.getChildren().size()) instanceof Label){
+            verticalBox.getChildren().remove(verticalBox.getChildren().size() - 2);
+        }
     }
 }
