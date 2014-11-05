@@ -163,7 +163,6 @@ public class Controller {
     StackPane glass = null;
     String splitPaneCSS = Controller.class.getResource("splitPane.css").toExternalForm();
     String errorCSS = Controller.class.getResource("errorTextField.css").toExternalForm();
-    String changeCSS = Controller.class.getResource("button.css").toExternalForm();
 
     @FXML
     public SplitPane split;
@@ -691,6 +690,8 @@ public class Controller {
 					return true;
 				else if(user.getBirthday().toString().toLowerCase().indexOf(lowerCaseFilter) != -1)
 					return true;
+                else if(user.getDepartment().toString().toLowerCase().indexOf(lowerCaseFilter) != -1)
+                    return true;
 
 				return false;
 			});
