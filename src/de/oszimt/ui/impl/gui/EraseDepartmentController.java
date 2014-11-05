@@ -68,6 +68,9 @@ public class EraseDepartmentController extends StackPane{
 
     private Department eraseDepartment;
 
+    private boolean isErrorField = false;
+    private List<User> userList;
+
     @FXML
     public void initialize(){
         choice.selectedToggleProperty().addListener(e -> removeErrorField());
@@ -89,25 +92,25 @@ public class EraseDepartmentController extends StackPane{
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                userList = getGui().getConcept().getUsersByDepartment(eraseDepartment);
                 //Blöder Workaround, um eine ComboBox in die Table zu bekommen
                 //TODO - entfernen des erstellen der eigenen UserList
                 departmentColumn.setEditable(true);
-                List<User> userList = getGui().getConcept().getAllUser();
 
-                List<Department> list = getGui().getConcept().getAllDepartments();
-                list.remove(eraseDepartment);
+                List<Department> departmentList = getGui().getConcept().getAllDepartments();
+                departmentList.remove(eraseDepartment);
                 userList.removeIf(e -> !e.getDepartment().equals(eraseDepartment));
 
                 for (User user : userList) {
                     ComboBox<Department> comboBox = new ComboBox<Department>();
-                    comboBox.getItems().addAll(list);
+                    comboBox.getItems().addAll(departmentList);
                     comboBox.setPromptText("Abteilung");
                     user.setCombobox(comboBox);
                 }
                 userDepartmentTableView.getItems().addAll(userList);
                 departmentColumn.setCellValueFactory(new PropertyValueFactory<User, ComboBox<String>>("combobox"));
 
-                allUsersComboBox.getItems().addAll(list);
+                allUsersComboBox.getItems().addAll(departmentList);
             }
         });
     }
@@ -135,23 +138,42 @@ public class EraseDepartmentController extends StackPane{
 
     @FXML
     private void changeAction() {
-        removeErrorField();
+        if(isErrorField) {
+            removeErrorField();
+        }
         if (tableRadioButton.isSelected()) {
-            List<User> userList = userDepartmentTableView.getItems();
             if(userList.parallelStream().anyMatch(e -> e.getCombobox().getValue() == null)){
                 this.addErrorField("Jedem Benutzer muss eine Abteilung zugeordnet werden");
+                this.isErrorField = true;
                 return;
             }
             userList.forEach(e -> e.setDepartment(e.getCombobox().getValue()));
             userList.forEach(e -> getGui().getConcept().upsertUser(e));
         } else if (allUsersRadioButton.isSelected()) {
             List<User> userList = userDepartmentTableView.getItems();
+            if(allUsersComboBox.getValue() == null){
+                this.addErrorField("Abteilung muss gesetzt werden");
+                this.isErrorField = true;
+                return;
+            }
             userList.forEach(e -> {
                 e.setDepartment(allUsersComboBox.getValue());
                 getGui().getConcept().upsertUser(e);
             });
         } else {
-
+            String newDepartmentName = newDepartmentTextField.getText().trim();
+            if(newDepartmentName.equals("")){
+                this.addErrorField("Abteilungsname darf nicht leer sein");
+                this.isErrorField = true;
+                return;
+            };
+            this.getGui().getConcept().createDepartment(newDepartmentName);
+            List<Department> departmentList = this.getGui().getConcept().getAllDepartments();
+            Department department = departmentList.get(departmentList.size() - 1);
+            userList.forEach(e -> {
+                e.setDepartment(department);
+                this.getGui().getConcept().upsertUser(e);
+            });
         }
         abortAction();
     }
@@ -159,11 +181,11 @@ public class EraseDepartmentController extends StackPane{
     private void addErrorField(String message){
         Label label = new Label(message);
         label.setTextFill(Color.RED);
-        verticalBox.getChildren().add(verticalBox.getChildren().size() - 2, label);
+        verticalBox.getChildren().add(verticalBox.getChildren().size() - 1, label);
     }
 
     private void removeErrorField(){
-        if(verticalBox.getChildren().get(verticalBox.getChildren().size()) instanceof Label){
+        if(verticalBox.getChildren().size() == 5 && verticalBox.getChildren().get(verticalBox.getChildren().size()-2) instanceof Label){
             verticalBox.getChildren().remove(verticalBox.getChildren().size() - 2);
         }
     }
