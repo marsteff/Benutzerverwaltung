@@ -23,17 +23,22 @@
             <StackPane disable="true" fx:id="tableRadioPane">
                 <TableView fx:id="userDepartmentTableView">
                     <columns>
-                        <TableColumn text="Vorname" fx:id="firstnameColumn">
+                        <TableColumn text="ID" fx:id="idColumn" editable="false" resizable="false">
                             <cellValueFactory>
-                                <PropertyValueFactory property="firstname"/>
+                                <PropertyValueFactory property="id" />
                             </cellValueFactory>
                         </TableColumn>
-                        <TableColumn text="Nachname" fx:id="lastnameColumn">
+                        <TableColumn text="Vorname" fx:id="firstnameColumn" editable="false" resizable="false">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="firstname" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Nachname" fx:id="lastnameColumn" editable="false" resizable="false">
                             <cellValueFactory>
                                 <PropertyValueFactory property="lastname"/>
                             </cellValueFactory>
                         </TableColumn>
-                        <TableColumn text="Abteilung" fx:id="departmentColumn">
+                        <TableColumn text="Abteilung" fx:id="departmentColumn" editable="false" resizable="false">
                             <!--<cellValueFactory>
                                 <PropertyValueFactory property="department"/>
                             </cellValueFactory>-->

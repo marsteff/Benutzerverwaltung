@@ -572,7 +572,7 @@ public class Controller {
                     stage.initModality(Modality.WINDOW_MODAL);
                     stage.initOwner(customerTable.getScene().getWindow());
                     stage.setTitle("Abteilungszuweisung");
-                    stage.setScene(new Scene(root, 450, 450));
+                    stage.setScene(new Scene(root, 500, 450));
                     stage.setResizable(false);
                     stage.showAndWait();
 

@@ -29,6 +29,8 @@ public class EraseDepartmentController extends StackPane{
     @FXML
     private TableView<User> userDepartmentTableView;
     @FXML
+    private TableColumn<User, Integer> idColumn;
+    @FXML
     private TableColumn<User, String> firstnameColumn;
     @FXML
     private TableColumn<User, String> lastnameColumn;
@@ -80,9 +82,10 @@ public class EraseDepartmentController extends StackPane{
         allUsersPane.disableProperty().bind(allUsersRadioButton.selectedProperty().not());
 
         userDepartmentTableView.prefWidthProperty().bind(widthPane.widthProperty());
-        firstnameColumn.prefWidthProperty().bind(userDepartmentTableView.widthProperty().multiply(0.315));
-        lastnameColumn.prefWidthProperty().bind(userDepartmentTableView.widthProperty().multiply(0.315));
-        departmentColumn.prefWidthProperty().bind(userDepartmentTableView.widthProperty().multiply(0.315));
+        idColumn.prefWidthProperty().bind(userDepartmentTableView.widthProperty().multiply(0.07));
+        firstnameColumn.prefWidthProperty().bind(userDepartmentTableView.widthProperty().multiply(0.3));
+        lastnameColumn.prefWidthProperty().bind(userDepartmentTableView.widthProperty().multiply(0.3));
+        departmentColumn.prefWidthProperty().bind(userDepartmentTableView.widthProperty().multiply(0.3));
 
         abortButton.prefWidthProperty().bind(widthPane.widthProperty().divide(0.5));
         changeButton.prefWidthProperty().bind(widthPane.widthProperty().divide(0.5));
