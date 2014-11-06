@@ -34,4 +34,9 @@ public class Validation {
         return  birthday.isAfter(LocalDate.now().minusYears(115)) ||
                 birthday.isBefore(LocalDate.now().minusYears(14));
     }
+
+    public static boolean checkIfDepartment(String text) {
+        return text.matches("^[A-Za-z|0-9]*$");
+
+    }
 }

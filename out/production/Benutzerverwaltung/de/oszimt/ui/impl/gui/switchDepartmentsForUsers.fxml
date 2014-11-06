@@ -20,52 +20,58 @@
         </padding>
         <HBox spacing="10">
             <RadioButton fx:id="tableRadioButton" toggleGroup="$choice"/>
-            <StackPane disable="true" fx:id="tableRadioPane">
-                <TableView fx:id="userDepartmentTableView">
-                    <columns>
-                        <TableColumn text="ID" fx:id="idColumn" editable="false" resizable="false">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="id" />
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Vorname" fx:id="firstnameColumn" editable="false" resizable="false">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="firstname" />
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Nachname" fx:id="lastnameColumn" editable="false" resizable="false">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="lastname"/>
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Abteilung" fx:id="departmentColumn" editable="false" resizable="false">
-                            <!--<cellValueFactory>
-                                <PropertyValueFactory property="department"/>
-                            </cellValueFactory>-->
-                        </TableColumn>
-                    </columns>
-                </TableView>
-            </StackPane>
+            <HBox fx:id="tableEventPane">
+                <StackPane disable="true" fx:id="tableRadioPane">
+                    <TableView fx:id="userDepartmentTableView">
+                        <columns>
+                            <TableColumn text="ID" fx:id="idColumn" editable="false" resizable="false">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="id" />
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn text="Vorname" fx:id="firstnameColumn" editable="false" resizable="false">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="firstname" />
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn text="Nachname" fx:id="lastnameColumn" editable="false" resizable="false">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="lastname"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn text="Abteilung" fx:id="departmentColumn" editable="false" resizable="false">
+                                <!--<cellValueFactory>
+                                    <PropertyValueFactory property="department"/>
+                                </cellValueFactory>-->
+                            </TableColumn>
+                        </columns>
+                    </TableView>
+                </StackPane>
+            </HBox>
         </HBox>
         <HBox spacing="10">
             <RadioButton fx:id="allUsersRadioButton" toggleGroup="$choice"/>
-            <HBox fx:id="allUsersPane" spacing="10">
-                <TextFlow >
-                    <children>
-                        <Label text="Alle Benutzer folgender Abteilung zuordnen " />
-                        <ComboBox fx:id="allUsersComboBox" promptText="Abteilung"/>
-                    </children>
-                </TextFlow>
+            <HBox fx:id="allUsersEventPane">
+                <HBox fx:id="allUsersPane" spacing="10">
+                    <TextFlow >
+                        <children>
+                            <Label fx:id="allUsersLabl" text="Alle Benutzer folgender Abteilung zuordnen " />
+                            <ComboBox fx:id="allUsersComboBox" promptText="Abteilung"/>
+                        </children>
+                    </TextFlow>
+                </HBox>
             </HBox>
         </HBox>
         <HBox spacing="10">
             <RadioButton fx:id="newDepartmentRadioButton" toggleGroup="$choice"/>
-            <StackPane fx:id="newDepartmentPane">
-                <TextFlow>
-                    <Label text="Alle Benutzern neuer Abteilung zuordnen " />
-                    <TextField fx:id="newDepartmentTextField" promptText="Abteilungsname"/>
-                </TextFlow>
-            </StackPane>
+            <HBox fx:id="newDepartmentEventPane">
+                <StackPane fx:id="newDepartmentPane">
+                    <TextFlow>
+                        <Label fx:id="newDepartmentLabel" text="Alle Benutzern neuer Abteilung zuordnen " />
+                        <TextField fx:id="newDepartmentTextField" promptText="Abteilungsname"/>
+                    </TextFlow>
+                </StackPane>
+            </HBox>
         </HBox>
         <HBox spacing="10" fx:id="widthPane">
             <Button text="Abbrechen" fx:id="abortButton" onAction="#abortAction"/>

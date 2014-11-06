@@ -2,12 +2,14 @@ package de.oszimt.ui.impl.gui;
 
 import de.oszimt.model.Department;
 import de.oszimt.model.User;
+import de.oszimt.util.Validation;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -38,23 +40,33 @@ public class EraseDepartmentController extends StackPane{
     private TableColumn<User, ComboBox<String>> departmentColumn;
 
     @FXML
+    public HBox tableEventPane;
+    @FXML
     private StackPane tableRadioPane;
     @FXML
     private RadioButton tableRadioButton;
 
+    @FXML
+    private HBox allUsersEventPane;
     @FXML
     private RadioButton allUsersRadioButton;
     @FXML
     private HBox allUsersPane;
     @FXML
     private ComboBox<Department> allUsersComboBox;
+    @FXML
+    private Label allUsersLabl;
 
+    @FXML
+    private HBox newDepartmentEventPane;
     @FXML
     private RadioButton newDepartmentRadioButton;
     @FXML
     private StackPane newDepartmentPane;
     @FXML
     private TextField newDepartmentTextField;
+    @FXML
+    private Label newDepartmentLabel;
 
     @FXML
     private Button changeButton;
@@ -91,6 +103,30 @@ public class EraseDepartmentController extends StackPane{
         changeButton.prefWidthProperty().bind(widthPane.widthProperty().divide(0.5));
 
         ObservableList<String> cbValues = FXCollections.observableArrayList("1", "2", "3");
+
+        //EventListener um den Teil auch auf der Schrift aktivieren zu können
+        tableEventPane.setOnMousePressed(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                choice.selectToggle(tableRadioButton);
+            }
+        });
+        allUsersEventPane.setOnMousePressed(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                choice.selectToggle(allUsersRadioButton);
+            }
+        });
+        newDepartmentEventPane.setOnMousePressed(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                choice.selectToggle(newDepartmentRadioButton);
+            }
+        });
+
+        allUsersEventPane.setOnMouseEntered(e -> allUsersLabl.setTextFill(Color.DARKBLUE));
+        allUsersEventPane.setOnMouseExited(e -> allUsersLabl.setTextFill(Color.BLACK));
+
+        newDepartmentEventPane.setOnMouseEntered(e -> newDepartmentLabel.setTextFill(Color.DARKBLUE));
+        newDepartmentEventPane.setOnMouseExited(e -> newDepartmentLabel.setTextFill(Color.BLACK));
+
 
         Platform.runLater(new Runnable() {
             @Override
@@ -169,7 +205,12 @@ public class EraseDepartmentController extends StackPane{
                 this.addErrorField("Abteilungsname darf nicht leer sein");
                 this.isErrorField = true;
                 return;
-            };
+            }
+            else if(!Validation.checkIfDepartment(newDepartmentName)){
+                this.addErrorField("Abteilungsname darf nur Buchstaben und Zahlen enthalten");
+                this.isErrorField = true;
+                return;
+            }
             this.getGui().getConcept().createDepartment(newDepartmentName);
             List<Department> departmentList = this.getGui().getConcept().getAllDepartments();
             Department department = departmentList.get(departmentList.size() - 1);

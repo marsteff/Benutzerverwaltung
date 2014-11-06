@@ -584,6 +584,10 @@ public class Controller {
                 //Daten neu aus DB laden um konsistenz gewährleisten zu können
                 searchInDepartmentTable();
                 searchInTable();
+
+                this.departmentTableView.getSelectionModel().clearSelection();
+                this.departmentTextField.setText("");
+
                 customerTable.getColumns().get(0).setVisible(false);
                 customerTable.getColumns().get(0).setVisible(true);
                 this.setSuccedMessage("");
