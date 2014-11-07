@@ -84,9 +84,17 @@ public class EraseDepartmentController extends StackPane{
 
     private boolean isErrorField = false;
     private List<User> userList;
+    String tableStyle;
+    String allUsersLabelStyle;
+    String newDepartmentLabelStyle;
 
     @FXML
     public void initialize(){
+        //setzen der bisherigen Style der Table und der Labels, um einheitliches aussehen zu gewährleisten
+        tableStyle = userDepartmentTableView.getStyle();
+        allUsersLabelStyle = allUsersLabl.getStyle();
+        newDepartmentLabelStyle = newDepartmentLabel.getStyle();
+
         choice.selectedToggleProperty().addListener(e -> removeErrorField());
         tableRadioButton.selectedProperty().setValue(true);
         newDepartmentPane.disableProperty().bind(newDepartmentRadioButton.selectedProperty().not());
@@ -108,24 +116,39 @@ public class EraseDepartmentController extends StackPane{
         tableEventPane.setOnMousePressed(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
                 choice.selectToggle(tableRadioButton);
+                userDepartmentTableView.setStyle(tableStyle);
             }
         });
         allUsersEventPane.setOnMousePressed(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
                 choice.selectToggle(allUsersRadioButton);
+                allUsersLabl.setTextFill(Color.BLACK);
             }
         });
         newDepartmentEventPane.setOnMousePressed(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
                 choice.selectToggle(newDepartmentRadioButton);
+                newDepartmentLabel.setTextFill(Color.BLACK);
             }
         });
 
-        allUsersEventPane.setOnMouseEntered(e -> allUsersLabl.setTextFill(Color.DARKBLUE));
+        allUsersEventPane.setOnMouseEntered(e -> {
+            if (!allUsersRadioButton.isSelected())
+                allUsersLabl.setTextFill(Color.DARKBLUE);
+        });
         allUsersEventPane.setOnMouseExited(e -> allUsersLabl.setTextFill(Color.BLACK));
 
-        newDepartmentEventPane.setOnMouseEntered(e -> newDepartmentLabel.setTextFill(Color.DARKBLUE));
+        newDepartmentEventPane.setOnMouseEntered(e -> {
+            if (!newDepartmentRadioButton.isSelected())
+                newDepartmentLabel.setTextFill(Color.DARKBLUE);
+        });
         newDepartmentEventPane.setOnMouseExited(e -> newDepartmentLabel.setTextFill(Color.BLACK));
+
+        tableEventPane.setOnMouseEntered(e -> {
+            if (!tableRadioButton.isSelected())
+                userDepartmentTableView.setStyle("-fx-border-color: darkblue");
+        });
+        tableEventPane.setOnMouseExited(e -> userDepartmentTableView.setStyle(tableStyle));
 
 
         Platform.runLater(new Runnable() {

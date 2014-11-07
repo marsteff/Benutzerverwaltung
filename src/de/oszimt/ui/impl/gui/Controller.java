@@ -200,7 +200,9 @@ public class Controller {
                     //final Deklaration des ContextMenu für die eine Row
                     final ContextMenu rowMenu = new ContextMenu();
                     //Erstellen des Menü-Eintrages
-                    MenuItem removeItem = new MenuItem("Benutzer löschen");
+                    //BUG !!! In der Callback funktionieren wohl keine Umlaute wie mir scheint, wechsel daher auf
+                    //auf 'entfernen' statt 'loeschen'
+                    MenuItem removeItem = new MenuItem("Benutzer entfernen");
                     //Wenn auf den Eintrag geklickt wird, wird der selektierte User gelöscht
                     removeItem.onActionProperty().set(e -> deleteUser());
                     //hinzufügen des Menü zur Row
@@ -219,7 +221,9 @@ public class Controller {
                     //final Deklaration des ContextMenu für die eine Row
                     final ContextMenu rowMenu = new ContextMenu();
                     //Erstellen des Menü-Eintrages
-                    MenuItem removeItem = new MenuItem("Abteilung löschen");
+                    //BUG !!! In der Callback funktionieren wohl keine Umlaute wie mir scheint, wechsel daher auf
+                    //auf 'entfernen' statt 'loeschen'
+                    MenuItem removeItem = new MenuItem("Abteilung entfernen");
                     //Wenn auf den Eintrag geklickt wird, wird der selektierte User gelöscht
                     removeItem.onActionProperty().set(e -> deleteDepartment());
                     //hinzufügen des Menü zur Row
