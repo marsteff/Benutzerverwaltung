@@ -124,7 +124,7 @@
                                                        styleClass="advancedSearchLink"/>
                                         </left>
                                         <right>
-                                            <ToggleButton fx:id="slide" text="Aufklappen" graphicTextGap="50">
+                                            <ToggleButton fx:id="slide" text="Abteilungen" graphicTextGap="50">
                                                 <graphic>
                                                     <ImageView fitWidth="21" preserveRatio="true" smooth="true">
                                                         <image>
@@ -199,8 +199,8 @@
                                 <TextField fx:id="departmentTextField" promptText="Abteilung" onAction="#departmentChangeAction"/>
                                 <TextField fx:id="searchFieldDepartment" promptText="Suchanfrage eingeben"/>
                                 <HBox spacing="5">
-                                    <Button fx:id="departmentChangeButton" text="Übernehmen" onAction="#departmentChangeAction"/>
-                                    <Button fx:id="departmentAbortButton" text="Abbrechen" onAction="#departmentAbortAction"/>
+                                    <Button fx:id="departmentChangeButton" text="Übernehmen" onAction="#departmentChangeAction" disable="true" />
+                                    <Button fx:id="departmentAbortButton" text="Abbrechen" onAction="#departmentAbortAction" />
                                 </HBox>
                             </VBox>
                         </top>

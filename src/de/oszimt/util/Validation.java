@@ -31,8 +31,8 @@ public class Validation {
     }
 
     public static boolean checkIfBirthday(LocalDate birthday) {
-        return  birthday.isAfter(LocalDate.now().minusYears(115)) ||
-                birthday.isBefore(LocalDate.now().minusYears(14));
+        return  birthday.isAfter(LocalDate.now().minusYears(14)) ||
+                birthday.isBefore(LocalDate.now().minusYears(115));
     }
 
     public static boolean checkIfDepartment(String text) {
