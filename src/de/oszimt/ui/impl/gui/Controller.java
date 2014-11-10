@@ -132,6 +132,7 @@ public class Controller {
      * umzusetzten
      */
 	private boolean isNewSelection = false;
+    private boolean isNewDepartmentSelection = false;
 	private boolean isAdvancedSearch = false;
 
     /**
@@ -181,7 +182,7 @@ public class Controller {
 		fillControls();
   
 		//setzt die Listener der Controls
-		setListenerForControls();;
+		setListenerForControls();
         //Hiermit ist es möglich, nach der Initialierung Code auszuführen. Notwendig, um in der initialize Methode auf das GUI Objekt zugreifen zu können
         Platform.runLater(new Runnable() {
             @Override
@@ -219,6 +220,8 @@ public class Controller {
                     //final Deklaration des ContextMenu für die eine Row
                     final ContextMenu rowMenu = new ContextMenu();
                     //Erstellen des Menü-Eintrages
+                    //BUG !!! In der Callback funktionieren wohl keine Umlaute wie mir scheint, wechsel daher auf
+                    //auf 'entfernen' statt 'loeschen'
                     MenuItem removeItem = new MenuItem("Abteilung löschen");
                     //Wenn auf den Eintrag geklickt wird, wird der selektierte User gelöscht
                     removeItem.onActionProperty().set(e -> deleteDepartment());
@@ -238,9 +241,7 @@ public class Controller {
             e.setMaxWidth(400);
         });
 
-        /**
-         * ONLY TRY THE SPLITSLIDE SHIT
-         */
+        //Splitter für die Abteilungen
         split.setDividerPositions(0.7);
         split.getStylesheets().addAll(splitPaneCSS);
         SplitPaneDividerSlider slider = new SplitPaneDividerSlider(split, 0, SplitPaneDividerSlider.Direction.RIGHT);
@@ -258,11 +259,9 @@ public class Controller {
             rightArrow.setPreserveRatio(true);
             rightArrow.setFitWidth(21);
             if(t1){
-                slide.setText("Zuklappen");
                 slide.setGraphic(rightArrow);
             }
             else{
-                slide.setText("Aufklappen");
                 slide.setGraphic(leftArrow);
             }
         });
@@ -340,7 +339,7 @@ public class Controller {
 
         User newUser = new User(firstname, lastname, bday, city, street, streetNr, zipcode, department);
 
-        if(validateThisShit(newUser)){
+        if(validateUser(newUser)){
             setErrorMessage("Falsche eingabe, bitte berichtigen");
             return;
         }
@@ -448,10 +447,17 @@ public class Controller {
         departmentTextField.setText("");
         searchFieldDepartment.setText("");
         departmentTableView.getSelectionModel().clearSelection();
+        departmentTextField.getStylesheets().removeAll(errorCSS);
     }
 
     @FXML
     private void departmentChangeAction() {
+        departmentTextField.getStylesheets().removeAll(errorCSS);
+        if(!Validation.checkIfDepartment(departmentTextField.getText()) || departmentTextField.getText().trim().isEmpty()){
+            setErrorMessage("Abteilungsname darf nur Buchstaben und Zahlen enthalten");
+            departmentTextField.getStylesheets().addAll(errorCSS);
+            return;
+        }
         int index = -1;
         int departmentComboBoxIndex = -2;
         if(departmentTableView.getSelectionModel().getSelectedItem() != null) {
@@ -492,7 +498,9 @@ public class Controller {
         this.gui = gui;
     }
 
-
+    /**
+     * Entfernen aller gesetzten Stylesheets der Textfelder
+     */
     private void removeAllStylesheets() {
         firstnameField.getStylesheets().removeAll(errorCSS);
         lastnameField.getStylesheets().removeAll(errorCSS);
@@ -501,9 +509,16 @@ public class Controller {
         cityField.getStylesheets().removeAll(errorCSS);
         zipCodeField.getStylesheets().removeAll(errorCSS);
         birthdayField.getStylesheets().removeAll(errorCSS);
+
     }
 
-    private boolean validateThisShit(User newUser) {
+    /**
+     * Validiert alle Werte eines Nutzers und setzt gegebenfalls einen Stylesheet
+     * um das Falsche Feld zu markieren
+     * @param newUser zu untersuchender Benutzer
+     * @return true, wenn alle Felder ok sind, sonst false
+     */
+    private boolean validateUser(User newUser) {
         boolean isFailed = false;
         if(!Validation.checkIfLetters(newUser.getFirstname())){
             firstnameField.getStylesheets().add(errorCSS);
@@ -529,7 +544,7 @@ public class Controller {
             zipCodeField.getStylesheets().add(errorCSS);
             isFailed = true;
         }
-        if(!Validation.checkIfBirthday(newUser.getBirthday())){
+        if(Validation.checkIfBirthday(newUser.getBirthday())){
             birthdayField.getStylesheets().add(errorCSS);
             isFailed = true;
         }
@@ -551,13 +566,16 @@ public class Controller {
         }
     }
     /**
-     * Löschen eines selektierten Benutzers (aus Tabelle und Datenhaltung)
+     * Löschen einer selektierten Abteilung.
+     * Wenn noch mehrere Benutzer einer Abteilung zugeordnet sind, wird ein neues Fenster geöffnet mit
+     * weiteren Optionen
      */
     private void deleteDepartment(){
+        departmentTextField.getStylesheets().removeAll(errorCSS);
         Department department = departmentTableView.getSelectionModel().getSelectedItem();
         if(department != null) {
+            //Wenn Anzahl der Mitarbeiter größer 0 ist, neues Fenster zur weitere Verarbeitung öffnen
             if(department.getAmount() > 0){
-                //TODO - Department Teil Überdecken oder neues Fenster aufmachen ? das ist hier die Frage ...
                 Parent root;
                 try{
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("switchDepartmentsForUsers.fxml"));
@@ -585,9 +603,11 @@ public class Controller {
                 searchInDepartmentTable();
                 searchInTable();
 
+                //Selection löschen und Text löschen
                 this.departmentTableView.getSelectionModel().clearSelection();
                 this.departmentTextField.setText("");
 
+                //Table neu ordnen um Bug zu umgehen
                 customerTable.getColumns().get(0).setVisible(false);
                 customerTable.getColumns().get(0).setVisible(true);
                 this.setSuccedMessage("");
@@ -628,11 +648,17 @@ public class Controller {
 
         departmentTableView.getSelectionModel().selectedItemProperty().addListener((obsValue, oldValue, newValue) -> {
             if (newValue != null) {
+                departmentTextField.getStylesheets().removeAll(errorCSS);
+                isNewDepartmentSelection = true;
                 departmentTextField.setText(newValue.getName());
+                isNewDepartmentSelection = false;
             }
         });
 	}
 
+    /**
+     * Lädt aus der DB alle Abteilungen neu und befähigt das Search Feld zur Suche bei veränderten Werten
+     */
     private void searchInDepartmentTable() {
         List<Department> departmentList = this.gui.getConcept().getAllDepartments();
 
@@ -751,7 +777,7 @@ public class Controller {
 	}
 	
 	/**
-	 * Set a Listener for the TextField Controls
+	 * Set a Listener for the Main Controls
 	 */
 	private void setListenerForControls(){
 		//Definierung eines textListener für die jeweiligen TextFelder,
@@ -856,13 +882,41 @@ public class Controller {
 
         //Setzen von KeyListener, damit mit der Enter Taste die darunter liegende Funktion ausgeführt wird
         changeButton.setOnKeyPressed(e -> {
-            if(e.getCode() == KeyCode.ENTER && !changeButton.isDisabled()){
+            if(e.getCode() == KeyCode.ENTER && !changeButton.isDisabled()) {
                 changeButtonAction();
             }
         });
         abortButton.setOnKeyPressed(e -> {
-            if(e.getCode() == KeyCode.ENTER && !abortButton.isDisabled()){
+            if (e.getCode() == KeyCode.ENTER && !abortButton.isDisabled()){
                 abortButtonAction();
+            }
+        });
+
+        departmentTextField.textProperty().addListener((ob, oldValue, newValue) -> {
+            boolean writeError = false;
+            departmentChangeButton.setDisable(true);
+            if(		!departmentTextField.getText().trim().isEmpty() &&
+                    !newValue.equals("") &&
+                    !oldValue.equals(newValue) &&
+                    !isNewDepartmentSelection)
+
+                departmentChangeButton.setDisable(false);
+
+            //Validierung der Länge und gegebenfalls Meldung löschen
+            if(newValue.length() < 28){
+                writeError = false;
+                cleanInformationLabel();
+            }
+
+            //wenn Input länger als 28 Zeichen, alten Wert setzen und Fehler melden
+            else if(newValue.length() > 28){
+                writeError = true;
+                ((StringProperty) ob).setValue(oldValue);
+            }
+
+            //Ausgabe der Fehlermeldung
+            if(writeError){
+                setErrorMessage("Eingabe darf nicht länger als 30 Zeichen lang sein");
             }
         });
     }
@@ -899,10 +953,10 @@ public class Controller {
 		if(		isAllFieldsFillt() &&  
 				!newValue.equals(value) && 
 				!oldValue.equals(newValue) && 
-				!isNewSelection)
-		
-			changeButton.setDisable(false);
-		
+				!isNewSelection) {
+
+            changeButton.setDisable(false);
+        }
 	}
  
 	/**
