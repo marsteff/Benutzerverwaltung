@@ -246,9 +246,7 @@ public class Controller {
         split.getStylesheets().addAll(splitPaneCSS);
         SplitPaneDividerSlider slider = new SplitPaneDividerSlider(split, 0, SplitPaneDividerSlider.Direction.RIGHT);
         slider.setAimContentVisible(false);
-        slide.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-            slider.setAimContentVisible(t1);
-        });
+        slide.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> slider.setAimContentVisible(t1));
         slide.setContentDisplay(ContentDisplay.RIGHT);
         slide.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
             ImageView leftArrow = new ImageView(new Image(this.getClass().getResourceAsStream("img/leftArrow.png")));
@@ -668,16 +666,12 @@ public class Controller {
 
         ObservableList<Department> masterData = FXCollections.observableArrayList(departmentList);
         FilteredList<Department> filteredData = new FilteredList<>(masterData, p -> true);
-        searchFieldDepartment.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(department -> {
-                if(newValue == null || newValue.isEmpty())
-                    return true;
-                if(department.getName().toLowerCase().contains(newValue.toLowerCase()))
-                    return true;
-
-                return false;
-            });
-        });
+        searchFieldDepartment.textProperty().addListener((observable, oldValue, newValue) ->
+                filteredData.setPredicate(department ->
+                        (newValue == null || newValue.isEmpty()) ||
+                        (department.getName().toLowerCase().contains(newValue.toLowerCase()))
+            )
+        );
         SortedList<Department> sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(departmentTableView.comparatorProperty());
         departmentTableView.setItems(filteredData);
@@ -689,43 +683,26 @@ public class Controller {
 	 */
 	private void searchInTable() {
         List<User> ulist = this.gui.getConcept().getAllUser();
-
         if(ulist == null){
             return;
         }
-
         //kapsel user liste zum observieren
 		ObservableList<User> masterDate = FXCollections.observableList(ulist);
-
 		FilteredList<User> filteredDate = new FilteredList<>(masterDate, p -> true);
-
-		searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-			filteredDate.setPredicate(user -> {
-				if(newValue == null || newValue.isEmpty())
-					return true;
-
-				String lowerCaseFilter = newValue.toLowerCase();
-
-				if(user.getFirstname().toLowerCase().indexOf(lowerCaseFilter) != -1)
-					return true;
-				else if(user.getLastname().toLowerCase().indexOf(lowerCaseFilter) != -1)
-					return true;
-				else if(user.getCity().toLowerCase().indexOf(lowerCaseFilter) != -1)
-					return true;
-				else if(user.getStreet().toLowerCase().indexOf(lowerCaseFilter) != -1)
-					return true;
-				else if(user.getStreetnr().toLowerCase().indexOf(lowerCaseFilter) != -1)
-					return true;
-				else if(Integer.toString(user.getZipcode()).toLowerCase().indexOf(lowerCaseFilter) != -1)
-					return true;
-				else if(user.getBirthday().toString().toLowerCase().indexOf(lowerCaseFilter) != -1)
-					return true;
-                else if(user.getDepartment().toString().toLowerCase().indexOf(lowerCaseFilter) != -1)
-                    return true;
-
-				return false;
-			});
-		});
+		searchField.textProperty().addListener((observable, oldValue, newValue) ->
+                filteredDate.setPredicate(user -> {
+                    if(newValue == null || newValue.isEmpty())
+                        return true;
+                    String lowerCaseFilter = newValue.toLowerCase();
+                    return (user.getFirstname().toLowerCase().contains(lowerCaseFilter)) ||
+                    (user.getLastname().toLowerCase().contains(lowerCaseFilter)) ||
+                    (user.getCity().toLowerCase().contains(lowerCaseFilter)) ||
+                    (user.getStreet().toLowerCase().contains(lowerCaseFilter)) ||
+                    (user.getStreetnr().toLowerCase().contains(lowerCaseFilter)) ||
+                    (Integer.toString(user.getZipcode()).toLowerCase().contains(lowerCaseFilter)) ||
+                    (user.getBirthday().toString().toLowerCase().contains(lowerCaseFilter)) ||
+                    (user.getDepartment().toString().toLowerCase().contains(lowerCaseFilter));
+        }));
 
 		SortedList<User> sortedDate = new SortedList<>(filteredDate);
 		sortedDate.comparatorProperty().bind(customerTable.comparatorProperty());
@@ -926,19 +903,16 @@ public class Controller {
 	 * @return true, wenn alle TextFields + DatePicker gefuellt sind, ansonsten false
 	 */
 	private boolean isAllFieldsFillt(){
-		if(		firstnameField.getText().equals("") ||
-				lastnameField.getText().equals("") ||
-				cityField.getText().equals("") ||
-				streetField.getText().equals("") ||
-				streetNrField.getText().equals("") ||
-				zipCodeField.getText().equals("") ||
+        return !(firstnameField.getText().equals("") ||
+                lastnameField.getText().equals("") ||
+                cityField.getText().equals("") ||
+                streetField.getText().equals("") ||
+                streetNrField.getText().equals("") ||
+                zipCodeField.getText().equals("") ||
                 birthdayField.getEditor().getText().length() != 10 ||
-                departmentComboBox.getValue() == null
-			) 
-			return false;
-		
-		return true;
-	}
+                departmentComboBox.getValue() == null);
+
+    }
 	
 	/**
 	 * Prüft, ob der ÜbernehmeButton aktiviert werden darf
