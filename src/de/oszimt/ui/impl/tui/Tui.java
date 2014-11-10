@@ -1,23 +1,17 @@
 package de.oszimt.ui.impl.tui;
 
 import de.oszimt.concept.iface.IConcept;
-import de.oszimt.model.Department;
-import de.oszimt.ui.iface.UserInterface;
-
-import java.util.stream.Collectors;
 
 /**
  * Created by user on 17.09.2014.
  */
-public class Tui implements UserInterface {
-
-    private IConcept concept;
+public class Tui {
 
     public Tui(IConcept concept) {
-        showMainMenu(concept);
+        showMenu(concept);
     }
 
-    private void showMainMenu(IConcept concept) {
+    private void showMenu(IConcept concept) {
 
         MenuBuilder builder = new MenuBuilder(concept);
         while(true) {
@@ -25,13 +19,4 @@ public class Tui implements UserInterface {
         }
     }
 
-    @Override
-    public IConcept getConcept() {
-        return this.concept;
-    }
-
-    @Override
-    public void setConcept(IConcept concept) {
-        this.concept = concept;
-    }
 }

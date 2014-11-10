@@ -15,20 +15,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AdvancedSearch extends StackPane{
+
+    @FXML
+	private TextField vornameField;
 	@FXML
-	TextField vornameField;
+	private TextField nachnameField;
 	@FXML
-	TextField nachnameField;
+	private TextField plzField;
 	@FXML
-	TextField plzField;
+    private TextField ortField;
 	@FXML
-	TextField ortField;
+    private TextField strasseField;
 	@FXML
-	TextField strasseField;
+    private TextField strassenNummerField;
 	@FXML
-	TextField strassenNummerField;
-	@FXML
-	DatePicker geburtstagField;
+    private DatePicker geburtstagField;
+    @FXML
+    private TextField departmentField;
 	
 	TableView<User> customerTable;
     ObservableList<User> originalList;
@@ -54,7 +57,7 @@ public class AdvancedSearch extends StackPane{
 		
 		this.customerTable = customerTable;
 		
-		//sichern der Originalen Liste, da diese f�r sp�tere Bearbeitungen ben�tigt wird
+		//sichern der Originalen Liste, da diese fuer spaetere Bearbeitungen benoetigt wird
         originalList = customerTable.getItems();
         
         //initialisieren der ChangeListener der einzelnen Felder
@@ -94,14 +97,15 @@ public class AdvancedSearch extends StackPane{
 	 * Setzt das Breitenbinding der einzelnen Felder fest
 	 */
 	private void widthBindingOfControls(){
-		vornameField.prefWidthProperty().bind(this.widthProperty().multiply(0.14));
-		nachnameField.prefWidthProperty().bind(this.widthProperty().multiply(0.14));
-		geburtstagField.prefWidthProperty().bind(this.widthProperty().multiply(0.14));
+		vornameField.prefWidthProperty().bind(this.widthProperty().multiply(0.125));
+		nachnameField.prefWidthProperty().bind(this.widthProperty().multiply(0.125));
+		geburtstagField.prefWidthProperty().bind(this.widthProperty().multiply(0.125));
 		
-		ortField.prefWidthProperty().bind(this.widthProperty().multiply(0.14));
-		plzField.prefWidthProperty().bind(this.widthProperty().multiply(0.14));
-		strasseField.prefWidthProperty().bind(this.widthProperty().multiply(0.14));
-		strassenNummerField.prefWidthProperty().bind(this.widthProperty().multiply(0.14));
+		ortField.prefWidthProperty().bind(this.widthProperty().multiply(0.125));
+		plzField.prefWidthProperty().bind(this.widthProperty().multiply(0.125));
+		strasseField.prefWidthProperty().bind(this.widthProperty().multiply(0.125));
+		strassenNummerField.prefWidthProperty().bind(this.widthProperty().multiply(0.125));
+        departmentField.prefWidthProperty().bind(this.widthProperty().multiply(0.125));
 	}
 	
 	
@@ -137,6 +141,10 @@ public class AdvancedSearch extends StackPane{
 		geburtstagField.valueProperty().addListener((observableValue, oldValue, newValue) -> {
             customerTable.setItems(searchInTable());
 		});
+
+        departmentField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            customerTable.setItems(searchInTable());
+        });
 		
 	}
 
@@ -155,7 +163,7 @@ public class AdvancedSearch extends StackPane{
                                     .filter(kunde -> kunde.getCity().toLowerCase().contains(ortField.getText().toLowerCase()))
                                     .filter(kunde -> kunde.getStreet().toLowerCase().contains(strasseField.getText().toLowerCase()))
                                     .filter(kunde -> kunde.getStreetnr().toLowerCase().contains(strassenNummerField.getText().toLowerCase()))
-                                    .filter(kunde -> kunde.getFirstname().toLowerCase().contains(vornameField.getText().toLowerCase()))
+                                    .filter(kunde -> kunde.getDepartment().getName().toLowerCase().contains(departmentField.getText().toLowerCase()))
                                     .filter(kunde ->{
                                         if(geburtstagField.getValue() != null)
                                             return kunde.getBirthday().toString().toLowerCase().contains(geburtstagField.getValue().toString().toLowerCase());

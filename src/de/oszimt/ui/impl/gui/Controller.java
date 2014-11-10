@@ -24,8 +24,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -163,7 +163,6 @@ public class Controller {
     StackPane glass = null;
     String splitPaneCSS = Controller.class.getResource("splitPane.css").toExternalForm();
     String errorCSS = Controller.class.getResource("errorTextField.css").toExternalForm();
-    String changeCSS = Controller.class.getResource("button.css").toExternalForm();
 
     @FXML
     public SplitPane split;
@@ -324,7 +323,7 @@ public class Controller {
      */
 	@FXML
 	private void changeButtonAction(){
-        eraseAllStylesheets();
+        removeAllStylesheets();
 
 		//index der Tabellenauswahl
 		int index = customerTable.getSelectionModel().getSelectedIndex();
@@ -415,11 +414,16 @@ public class Controller {
         StackPane glass = callProgress();
         task.setOnSucceeded(e -> {
             rootPane.getChildren().remove(glass);
+            this.abortButtonAction();
+           removeAllStylesheets();
             searchInTable();
+
             setSuccedMessage("Alle Nutzer erfolgreich gelöscht");
         });
         abortButtonAction();
     }
+
+
 
     @FXML
     private void newCustomerAction() {
@@ -489,7 +493,7 @@ public class Controller {
     }
 
 
-    private void eraseAllStylesheets() {
+    private void removeAllStylesheets() {
         firstnameField.getStylesheets().removeAll(errorCSS);
         lastnameField.getStylesheets().removeAll(errorCSS);
         streetNrField.getStylesheets().removeAll(errorCSS);
@@ -509,11 +513,11 @@ public class Controller {
             lastnameField.getStylesheets().add(errorCSS);
             isFailed = true;
         }
-        if(!Validation.checkIfCity(newUser.getCity())){
+        if(!Validation.checkIfCity(newUser.getCity()) || newUser.getCity().startsWith(" ")){
             cityField.getStylesheets().add(errorCSS);
             isFailed = true;
         }
-        if(!Validation.checkIfStreet(newUser.getStreet())){
+        if(!Validation.checkIfStreet(newUser.getStreet()) || newUser.getStreet().startsWith(" ")){
             streetField.getStylesheets().add(errorCSS);
             isFailed = true;
         }
@@ -525,8 +529,7 @@ public class Controller {
             zipCodeField.getStylesheets().add(errorCSS);
             isFailed = true;
         }
-        if(     newUser.getBirthday().isBefore(LocalDate.now().minusYears(115)) ||
-                newUser.getBirthday().isAfter(LocalDate.now().minusYears(14))){
+        if(!Validation.checkIfBirthday(newUser.getBirthday())){
             birthdayField.getStylesheets().add(errorCSS);
             isFailed = true;
         }
@@ -568,7 +571,7 @@ public class Controller {
                     stage.initModality(Modality.WINDOW_MODAL);
                     stage.initOwner(customerTable.getScene().getWindow());
                     stage.setTitle("Abteilungszuweisung");
-                    stage.setScene(new Scene(root, 400, 450));
+                    stage.setScene(new Scene(root, 500, 450));
                     stage.setResizable(false);
                     stage.showAndWait();
 
@@ -581,6 +584,10 @@ public class Controller {
                 //Daten neu aus DB laden um konsistenz gewährleisten zu können
                 searchInDepartmentTable();
                 searchInTable();
+
+                this.departmentTableView.getSelectionModel().clearSelection();
+                this.departmentTextField.setText("");
+
                 customerTable.getColumns().get(0).setVisible(false);
                 customerTable.getColumns().get(0).setVisible(true);
                 this.setSuccedMessage("");
@@ -600,6 +607,7 @@ public class Controller {
 	private void fillControls() {
 		customerTable.getSelectionModel().selectedItemProperty().addListener((obsValue, oldValue, newValue) -> {
 			if(newValue != null){
+                removeAllStylesheets();
 				changeButton.setDisable(true);
 				isNewSelection = true;
 				firstnameField.setText(newValue.getFirstname());
@@ -686,6 +694,8 @@ public class Controller {
 					return true;
 				else if(user.getBirthday().toString().toLowerCase().indexOf(lowerCaseFilter) != -1)
 					return true;
+                else if(user.getDepartment().toString().toLowerCase().indexOf(lowerCaseFilter) != -1)
+                    return true;
 
 				return false;
 			});
@@ -762,7 +772,7 @@ public class Controller {
 				writeError = true;
 				((StringProperty) observable).setValue(oldValue);
 			}
-				
+
 			//Ausgabe der Fehlermeldung
 			if(writeError){
 				setErrorMessage("Eingabe darf nicht länger als 30 Zeichen lang sein");
@@ -843,6 +853,18 @@ public class Controller {
         birthdayField.valueProperty().addListener(dateListener);
         departmentComboBox.valueProperty().addListener(departmentListener);
         birthdayField.getEditor().textProperty().addListener(textListener);
+
+        //Setzen von KeyListener, damit mit der Enter Taste die darunter liegende Funktion ausgeführt wird
+        changeButton.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER && !changeButton.isDisabled()){
+                changeButtonAction();
+            }
+        });
+        abortButton.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER && !abortButton.isDisabled()){
+                abortButtonAction();
+            }
+        });
     }
 	
 	/**

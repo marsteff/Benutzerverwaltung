@@ -13,6 +13,7 @@
 				<TextField promptText="PLZ" fx:id="plzField" />
 				<TextField promptText="Strasse" fx:id="strasseField" />
 				<TextField promptText="Nummer" fx:id="strassenNummerField" />
+                <TextField promptText="Abteilung" fx:id="departmentField" />
 		</HBox>		
 	</AnchorPane>
 </fx:root>

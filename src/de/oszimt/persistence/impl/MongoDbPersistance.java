@@ -9,7 +9,13 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 
-
+/**
+ * Datenhaltung for MongoDB
+ * getestet für MongoDB shell version: 2.6.3+
+ *
+ * Implementierung des IPersistance Interfaces für die
+ * Dokumenten orientierte Datenbank MongoDB
+ */
 public class MongoDbPersistance implements IPersistance{
 
     /**
@@ -219,7 +225,7 @@ public class MongoDbPersistance implements IPersistance{
      * neu erzeugt. Andererseits werden alle vorhandenen werde aus der Map in
      * das Dokument übernommen
      *
-     * @param user Map<String,Object>
+     * @param user Map mit Benutzer Daten
      */
     @Override
     public void upsertUser(Map<String,Object> user) {
@@ -246,8 +252,8 @@ public class MongoDbPersistance implements IPersistance{
 
     /**
      * Laden eines einzelnen Benutzers anhand seiner Id
-     * @param id int
-     * @return Map<String,Object>
+     * @param id Id des Benurtzers
+     * @return Map mit Daten des Benutzers
      */
     public Map<String,Object> getUserById(int id){
         //leere Map inialisieren
@@ -275,8 +281,8 @@ public class MongoDbPersistance implements IPersistance{
 
     /**
      * Laden einer einzelnen Abteilung anhand der Id
-     * @param id int
-     * @return Map<String,Object>
+     * @param id Id der Abteilung
+     * @return Map mit Daten der Abteilung
      */
     @Override
     public Map<String,Object> getDepartmentById(int id){
@@ -305,17 +311,14 @@ public class MongoDbPersistance implements IPersistance{
 
     /**
      * Benutzer Dokument aus der Collection entfernen
-     * @param id int
+     * @param id Id des zulöschenden Benutzers
      */
     @Override
     public void deleteUser(int id) {
         //laden der Collection
         DBCollection coll = this.getCollection("Users");
         //Finden des Benutzer-Dokuments anhand eines Such-Queries
-        DBObject doc = coll.findOne(new BasicDBObject(
-                this.getKeyUserId(),
-                id
-        ));
+        DBObject doc = coll.findOne(new BasicDBObject(this.getKeyUserId(),id));
         if(doc != null) {
             //Dokument aus der Collection entfernen
             coll.remove(doc);
@@ -327,13 +330,13 @@ public class MongoDbPersistance implements IPersistance{
      * BasicDBObject bilden die übliche JSON Struktur in MongoDb
      * nach.
      *
-     * @param user Map<String,Object>
+     * @param user Map mit Daten des Benzuters
      * @return BasicDBObject
      */
     private BasicDBObject userMapToBasicDBObject(Map<String,Object> user){
         //leeres BasicDBObject erzeugen
         BasicDBObject doc = new BasicDBObject();
-        //hinzufügen der Benutzerdaten unter Einbeziehung der festgelegten Key-Namen
+        //hinzufügen der Benutzerdaten unter Einbeziehung der festgt()));
         doc.append(this.getKeyUserId(), user.get(this.getKeyUserId()));
         doc.append(this.getKeyUserFirstname(), user.get(this.getKeyUserFirstname()));
         doc.append(this.getKeyUserLastname(), user.get(this.getKeyUserLastname()));
@@ -352,7 +355,7 @@ public class MongoDbPersistance implements IPersistance{
 
     /**
      * Erstellt einen neuen Benutzer
-     * @param user Map<String,Object>
+     * @param user Map mit Benutzer Daten
      */
     @Override
     public void createUser(Map<String,Object> user) {
@@ -372,7 +375,6 @@ public class MongoDbPersistance implements IPersistance{
             //id hochzählen
             nextId++;
         }
-
         //setzten/überschreiben der Benutzer ID durch die neue ID
         user.put(this.getKeyUserId(),nextId);
         //Benutzer Map zu einem BasicDBObject konvertieren
@@ -387,24 +389,21 @@ public class MongoDbPersistance implements IPersistance{
      * @notice  Die Methode bewegt den Datenbankzeiger (cursor) eine Position
      *          nach vorn
      * @param cursor DBCursor
-     * @return Map<String,Object>
+     * @return Map mit Daten des Benutzers
      */
     private Map<String,Object> cursorNextToUserMap(DBCursor cursor){
         //Zeiger bewegen und Dokument zur Map konvertieren
         Map tmp = cursor.next().toMap();
         //laden der Abteilungs Colelction
         DBCollection coll = this.getCollection("Departments");
-
         BasicDBObject query = new BasicDBObject(
                 this.getKeyDepartmentId(),
                 Integer.parseInt(
                         tmp.get("department_id").toString()
                 )
         );
-
         //finden der Abteilung anhand der in der Benutzer Map gegebenen Id
         DBObject depDBO = coll.findOne(query);
-
         //wurde was gefunden?
         if(depDBO != null) {
             //Abteilungs Dokument zu einen Map kovertieren
@@ -419,7 +418,7 @@ public class MongoDbPersistance implements IPersistance{
 
     /**
      * Gibt eine Liste alle Benutzer (Maps) zurück
-     * @return List<Map<String,Object>>
+     * @return Liste von Maps mit Daten aller Benutzer
      */
     @Override
     public List<Map<String,Object>> getAllUser() {
@@ -445,7 +444,7 @@ public class MongoDbPersistance implements IPersistance{
 
     /**
      * Gibt eine Liste alle Benutzer (Maps) die einer Abteilungs IDs zugeordnet sind, zurück
-     * @return List<Map<String,Object>>
+     * @return Liste von Maps mit Daten aller Abteilungen
      */
     @Override
     public List<Map<String, Object>> getUsersByDepartmentId(int id) {
@@ -475,8 +474,8 @@ public class MongoDbPersistance implements IPersistance{
 
     /**
      * Anbeilungs Map zu BasicDBObject konvertieren
-     * @param dep Map<String,Object>
-     * @return BasicDBObject
+     * @param dep Map mit Daten einer Abteilung
+     * @return BasicDBObject JSON ersatz in Java
      */
     private BasicDBObject departmentToBasicDBObject(Map<String,Object> dep){
         //leeres BasicDBObject initialisieren
@@ -489,17 +488,14 @@ public class MongoDbPersistance implements IPersistance{
 
     /**
      * Neue Abteilung erzeugen
-     * @param name String
-     *
+     * @param name Name der zuerstellenden Abteilung
      */
     @Override
     public void createDepartment(String name){
         //Laden der Abteilungs Collection
         DBCollection coll = this.getCollection("Departments");
-
         //ermitteln der größten Id
-        DBCursor cursor = coll.find().sort(new BasicDBObject(
-                this.getKeyDepartmentId(), -1));
+        DBCursor cursor = coll.find().sort(new BasicDBObject(this.getKeyDepartmentId(), -1));
         int nextId = 1;
         //setzen der neuen id
         if(cursor.count() > 0){
@@ -508,23 +504,20 @@ public class MongoDbPersistance implements IPersistance{
             ).toString());
             nextId++;
         }
-
         //neue Map für Abteilungs Daten initialisieren
         Map<String,Object> dep = new HashMap<String,Object>();
         //hinzufügen der Abteilungs daten
         dep.put(this.getKeyDepartmentId(), nextId);
         dep.put(this.getKeyDepartmentName(), name);
-
         //Map zu BasicDBObject konvertieren
         BasicDBObject doc = this.departmentToBasicDBObject(dep);
-
         //Dokument der Collection hinzufügen
         coll.insert(doc);
     }
 
     /**
      * Ändern einer Abteilung
-     * @param dep
+     * @param dep Map mit Daten einer Abteilung
      */
     @Override
     public void upsertDepartment(Map<String, Object> dep){
@@ -551,15 +544,14 @@ public class MongoDbPersistance implements IPersistance{
 
     /**
      * Löschen einer Abteilung
-     * @param id
+     * @param id Id der zulöschenden Abteilung
      */
     @Override
     public void deleteDepartment(int id){
         //Laden der Abteilungs Collection
         DBCollection coll = this.getCollection("Departments");
         //Dokument anhand der Id finden
-        DBObject doc = coll.findOne(new BasicDBObject(
-                this.getKeyDepartmentId(),id));
+        DBObject doc = coll.findOne(new BasicDBObject(this.getKeyDepartmentId(),id));
         //Dokument aus der Collection entfernen
         coll.remove(doc);
     }
@@ -570,7 +562,7 @@ public class MongoDbPersistance implements IPersistance{
      * @notice  Die Methode bewegt den Datenbankzeiger (cursor) eine Position
      *          nach vorn
      * @param cursor DBCursor
-     * @return Map<String,Object>
+     * @return Map mit Daten der Abteilung
      */
     private Map<String,Object> cursorNextToDepartmentMap(DBCursor cursor){
         //aktuelles Dokument in den Scope laden und Zeiger einen weiter bewegen
@@ -584,7 +576,6 @@ public class MongoDbPersistance implements IPersistance{
         map.put(this.getKeyDepartmentName(),tmp.toMap().get(
                 this.getKeyDepartmentName()
         ).toString());
-
         //Anzahl der Benutzer in dieser Abteilung ermitten
         int amount = getUserAmount(id);
         //Anzahl der Map hinzufügen
@@ -594,8 +585,7 @@ public class MongoDbPersistance implements IPersistance{
 
     /**
      * Gibt eine Liste aller Abteilungen zurück
-     *
-     * @return
+     * @return Liste von Maps mit Daten aller Abteilungen
      */
     @Override
     public List<Map<String,Object>> getAllDepartments(){
@@ -614,10 +604,14 @@ public class MongoDbPersistance implements IPersistance{
         } finally {
             cursor.close();
         }
-
         return list;
     }
 
+    /**
+     * Gibt die Anzahl der Benutzer in einer Abteilung
+     * @param department_id Id der Abteilung
+     * @return Anzahl der Benutzer in der Abteilung
+     */
     private int getUserAmount(int department_id){
         //Laden der Benutzer Collection
         DBCollection coll = db.getCollection("Users");
@@ -626,5 +620,4 @@ public class MongoDbPersistance implements IPersistance{
         //suchen + zählen
         return (int) coll.count(query);
     }
-
 }

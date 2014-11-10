@@ -17,11 +17,6 @@ import java.time.LocalDate;
 public class User {
 
     /**
-     * Id des Benutzers
-     */
-	private int id;
-
-    /**
      * Vorname des Benutzers
      */
 	private final SimpleStringProperty firstname;
@@ -61,7 +56,16 @@ public class User {
      * Geburtsdatum des Benutzers
      */
     private final SimpleObjectProperty<LocalDate> birthday;
+
+    /**
+     * CombobBox mit Departments für das löschen einer Abteilung
+     */
     private SimpleObjectProperty<ComboBox<Department>> combobox;
+
+    /**
+     * ID eines Benutzers
+     */
+    private SimpleIntegerProperty id;
     
 
     /**
@@ -88,6 +92,7 @@ public class User {
 		this.birthday = new SimpleObjectProperty<>(bday);
         this.department = new SimpleObjectProperty<>(department);
         this.combobox = new SimpleObjectProperty<ComboBox<Department>>();
+        this.id = new SimpleIntegerProperty();
 	}
 
     /**
@@ -160,7 +165,7 @@ public class User {
      * @return Id des Benutzers
      */
 	public int getId() {
-		return id;
+		return id.get();
 	}
 
     /**
@@ -168,7 +173,7 @@ public class User {
      * @param id Id des Benutzers
      */
 	public void setId(int id) {
-		this.id = id;
+		this.id.set(id);
 	}
 
     /**

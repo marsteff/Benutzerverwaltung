@@ -8,6 +8,13 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.Date;
 
+/**
+ * Datenhaltung for SQLite
+ * getestet für SQLite version: 3.0.0+
+ *
+ * Implementierung des IPersistance Interfaces für die
+ * relationale Datenbank SQLite
+ */
 public class SQLitePersistance implements IPersistance {
 
     /**
@@ -46,7 +53,7 @@ public class SQLitePersistance implements IPersistance {
 
     /**
      * Baut eine Verbung zur Datenbank auf
-     * @return
+     * @return Verbindungs Objekt
      */
 	private Connection getConnection(){
 		Connection connection = null;
@@ -57,7 +64,6 @@ public class SQLitePersistance implements IPersistance {
 		} catch (Exception e) {
 			System.err.println("bei Erstellung der Verbindung ist was schief gelaufen");
 		}
-		
 		return connection;
 	}
 
@@ -242,23 +248,26 @@ public class SQLitePersistance implements IPersistance {
         this.dbUpdate(Department_sql);
 	}
 
+    /**
+     * Erstellt einen neuen Benutzer oder ändert einen bestehenden
+     * @param user Map mit Daten des Benutzers
+     */
     @Override
 	public void upsertUser(Map<String, Object> user) {
 		if(existCustomer((int)user.get(this.getKeyUserId())))
-			update(user);
+			updateUser(user);
 		else
 			createUser(user);
 	}
 
     /**
-     * Kombination aus update/insert User. Wenn ein Benutzer, welcher
+     * Kombination aus updateUser/insert User. Wenn ein Benutzer, welcher
      * sich aus den Werten der Map ergibt, nicht existstiert dann wird er
      * neu erzeugt. Andererseits werden alle vorhandenen werde aus der Map in
      * das Dokument übernommen
-     *
-     * @param user Map<String,Object>
+     * @param user Map mit Daten des Benutzers
      */
-    private void update(Map<String, Object> user) {
+    private void updateUser(Map<String, Object> user) {
         //ausführen des Update Statements, unter berücksichtiung der key namen
         this.dbUpdate("UPDATE User set " +
                 "first_name 	= '" + user.get(this.getKeyUserFirstname()) + "', " +
@@ -275,8 +284,7 @@ public class SQLitePersistance implements IPersistance {
     /**
      * Alle Datenbank Aktionen die keine Rückgabe haben (CREATE, INSERT, UPDATE...)
      * werden hier ausgeführt
-     *
-     * @param sql
+     * @param sql Datenbank Abfrage
      */
     private void dbUpdate(String sql){
         //Verbindungsaufbau
@@ -303,7 +311,7 @@ public class SQLitePersistance implements IPersistance {
 
     /**
      * Benutzer Dokument aus der Collection entfernen
-     * @param id int
+     * @param id Id des Benutzers
      */
     @Override
     public void deleteUser(int id) {
@@ -312,7 +320,7 @@ public class SQLitePersistance implements IPersistance {
 
     /**
      * Neue Abteilung erzeugen
-     * @param name String
+     * @param name Name der neuen Abteilung
      */
     @Override
     public void createDepartment(String name){
@@ -321,8 +329,7 @@ public class SQLitePersistance implements IPersistance {
 
     /**
      * Aktualisieren einer Abteiung
-     *
-     * @param dep
+     * @param dep Map mit Daten der Abteilung
      */
     @Override
     public void upsertDepartment(Map<String, Object> dep){
@@ -332,6 +339,10 @@ public class SQLitePersistance implements IPersistance {
             createDepartment((String) dep.get(this.getKeyDepartmentName()));
     }
 
+    /**
+     * Ändert eine Abteilung
+     * @param dep Map mit Daten der Abteilung
+     */
     private void updateDepartment(Map<String, Object> dep){
         this.dbUpdate("UPDATE Department SET name = '" +
                         dep.get(this.getKeyDepartmentName()) +
@@ -342,8 +353,7 @@ public class SQLitePersistance implements IPersistance {
 
     /**
      * Entfernen einer Abteilung
-     *
-     * @param id
+     * @param id Id der zulöschenden Abteilung
      */
     @Override
     public void deleteDepartment(int id){
@@ -352,13 +362,12 @@ public class SQLitePersistance implements IPersistance {
 
     /**
      * Gibt eine Liste aller Abteilungen zurück
-     *
-     * @return
+     * @return Liste von Maps mit Daten aller Abteilungen
      */
     @Override
     public List<Map<String,Object>> getAllDepartments(){
         //leere Liste initialisieren
-        List<Map<String,Object>> list = new ArrayList<Map<String, Object>>();
+        List<Map<String,Object>> list = new ArrayList<>();
         //Verbindungsaufbau
         Connection con = this.getConnection();
         //Statement Variable initialisieren
@@ -384,7 +393,6 @@ public class SQLitePersistance implements IPersistance {
             }
             //Ergebinss schließen
             rs.close();
-
         //Fehlerhandhabung
         } catch(Exception e) {
             System.err.println("Fehler beim Laden aller Abteilungen");
@@ -395,6 +403,12 @@ public class SQLitePersistance implements IPersistance {
         return list;
     }
 
+    /**
+     * Wandet ein ResultSet in eine Map mit Daten einer Abteilung um
+     * @param rs ResultSet
+     * @return Map mit Daten einer Abteilung
+     * @throws SQLException
+     */
     private Map<String, Object> departmentResultToDepartmentMap(ResultSet rs) throws SQLException {
         //Neue Map für Zwischenergenis initialisieren
         Map<String,Object> dep = new HashMap<String, Object>();
@@ -409,7 +423,7 @@ public class SQLitePersistance implements IPersistance {
 
     /**
      * Erstellt einen neuen Benutzer
-     * @param user Map<String,Object>
+     * @param user Map mit Daten eines Benutzers
      */
 	@Override
 	public void createUser(Map<String,Object> user) {
@@ -426,10 +440,9 @@ public class SQLitePersistance implements IPersistance {
 	}
 
     /**
-     * Prüfen ob ein Benutzer existiert (anhand der ID
-     * )
-     * @param id
-     * @return
+     * Prüfen ob ein Benutzer existiert (anhand der ID)
+     * @param id Id des Benutzers
+     * @return ture=existiert, false=existiert noch nicht
      */
 	public boolean existCustomer(int id){
         //Verbindungsaufbau
@@ -464,10 +477,9 @@ public class SQLitePersistance implements IPersistance {
 	}
 
     /**
-     * Prüfen ob ein Department existiert (anhand der ID
-     * )
-     * @param id
-     * @return
+     * Prüfen ob ein Department existiert (anhand der ID)
+     * @param id Id der Abteilung
+     * @return ture=existiert, false=existiert noch nicht
      */
     public boolean existDepartment(int id){
         //Verbindungsaufbau
@@ -489,7 +501,6 @@ public class SQLitePersistance implements IPersistance {
             }
             //Ergbinis schließen
             rs.close();
-
             //Fehlerhandhabung
         } catch(Exception e) {
             System.err.println("Fehler beim ermitteln ob Department vorhanden ist");
@@ -503,7 +514,7 @@ public class SQLitePersistance implements IPersistance {
 
     /**
      * Gibt eine Liste alle Benutzer (Maps) zurück
-     * @return List<Map<String,Object>>
+     * @return Liste von Maps mit Daten aller Benutzer
      */
 	@Override
 	public List<Map<String ,Object>> getAllUser() {
@@ -553,6 +564,11 @@ public class SQLitePersistance implements IPersistance {
 		return list;
 	}
 
+    /**
+     * Gibt eine Liste von Benutzer Maps anhand Ihrer Abteilung
+     * @param id Id der Abteilung
+     * @return List von Maps mit Daten aller Benutzer die in der gegebenden Abteilung sind
+     */
     @Override
     public List<Map<String, Object>> getUsersByDepartmentId(int id) {
         String sql;
@@ -597,6 +613,11 @@ public class SQLitePersistance implements IPersistance {
         return users.size() == 0 ? null : users;
     }
 
+    /**
+     * Gibt eine Abteilung anhand Ihrer Id
+     * @param id Id der Abteiling
+     * @return Map mit Daten der Abteilung
+     */
     @Override
     public Map<String, Object> getDepartmentById(int id) {
         String sql;
@@ -636,9 +657,8 @@ public class SQLitePersistance implements IPersistance {
 
     /**
      * Wandelt ein ResultSet in eine Benutzer Map um
-     *
-     * @param rs
-     * @return
+     * @param rs ResultSet
+     * @return Map mit Daten des Benutzers
      * @throws SQLException
      */
     private Map<String, Object> userResultSetToUserMap(ResultSet rs) throws SQLException {
@@ -671,7 +691,7 @@ public class SQLitePersistance implements IPersistance {
         //hinzufügen der Benutzer Hausnummer (mit gegeben Keynamen)
         user.put(this.getKeyUserStreetNr(),rs.getString(this.getKeyUserStreetNr()));
         //hinzufügen der Benutzer PLZ (mit gegeben Keynamen)
-        user.put(this.getKeyUserZipCode(),rs.getString(this.getKeyUserZipCode()));
+        user.put(this.getKeyUserZipCode(),rs.getInt(this.getKeyUserZipCode()));
         //hinzufügen der Benutzer Abteilung (mit gegeben Keynamen)
         user.put(this.getKeyUserDepartment(),depMap);
         //Benutzer zurückgeben
@@ -680,8 +700,8 @@ public class SQLitePersistance implements IPersistance {
 
     /**
      * Laden eines einzelnen Benutzers anhand seiner Id
-     * @param id int
-     * @return Map<String,Object>
+     * @param id Id des Benutzers
+     * @return Map mit Daten des Benutzers
      */
     @Override
     public Map<String, Object> getUserById(int id) {
@@ -728,8 +748,8 @@ public class SQLitePersistance implements IPersistance {
 
     /**
      * Schließen der Verbindung zur Datenbank
-     * @param con
-     * @param stmt
+     * @param con Verbindung
+     * @param stmt Datenbank Statement
      */
     private void closeConnection(Connection con, Statement stmt){
 		try{
